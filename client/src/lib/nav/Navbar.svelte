@@ -18,10 +18,10 @@
 
 <svelte:window bind:innerWidth={windowWidth} />
 
-<nav class="position-fixed h-100 p-2 bg-dark text-light" class:expanded={$navbarExpanded} 
+<nav class="position-fixed h-100 bg-dark text-light" class:expanded={$navbarExpanded} 
 on:mouseover={expandNavbar} on:focus={expandNavbar} on:blur={closeNavbar} on:mouseout={closeNavbar} >
 
-    <NavButton />
+    <NavButton caption="home" href={'/'} />
 </nav>
 
 <style>
