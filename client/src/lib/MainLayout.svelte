@@ -17,4 +17,11 @@
 		margin-left: 4rem;
 		padding: 0.25rem 0.5rem;
 	}
+
+	@media only screen and (max-width: 576px) {
+		.main-layout-container {
+			margin-left: 0;
+			margin-bottom: 4rem;
+		}
+	}
 </style>
