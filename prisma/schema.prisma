@@ -14,7 +14,7 @@ model User {
   	id Int @id @default(autoincrement()) @unique
 	firstName String @db.VarChar(20)
 	lastName String @db.VarChar(20)
-	email String @db.VarChar(50)
+	email String @db.VarChar(50) @unique
 	password String @db.VarChar(20)
 	description String? @db.Text
 	// Thumbnail UserThumbnail?
