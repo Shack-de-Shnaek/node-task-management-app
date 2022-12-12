@@ -1,18 +1,18 @@
-import { Get, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class UsersService {
-    constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService) {}
     
-    async user(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
+    async get(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
         return this.prisma.user.findUnique({
             where: userWhereUniqueInput
         });
     }
 
-    async users(params: {
+    async list(params?: {
         skip?: number;
         take?: number;
         cursor?: Prisma.UserWhereUniqueInput;
