@@ -1,5 +1,6 @@
 import { Controller, Get, NotFoundException, Param, ParseIntPipe, Req } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { Request } from 'express';
 import { UsersService } from './users.service'; 
 
 @Controller('api/users')
@@ -8,6 +9,7 @@ export class UsersController {
     
     @Get()
     async list(@Req() request: Request): Promise<User[]>  {
+        console.log(request.user);
         return this.usersService.list({});
     }
 

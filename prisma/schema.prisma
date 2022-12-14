@@ -10,12 +10,19 @@ datasource db {
   	url      = env("DATABASE_URL")
 }
 
+model Session {
+	id String @id
+	sid String @unique
+	data String @db.Text
+	expiresAt DateTime
+}
+
 model User {
   	id Int @id @default(autoincrement()) @unique
 	firstName String @db.VarChar(20)
 	lastName String @db.VarChar(20)
 	email String @db.VarChar(50) @unique
-	password String @db.VarChar(20)
+	password String @db.VarChar(100)
 	description String? @db.Text
 	// Thumbnail UserThumbnail?
 	projects Project[] @relation("members")
