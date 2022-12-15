@@ -8,13 +8,13 @@ export class UsersController {
     constructor(private usersService: UsersService) {}
     
     @Get()
-    async list(@Req() request: Request): Promise<User[]>  {
+    async list(@Req() request: Request)  {
         console.log(request.user);
         return this.usersService.list({});
     }
 
     @Get(':id')
-    async get(@Req() request: Request, @Param('id', ParseIntPipe) id: number): Promise<User | null> {
+    async get(@Req() request: Request, @Param('id', ParseIntPipe) id: number) {
         const user = await this.usersService.get({
             id: id
         });

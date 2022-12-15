@@ -14,6 +14,9 @@ const path_1 = require("path");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const prisma_service_1 = require("./prisma.service");
+const projects_module_1 = require("./projects/projects.module");
+const posts_module_1 = require("./posts/posts.module");
+const tasks_module_1 = require("./tasks/tasks.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -23,7 +26,10 @@ AppModule = __decorate([
                 rootPath: (0, path_1.join)(__dirname, '..', '..', 'client', 'dist')
             }),
             auth_module_1.AuthModule,
-            users_module_1.UsersModule
+            users_module_1.UsersModule,
+            projects_module_1.ProjectsModule,
+            posts_module_1.PostsModule,
+            tasks_module_1.TasksModule
         ],
         controllers: [],
         providers: [app_service_1.AppService, prisma_service_1.PrismaService],

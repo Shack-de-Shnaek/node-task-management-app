@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Redirect, Req, Session, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Redirect, Req, Session, UseGuards, ValidationPipe } from '@nestjs/common';
 import { hash } from 'bcrypt';
 import { Request } from 'express';
 import { CreateUserDto } from 'src/users/user-create.dto';
@@ -18,6 +18,7 @@ export class AuthController {
     }
 
     @Post('register')
+    @HttpCode(201)
     async register(@Body(new ValidationPipe()) data: CreateUserDto) {
         data.password = await hash(data.password, 10);
         const { password, ...user } = await this.usersService.create(data);
@@ -31,9 +32,9 @@ export class AuthController {
         return Redirect('/login');
     }
 
-    @Get('test')
-    @UseGuards(SessionAuthGuard)
-    async test(@Req() request: Request) {
-        return request.user;
-    }
+    // @Get('test')
+    // @UseGuards(SessionAuthGuard)
+    // async test(@Req() request: Request) {
+    //     return request.user;
+    // }
 }

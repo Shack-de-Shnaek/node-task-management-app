@@ -1,14 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
+import ICrudService from 'interfaces/ICrudService';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements ICrudService {
     constructor(private prisma: PrismaService) {}
     
-    async get(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
+    async get(userWhereUniqueInput: Prisma.UserWhereUniqueInput) {
         return this.prisma.user.findUnique({
-            where: userWhereUniqueInput
+            where: userWhereUniqueInput,
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                description: true,
+                projects: {
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true
+                    }
+                },
+                posts: {
+                    select: {
+                        id: true,
+                        title: true,
+                        content: true
+                    }
+                },
+                createdTasks: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true
+                    }
+                }
+            }
         });
     }
 
@@ -19,7 +48,16 @@ export class UsersService {
         where?: Prisma.UserWhereInput;
         orderBy?: Prisma.UserOrderByWithRelationInput;
     }) {
-        return this.prisma.user.findMany(params);
+        return this.prisma.user.findMany({
+            ...params,
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                description: true
+            }
+        });
     }
 
     async create(data: Prisma.UserCreateInput) {
