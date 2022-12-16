@@ -23,6 +23,13 @@ export class UsersService implements ICrudService {
                         description: true
                     }
                 },
+                leaderOfProjects: {
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true
+                    }
+                },
                 posts: {
                     select: {
                         id: true,
@@ -79,6 +86,36 @@ export class UsersService implements ICrudService {
         return this.prisma.user.delete({
             where: {
                 id: id
+            }
+        });
+    }
+
+
+    async getProjects(id: number) {
+        // return this.prisma.project.findMany({
+        //     where: {
+        //         leaderId: id
+        //     }
+        // });
+        return this.prisma.user.findUnique({
+            where: {
+                id: id
+            },
+            select: {
+                projects: {
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true
+                    }
+                },
+                leaderOfProjects: {
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true
+                    }
+                }
             }
         });
     }

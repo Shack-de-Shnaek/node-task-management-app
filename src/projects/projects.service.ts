@@ -5,10 +5,10 @@ import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class ProjectsService implements ICrudService {
-    constructor(private prismaService: PrismaService) { }
+    constructor(private prisma: PrismaService) { }
 
     async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput) {
-        return await this.prismaService.project.findUnique({
+        return this.prisma.project.findUnique({
             where: projectWhereUniqueImport
         });
     }
@@ -20,17 +20,17 @@ export class ProjectsService implements ICrudService {
         where?: Prisma.ProjectWhereInput;
         orderBy?: Prisma.ProjectOrderByWithRelationInput;
     }) {
-        return await this.prismaService.project.findMany(params);
+        return this.prisma.project.findMany(params);
     }
 
     async create(data: Prisma.ProjectCreateInput) {
-        return await this.prismaService.project.create({
+        return this.prisma.project.create({
             data: data
         });
     }
 
     async update(id: number, data: Prisma.ProjectUpdateInput) {
-        return await this.prismaService.project.update({
+        return this.prisma.project.update({
             where: {
                 id: id
             },
@@ -39,7 +39,7 @@ export class ProjectsService implements ICrudService {
     }
 
     async delete(id: number) {
-        return await this.prismaService.project.delete({
+        return this.prisma.project.delete({
             where: {
                 id: id
             }

@@ -5,10 +5,10 @@ import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class PostsService implements ICrudService {
-    constructor(private prismaService: PrismaService) { }
+    constructor(private prisma: PrismaService) { }
 
     async get(postWhereUniqueImport: Prisma.PostWhereUniqueInput) {
-        return await this.prismaService.post.findUnique({
+        return this.prisma.post.findUnique({
             where: postWhereUniqueImport
         });
     }
@@ -20,18 +20,18 @@ export class PostsService implements ICrudService {
         where?: Prisma.PostWhereInput;
         orderBy?: Prisma.PostOrderByWithRelationInput;
     }) {
-        return await this.prismaService.post.findMany(params);
+        return this.prisma.post.findMany(params);
     }
 
     async create(data: Prisma.PostCreateInput) {
-        const post = await this.prismaService.post.create({
+        const post = await this.prisma.post.create({
             data: data
         });
         return post;
     }
 
     async update(id: number, data: Prisma.PostUpdateInput) {
-        return await this.prismaService.post.update({
+        return this.prisma.post.update({
             where: {
                 id: id
             },
@@ -40,7 +40,7 @@ export class PostsService implements ICrudService {
     }
 
     async delete(id: number) {
-        return await this.prismaService.post.delete({
+        return this.prisma.post.delete({
             where: {
                 id: id
             }

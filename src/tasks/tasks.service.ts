@@ -5,10 +5,10 @@ import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class TasksService implements ICrudService {
-    constructor(private prismaService: PrismaService) { }
+    constructor(private prisma: PrismaService) { }
 
     async get(taskWhereUniqueImport: Prisma.TaskWhereUniqueInput) {
-        const task = await this.prismaService.task.findUnique({
+        const task = await this.prisma.task.findUnique({
             where: taskWhereUniqueImport
         });
         return task;
@@ -21,19 +21,19 @@ export class TasksService implements ICrudService {
         where?: Prisma.TaskWhereInput;
         orderBy?: Prisma.TaskOrderByWithRelationInput;
     }) {
-        const tasks = await this.prismaService.task.findMany(params);
+        const tasks = await this.prisma.task.findMany(params);
         return tasks;
     }
 
     async create(data: Prisma.TaskCreateInput) {
-        const task = await this.prismaService.task.create({
+        const task = await this.prisma.task.create({
             data: data
         });
         return task;
     }
 
     async update(id: number, data: Prisma.TaskUpdateInput) {
-        const task = await this.prismaService.task.update({
+        const task = await this.prisma.task.update({
             where: {
                 id: id
             },
@@ -43,7 +43,7 @@ export class TasksService implements ICrudService {
     }
 
     async delete(id: number) {
-        const task = await this.prismaService.task.delete({
+        const task = await this.prisma.task.delete({
             where: {
                 id: id
             }
