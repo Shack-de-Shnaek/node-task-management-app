@@ -10,9 +10,7 @@
 
 <svelte:window bind:innerWidth={$windowWidth} />
 
-<main>
-	<Router routes={routes} />
-</main>
+<Router routes={routes} />
 
 <style>
 

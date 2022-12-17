@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { compare } from 'bcrypt';
 // import { verify } from 'crypto';
 
 @Injectable()
@@ -19,7 +20,9 @@ export class AuthService {
                 lastName: true,
             }
         });
-        if (user.password === password) {
+        if (user === null) throw new NotFoundException();
+        const passwordIsCorrect = await compare(password, user.password);
+        if (passwordIsCorrect) {
             const { password, ...result } = user;
             return result;
         }

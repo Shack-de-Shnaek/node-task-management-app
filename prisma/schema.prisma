@@ -24,6 +24,7 @@ model User {
 	email String @db.VarChar(50) @unique
 	password String @db.VarChar(100)
 	description String? @db.Text
+	isActive Boolean @default(true)
 	// Thumbnail UserThumbnail?
 	projects Project[] @relation("members")
 	leaderOfProjects Project[] @relation("leaderOfProject")

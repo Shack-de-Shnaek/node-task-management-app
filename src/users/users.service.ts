@@ -83,20 +83,20 @@ export class UsersService implements ICrudService {
     }
 
     async delete(id: number) {
-        return this.prisma.user.delete({
+        return this.prisma.user.update({
             where: {
                 id: id
+            },
+            data: {
+                isActive: false,
+                firstName: 'Deleted',
+                lastName: 'User'
             }
         });
     }
 
 
     async getProjects(id: number) {
-        // return this.prisma.project.findMany({
-        //     where: {
-        //         leaderId: id
-        //     }
-        // });
         return this.prisma.user.findUnique({
             where: {
                 id: id

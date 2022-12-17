@@ -11,8 +11,7 @@ export class UsersController {
     
     @Get()
     async list(@Req() request: Request)  {
-        console.log(request.user);
-        return this.usersService.list({});
+        return this.usersService.list();
     }
 
     @Get(':id')

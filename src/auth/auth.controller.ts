@@ -32,9 +32,9 @@ export class AuthController {
         return Redirect('/login');
     }
 
-    // @Get('test')
-    // @UseGuards(SessionAuthGuard)
-    // async test(@Req() request: Request) {
-    //     return request.user;
-    // }
+    @Get('test')
+    @UseGuards(SessionAuthGuard)
+    async test(@Req() request: Request) {
+        return request.user;
+    }
 }
