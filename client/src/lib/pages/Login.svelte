@@ -61,7 +61,7 @@
 </script>
 
 <div class="auth-screen d-flex w-100 h-100 flex-column align-items-center justify-content-center bg-dark">
-    <div class="auth-container w-50 px-3 py-4 d-flex flex-column bg-light rounded-1">
+    <div class="auth-container px-3 py-4 d-flex flex-column bg-light rounded-1">
         <h2 class="mode-message w-100">
             {mode}
         </h2>
@@ -96,7 +96,7 @@
 
     input:not([type=submit]) {
         width: 24rem;
-        max-width: 85vw;
+        /* max-width: 85vw; */
         border-bottom: 2px solid var(--dark-gray);
         transition: 0.2s;
     }
@@ -115,9 +115,12 @@
         background-color: var(--light-blue) !important;
     }
 
+    form {
+        width: fit-content;
+    }
+
     .auth-container {
-        min-width: fit-content;
-        max-width: 100vw;
+        width: fit-content;
         height: 25rem;
     }
 

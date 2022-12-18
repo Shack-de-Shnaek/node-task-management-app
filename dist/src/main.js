@@ -6,6 +6,7 @@ const prisma_session_store_1 = require("@quixo3/prisma-session-store");
 const session = require("express-session");
 const passport = require("passport");
 const app_module_1 = require("./app.module");
+const unauthorizedRedirect_filter_1 = require("./auth/unauthorizedRedirect.filter");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use(session({
@@ -18,6 +19,7 @@ async function bootstrap() {
             dbRecordIdFunction: undefined
         })
     }));
+    app.useGlobalFilters(new unauthorizedRedirect_filter_1.UnauthorizedRedirectFilter());
     app.use(passport.initialize());
     app.use(passport.session());
     await app.listen(3000);

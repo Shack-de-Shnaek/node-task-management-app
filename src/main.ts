@@ -4,6 +4,7 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import { AppModule } from './app.module';
+import { UnauthorizedRedirectFilter } from './auth/unauthorizedRedirect.filter';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -20,7 +21,8 @@ async function bootstrap() {
 				}
 			)
 		})
-	);
+    );
+    app.useGlobalFilters(new UnauthorizedRedirectFilter());
 
 	app.use(passport.initialize());
 	app.use(passport.session());

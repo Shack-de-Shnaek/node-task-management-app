@@ -1,6 +1,6 @@
-import { Body, Controller, Get, HttpCode, Post, Redirect, Req, Session, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { hash } from 'bcrypt';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { CreateUserDto } from 'src/users/user-create.dto';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
@@ -26,10 +26,11 @@ export class AuthController {
     }
 
     @Post('logout')
+    @HttpCode(303)
     @UseGuards(SessionAuthGuard)
-    async logout(@Req() request: Request) {
+    async logout(@Req() request: Request, @Res() response: Response) {
         request.session.destroy(() => {});
-        return Redirect('/login');
+        response.redirect('/login');
     }
 
     @Get('test')
