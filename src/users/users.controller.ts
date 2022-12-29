@@ -5,7 +5,7 @@ import { UserExists } from './userExists.guard';
 import { UsersService } from './users.service'; 
 
 @Controller('api/users')
-// @UseGuards(SessionAuthGuard)
+@UseGuards(SessionAuthGuard)
 export class UsersController {
     constructor(private usersService: UsersService) {}
     
@@ -27,5 +27,11 @@ export class UsersController {
     @UseGuards(UserExists)
     async projects(@Param('id', ParseIntPipe) id: number) {
         return this.usersService.getProjects(id);
+    }
+
+    @Get(':id/posts')
+    @UseGuards(UserExists)
+    async posts(@Param('id', ParseIntPipe) id: number) {
+        return this.usersService.getPosts(id);
     }
 }

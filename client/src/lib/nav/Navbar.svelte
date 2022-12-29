@@ -3,6 +3,7 @@
     import { writable } from "svelte/store";
 	import type { Writable } from "svelte/store";
     import NavButton from "./NavButton.svelte";
+	import { currentUserData } from "../../store";
 
     const windowWidth: Writable<number> = getContext('windowWidth');
     
@@ -27,7 +28,7 @@ class:expanded={$navbarExpanded}
 on:mouseenter={expandNavbar} on:focusin={expandNavbar} on:focusout={closeNavbar} on:mouseleave={closeNavbar} >
 
     <NavButton label="Home" imagePath="icons/home.png" href="/" />
-    <NavButton label="Projects" imagePath="icons/project.png" click={() => {alert('projects')}} />
+    <NavButton label="Projects" imagePath="icons/project.png" click={() => {console.log([...$currentUserData.projects, ...$currentUserData.leaderOfProjects])}} />
         
     {#if $windowWidth < 576}
         <NavButton label="Menu" imagePath="icons/menu.png" href="test" />

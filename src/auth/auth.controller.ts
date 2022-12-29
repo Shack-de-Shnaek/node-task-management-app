@@ -25,17 +25,22 @@ export class AuthController {
         return user
     }
 
+    // @UseGuards(SessionAuthGuard)
     @Post('logout')
     @HttpCode(303)
-    @UseGuards(SessionAuthGuard)
     async logout(@Req() request: Request, @Res() response: Response) {
         request.session.destroy(() => {});
         response.redirect('/login');
     }
 
+    // @UseGuards(SessionAuthGuard)
     @Get('test')
-    @UseGuards(SessionAuthGuard)
     async test(@Req() request: Request) {
+        return request.user;
+    }
+
+    @Get('current-user')
+    async currentUser(@Req() request: Request) {
         return request.user;
     }
 }

@@ -4,6 +4,7 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import { AppModule } from './app.module';
+import { LocalAuthGuard } from './auth/localAuth.guard';
 import { UnauthorizedRedirectFilter } from './auth/unauthorizedRedirect.filter';
 
 async function bootstrap() {
@@ -21,7 +22,7 @@ async function bootstrap() {
 				}
 			)
 		})
-    );
+	);
     app.useGlobalFilters(new UnauthorizedRedirectFilter());
 
 	app.use(passport.initialize());

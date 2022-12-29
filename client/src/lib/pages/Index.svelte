@@ -1,5 +1,5 @@
 <script lang="ts">
-
+    import { currentUserData } from "../../store";
 </script>
 
 <h1>index</h1>
@@ -15,3 +15,7 @@
 }}>
     log out
 </button>
+
+{#if $currentUserData.firstName !== ''}
+    <h1>Hello, {$currentUserData.firstName} {$currentUserData.lastName}!</h1>
+{/if}

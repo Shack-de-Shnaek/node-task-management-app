@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { navigateTo } from 'svelte-router-spa';
     import { fade } from 'svelte/transition';
+	import getCurrentUser from '../utilities/getCurrentUser';
 
     let mode = 'Login';
     let welcomeBackUser = '';
@@ -29,6 +30,7 @@
             });
             if(res.ok) {
                 const json = await res.json();
+                getCurrentUser();
                 navigateTo('/');
             } else if(res.status === 404) {
                 alert('That user does not exist');
@@ -51,6 +53,7 @@
             });
             if(res.ok) {
                 const json = await res.json();
+                getCurrentUser();
             } else {
                 console.log('oops');
             }

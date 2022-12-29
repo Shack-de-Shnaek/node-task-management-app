@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma.service';
 export class UsersService implements ICrudService {
     constructor(private prisma: PrismaService) {}
     
-    async get(userWhereUniqueInput: Prisma.UserWhereUniqueInput) {
+    async get(userWhereUniqueInput: Prisma.UserWhereUniqueInput, getPassword=false) {
         return this.prisma.user.findUnique({
             where: userWhereUniqueInput,
             select: {
@@ -15,6 +15,7 @@ export class UsersService implements ICrudService {
                 firstName: true,
                 lastName: true,
                 email: true,
+                password: getPassword,
                 description: true,
                 projects: {
                     select: {
@@ -118,5 +119,29 @@ export class UsersService implements ICrudService {
                 }
             }
         });
+    }
+
+    async getPosts(id: number) {
+        return this.prisma.user.findUnique({
+            where: {
+                id: id
+            },
+            select: {
+                posts: {
+                    select: {
+                        id: true,
+                        title: true,
+                        content: true,
+                        createdAt: true,
+                        project: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
 }

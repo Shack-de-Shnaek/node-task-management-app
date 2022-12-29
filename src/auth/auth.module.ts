@@ -5,6 +5,7 @@ import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
 import { SessionSerializer } from './session.serializer';
 import { UsersModule } from 'src/users/users.module';
+import { PrismaService } from 'src/prisma.service';
 
 @Module({
 	imports: [PassportModule.register({ session: true }), UsersModule],
