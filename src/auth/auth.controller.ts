@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, NotFoundException, Post, Redirect, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { hash } from 'bcrypt';
 import { Request, Response } from 'express';
 import { CreateUserDto } from 'src/users/user-create.dto';
@@ -13,21 +13,23 @@ export class AuthController {
     
     @Post('login')
     @UseGuards(LocalAuthGuard)
+    @Header('Content-Type', 'application/json')
     async login(@Req() request: Request) {
         return request.user;
     }
 
     @Post('register')
     @HttpCode(201)
-    async register(@Body(new ValidationPipe()) data: CreateUserDto) {
+    @Header('Content-Type', 'application/json')
+    async register(@Body(new ValidationPipe()) data: CreateUserDto, @Req() request: Request) {
         data.password = await hash(data.password, 10);
         const { password, ...user } = await this.usersService.create(data);
-        return user
+        // return;
     }
 
-    // @UseGuards(SessionAuthGuard)
     @Post('logout')
     @HttpCode(303)
+    @Header('Content-Type', 'application/json')
     async logout(@Req() request: Request, @Res() response: Response) {
         request.session.destroy(() => {});
         response.redirect('/login');
@@ -40,7 +42,9 @@ export class AuthController {
     }
 
     @Get('current-user')
+    @Header('Content-Type', 'application/json')
     async currentUser(@Req() request: Request) {
-        return request.user;
+        if (request.user) return request.user;
+        throw new NotFoundException('You are not logged in');
     }
 }

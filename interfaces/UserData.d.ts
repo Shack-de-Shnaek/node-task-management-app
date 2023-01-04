@@ -9,3 +9,10 @@ export type UserData = {
     posts: [];
     createdTasks: [];
 }
+
+export type LimitedUserData = {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+}

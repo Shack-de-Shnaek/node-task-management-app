@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { currentUserData } from '../../../src/store';
 	import { navigateTo } from 'svelte-router-spa';
     import { fade } from 'svelte/transition';
+	import type { UserData } from '../../../../interfaces/UserData';
 	import getCurrentUser from '../utilities/getCurrentUser';
 
     let mode = 'Login';
@@ -43,17 +45,24 @@
     }
 
     const register = async() => {
+        if(registerUserData.password !== registerUserData.confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        const {confirmPassword, ...data} = registerUserData;
+
         try {
-            const res = await fetch('/api/register', {
+            const res = await fetch('/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(registerUserData)
+                body: JSON.stringify(data)
             });
             if(res.ok) {
-                const json = await res.json();
-                getCurrentUser();
+                for(const key in registerUserData) registerUserData[key] = '';
+                mode = 'Login';
             } else {
                 console.log('oops');
             }
@@ -99,7 +108,7 @@
 
     input:not([type=submit]) {
         width: 24rem;
-        /* max-width: 85vw; */
+        max-width: 85vw;
         border-bottom: 2px solid var(--dark-gray);
         transition: 0.2s;
     }
