@@ -13,3 +13,5 @@ export const currentUserData: Writable<UserData> = writable({
     posts: [],
     createdTasks: []
 });
+
+export const currentUserHasBeenRequested: Writable<boolean> = writable(false);

@@ -5,7 +5,7 @@
 	import { routes } from './routes';
 	import { Route } from 'svelte-router-spa';
 	import type { UserData } from '../../interfaces/UserData';
-	import { currentUserData } from './store';
+	import { currentUserData, currentUserHasBeenRequested } from './store';
 	import getCurrentUser from './lib/utilities/getCurrentUser';
 
 	let windowWidth = writable(0);
@@ -14,7 +14,7 @@
 	onMount(async () => {
 		if(window.location.pathname === '/login') return;
 		getCurrentUser();
-		console.log('user got');
+		currentUserHasBeenRequested.set(true);
 	});
 </script>
 

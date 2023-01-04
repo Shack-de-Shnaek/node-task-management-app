@@ -6,23 +6,10 @@ import Login from "./lib/pages/Login.svelte"
 import Project from "./lib/pages/Project.svelte"
 import Projects from "./lib/pages/Projects.svelte"
 
-// const userIsLoggedInGuard = async () => {
-//     let userData: UserData;
-//     const unsubscribe = currentUserData.subscribe((val) => {
-//         userData = val;
-//     });
-//     unsubscribe();
-//     if (userData.id !== 0) return true;
-
-//     userData = await getCurrentUser();
-//     console.log('fuck')
-//     return (userData !== null);
-// }
-
 export const routes: Route[] = [
     {
         name: '/',
-        onlyIf: { guard: async() => false, redirect: '/login' },
+        // onlyIf: { guard: userIsLoggedInGuard, redirect: '/login' },
         component: Index,
         layout: MainLayout,
     },
@@ -32,13 +19,13 @@ export const routes: Route[] = [
     },
     {
         name: '/project/:id',
-        onlyIf: { guard: userIsLoggedInGuard, redirect: '/login' },
+        // onlyIf: { guard: userIsLoggedInGuard, redirect: '/login' },
         component: Project,
         layout: MainLayout,
     },
     {
         name: '/test',
-        onlyIf: { guard: userIsLoggedInGuard, redirect: '/login' }, 
+        // onlyIf: { guard: userIsLoggedInGuard, redirect: '/login' }, 
         component: Projects,
         layout: MainLayout,
     }

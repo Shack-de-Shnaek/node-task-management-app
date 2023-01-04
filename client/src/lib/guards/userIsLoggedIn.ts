@@ -1,17 +1,14 @@
-import { currentUserData } from "../../store";
+import { currentUserData, currentUserHasBeenRequested } from "../../store";
 import type { UserData } from "../../../../interfaces/UserData";
 import getCurrentUser from "../utilities/getCurrentUser";
 
-const userIsLoggedInGuard = async() => {
+const userIsLoggedInGuard =() => {
     let userData: UserData;
-    const unsubscribe = currentUserData.subscribe((val) => {
+    currentUserData.subscribe((val) => {
         userData = val;
-    });
-    unsubscribe();
+    })();
     if (userData.id !== 0) return true;
-
-    userData = await getCurrentUser();
-    return (userData !== null);
+    console.log('no user in store');
 }
 
 export default userIsLoggedInGuard;
