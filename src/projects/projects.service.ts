@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
+import { projectLimitedSelector } from 'prisma/selectors/projectSelectors';
+import { userLimitedSelector } from 'prisma/selectors/userSelectors';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -9,6 +11,21 @@ export class ProjectsService implements ICrudService {
 
     async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput) {
         return this.prisma.project.findUnique({
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                createdAt: true,
+                updatedAt: true,
+                leader: {
+                    select: userLimitedSelector
+                },
+                members: {
+                    select: userLimitedSelector
+                },
+                posts: true,
+                tasks: true,
+            },
             where: projectWhereUniqueImport
         });
     }
@@ -20,7 +37,10 @@ export class ProjectsService implements ICrudService {
         where?: Prisma.ProjectWhereInput;
         orderBy?: Prisma.ProjectOrderByWithRelationInput;
     }) {
-        return this.prisma.project.findMany(params);
+        return this.prisma.project.findMany({
+            select: projectLimitedSelector,
+            ...params
+        });
     }
 
     async create(data: Prisma.ProjectCreateInput) {

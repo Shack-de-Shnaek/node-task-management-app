@@ -3,25 +3,36 @@
     import type { Writable } from "svelte/store";
     import { getContext, onMount } from "svelte";
 
-    const expanded: Writable<boolean> = getContext('navbarExpanded');
+    const expanded: Writable<boolean> = getContext('mainMenuExpanded');
+
+    export let isStaticButton = false;
 
     export let componentClass = '';
     export let componentStyle = '';
-    export let imagePath: string;
+    export let imagePath = '';
     export let label: string;
     export let href: string = undefined;
     export let click: (event?: MouseEvent) => void = undefined;
+
+    const expand = () => {
+        if(isStaticButton) return true;
+        return $expanded;
+    }
 </script>
 
 {#if href !== undefined && click === undefined}
-    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={$expanded} style="{componentStyle}" on:click={() => navigateTo(href)}>
-        <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
-        <div class="nav-button-label" class:d-none={!$expanded}>{label}</div>
+    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand()} style="{componentStyle}" on:click={() => navigateTo(href)}>
+        {#if imagePath !== ''}
+            <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
+        {/if}
+        <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
     </button>
 {:else if click !== undefined && href === undefined}
-    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={$expanded} style="{componentStyle}" on:click={click}>
-        <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
-        <div class="nav-button-label" class:d-none={!$expanded}>{label}</div>
+    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand()} style="{componentStyle}" on:click={click}>
+        {#if imagePath !== ''}
+            <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
+        {/if}
+        <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
     </button>
 {/if}
 

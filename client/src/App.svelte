@@ -14,6 +14,7 @@
 	onMount(async () => {
 		if(window.location.pathname === '/login') return;
 		getCurrentUser();
+		console.log('user got');
 	});
 </script>
 

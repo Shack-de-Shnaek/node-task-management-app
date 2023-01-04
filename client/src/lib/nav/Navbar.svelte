@@ -1,62 +1,86 @@
 <script lang="ts">
     import { setContext, getContext } from "svelte";
     import { writable } from "svelte/store";
+    import { navigateTo } from "svelte-router-spa";
 	import type { Writable } from "svelte/store";
     import NavButton from "./NavButton.svelte";
 	import { currentUserData } from "../../store";
 
     const windowWidth: Writable<number> = getContext('windowWidth');
     
-    const navbarExpanded = writable(false);
+    const mainMenuExpanded = writable(false);
     let mobileMenuExpanded = false;
+    let projectMenuExpanded = false;
 
-    setContext('navbarExpanded', navbarExpanded);
+    setContext('mainMenuExpanded', mainMenuExpanded);
 
-    const expandNavbar = () => {
+    const expandMainMenu = () => {
         if($windowWidth < 576) return;
-        $navbarExpanded = true;
+        $mainMenuExpanded = true;
     }
-    const closeNavbar = () => {
+    const closeMainMenu = () => {
         if($windowWidth < 576) return;
-        $navbarExpanded = false;
+        $mainMenuExpanded = false;
     }
 </script>
 
-
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<nav class="position-fixed bg-dark text-light d-flex flex-sm-column align-items-sm-start align-items-center justify-content-sm-start justify-content-center gap-2 gap-sm-0" 
-class:expanded={$navbarExpanded}
-on:mouseenter={expandNavbar} on:focusin={expandNavbar} on:focusout={closeNavbar} on:mouseleave={closeNavbar} >
-
-    <NavButton label="Home" imagePath="icons/home.png" href="/" />
-    <NavButton label="Projects" imagePath="icons/project.png" click={() => {console.log([...$currentUserData.projects, ...$currentUserData.leaderOfProjects])}} />
-        
-    {#if $windowWidth < 576}
-        <NavButton label="Menu" imagePath="icons/menu.png" click={() => mobileMenuExpanded = !mobileMenuExpanded} />
-        <div class="mobile-menu w-100 h-100 position-absolute d-flex align-items-center justify-content-center gap-2" class:d-none={!mobileMenuExpanded} >
+<nav class="position-fixed bg-dark text-light d-flex flex-sm-row flex-column-reverse">
+    <div class="main-menu sub-menu" class:expanded={$mainMenuExpanded}
+    on:mouseenter={expandMainMenu} on:focusin={expandMainMenu} on:focusout={closeMainMenu} on:mouseleave={closeMainMenu}>
+        <NavButton label="Home" imagePath="icons/home.png" href="/" />
+        <NavButton label="Projects" imagePath="icons/project.png" click={() => projectMenuExpanded = !projectMenuExpanded} />
+        {#if $windowWidth < 576}
+            <NavButton label="Menu" imagePath="icons/menu.png" click={() => mobileMenuExpanded = !mobileMenuExpanded} />
+        {:else}
             <NavButton label="Tasks" imagePath="icons/bug.png" href="test" />
             <NavButton label="Posts" imagePath="icons/post.png" href="posts" />
-            <NavButton label="Calendar" imagePath="icons/calendar.png" href="calendar" />    
-        </div>
-    {:else}
+            <NavButton label="Calendar" imagePath="icons/calendar.png" href="calendar" />
+        {/if}
+    </div>
+    <div class="mobile-menu sub-menu" class:d-none={!mobileMenuExpanded || $windowWidth >= 576} >
         <NavButton label="Tasks" imagePath="icons/bug.png" href="test" />
         <NavButton label="Posts" imagePath="icons/post.png" href="posts" />
-        <NavButton label="Calendar" imagePath="icons/calendar.png" href="calendar" />
-    {/if}
-
-    <NavButton label="My account" imagePath="icons/user.png" href="my-account" componentClass="mt-sm-auto" />
+        <NavButton label="Calendar" imagePath="icons/calendar.png" href="calendar" />    
+    </div>
+    <ul class="project-menu sub-menu m-0 list-unstyled" class:d-none={!projectMenuExpanded}>
+        {#each [...$currentUserData.leaderOfProjects, ...$currentUserData.projects] as project}
+            <li class="project px-2 py-1">
+                <!-- <NavButton label={project.name} href={`/project/${project.id}`} isStaticButton={true} /> -->
+                <button class="border-0 w-100 text-white text-start"
+                on:click={() => navigateTo(`/project/${project.id}`)}>
+                    {project.name}
+                </button>
+            </li>
+        {/each}
+    </ul>
 </nav>
 
 <style>
     nav {
         left: 0;
         top: 0;
-        width: 4rem;
+        width: fit-content;
         height: 100%;
     }
 
-    nav.expanded {
+    .sub-menu {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+    }
+
+    .project {
         width: 12rem;
+    }
+
+    .project button {
+        background: inherit;
+        outline: none;
+        padding: 0;
+    }
+
+    .project:hover, .project:focus {
+        background-color: #3f3f3f;
     }
 
     @media only screen and (max-width: 576px) {
@@ -64,13 +88,37 @@ on:mouseenter={expandNavbar} on:focusin={expandNavbar} on:focusout={closeNavbar}
             top: unset;
             bottom: 0;
             width: 100%;
-            height: 4rem;
+            height: fit-content;
         }
 
-        .mobile-menu {
-            bottom: 4rem;
-            left: 0;
-            background: inherit;
+        .sub-menu {
+            gap: 1rem;
+            justify-content: center;
+            flex-direction: row;
+        }
+
+        /* .project-menu {
+            height: fit-content;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            justify-content: start;
+            gap: 0.25rem;
+        }
+
+        .project {
+            min-height: 4rem;
+            min-width: 33vw;
+        } */
+
+        .project-menu {
+            flex-direction: column;
+            justify-content: start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        .project {
+            width: 100%;
         }
     }
 

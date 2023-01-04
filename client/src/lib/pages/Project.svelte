@@ -1,56 +1,7 @@
 <script lang="ts">
+    export let currentRoute;
 
+    let project;
 </script>
 
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
-<h1>project</h1>
+<h1>{currentRoute.namedParams.id}</h1>

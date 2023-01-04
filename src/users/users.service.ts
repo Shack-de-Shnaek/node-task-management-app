@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
+import { userLimitedSelector } from 'prisma/selectors/userSelectors';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -58,13 +59,7 @@ export class UsersService implements ICrudService {
     }) {
         return this.prisma.user.findMany({
             ...params,
-            select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-                description: true
-            }
+            select: userLimitedSelector
         });
     }
 
