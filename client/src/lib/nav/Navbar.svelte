@@ -89,26 +89,14 @@
             bottom: 0;
             width: 100%;
             height: fit-content;
+            gap: 0.5rem;
         }
 
         .sub-menu {
-            gap: 1rem;
+            gap: 2rem;
             justify-content: center;
             flex-direction: row;
         }
-
-        /* .project-menu {
-            height: fit-content;
-            overflow-y: hidden;
-            overflow-x: scroll;
-            justify-content: start;
-            gap: 0.25rem;
-        }
-
-        .project {
-            min-height: 4rem;
-            min-width: 33vw;
-        } */
 
         .project-menu {
             flex-direction: column;
