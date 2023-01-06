@@ -6,7 +6,7 @@ const getCurrentUser = async () => {
     try {
         const res = await fetch('/auth/current-user');
         if (res.status === 404) {
-            alert('You are not logged in');
+            // alert('You are not logged in');
             navigateTo('/login');
             return null; 
         }

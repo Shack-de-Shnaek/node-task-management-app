@@ -43,9 +43,26 @@ export class ProjectsService implements ICrudService {
         });
     }
 
-    async create(data: Prisma.ProjectCreateInput) {
+    async create(data: {
+        leaderId: number;
+        name: string;
+        description: string;
+    }) {
         return this.prisma.project.create({
-            data: data
+            data: {
+                name: data.name,
+                description: data.description,
+                leader: {
+                    connect: {
+                        id: data.leaderId
+                    }
+                },
+                members: {
+                    connect: {
+                        id: data.leaderId
+                    }
+                }
+            }
         });
     }
 

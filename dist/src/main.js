@@ -13,6 +13,9 @@ async function bootstrap() {
         secret: 'dmVyeWVwaWNzZWNyZXRrZXl2ZXJ5c2VjcmV0',
         resave: false,
         saveUninitialized: false,
+        cookie: {
+            maxAge: 2 * 3600 * 1000,
+        },
         store: new prisma_session_store_1.PrismaSessionStore(new client_1.PrismaClient(), {
             checkPeriod: 2 * 60 * 1000,
             dbRecordIdIsSessionId: true,

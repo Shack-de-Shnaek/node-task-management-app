@@ -51,8 +51,10 @@
         outline: none;
     }
 
-    .nav-button:hover, .nav-button:focus {
-        background-color: #3f3f3f;
+    @media only screen and (pointer: precise) {
+        .nav-button:hover, .nav-button:focus {
+            background-color: #3f3f3f;
+        }
     }
 
     .nav-button.expanded {

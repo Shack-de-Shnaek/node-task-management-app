@@ -22,15 +22,25 @@
         if($windowWidth < 576) return;
         $mainMenuExpanded = false;
     }
+
+    const toggleMobileMenu = () => {
+        mobileMenuExpanded = !mobileMenuExpanded;
+        projectMenuExpanded = false;
+    }
+
+    const toggleProjectMenu = () => {
+        projectMenuExpanded = !projectMenuExpanded;
+        mobileMenuExpanded = false;
+    }
 </script>
 
 <nav class="position-fixed bg-dark text-light d-flex flex-sm-row flex-column-reverse">
     <div class="main-menu sub-menu" class:expanded={$mainMenuExpanded}
     on:mouseenter={expandMainMenu} on:focusin={expandMainMenu} on:focusout={closeMainMenu} on:mouseleave={closeMainMenu}>
         <NavButton label="Home" imagePath="icons/home.png" href="/" />
-        <NavButton label="Projects" imagePath="icons/project.png" click={() => projectMenuExpanded = !projectMenuExpanded} />
+        <NavButton label="Projects" imagePath="icons/project.png" click={toggleProjectMenu} />
         {#if $windowWidth < 576}
-            <NavButton label="Menu" imagePath="icons/menu.png" click={() => mobileMenuExpanded = !mobileMenuExpanded} />
+            <NavButton label="Menu" imagePath="icons/menu.png" click={toggleMobileMenu} />
         {:else}
             <NavButton label="Tasks" imagePath="icons/bug.png" href="test" />
             <NavButton label="Posts" imagePath="icons/post.png" href="posts" />
@@ -43,9 +53,8 @@
         <NavButton label="Calendar" imagePath="icons/calendar.png" href="calendar" />    
     </div>
     <ul class="project-menu sub-menu m-0 list-unstyled" class:d-none={!projectMenuExpanded}>
-        {#each [...$currentUserData.leaderOfProjects, ...$currentUserData.projects] as project}
+        {#each $currentUserData.projects as project}
             <li class="project px-2 py-1">
-                <!-- <NavButton label={project.name} href={`/project/${project.id}`} isStaticButton={true} /> -->
                 <button class="border-0 w-100 text-white text-start"
                 on:click={() => navigateTo(`/project/${project.id}`)}>
                     {project.name}
@@ -64,9 +73,14 @@
     }
 
     .sub-menu {
+        margin: 0 !important;
         display: flex;
         flex-direction: column;
         justify-content: start;
+    }
+
+    .project-menu {
+        background-color: var(--bs-gray-dark);
     }
 
     .project {
@@ -89,20 +103,23 @@
             bottom: 0;
             width: 100%;
             height: fit-content;
-            gap: 0.5rem;
+            gap: 0rem !important;
         }
 
         .sub-menu {
             gap: 2rem;
             justify-content: center;
             flex-direction: row;
+            padding-bottom: 0.5rem;
+            padding-top: 0.25rem;
+
         }
 
         .project-menu {
             flex-direction: column;
             justify-content: start;
             gap: 0.5rem;
-            margin-bottom: 0.5rem !important;
+            padding-bottom: 0.75rem;
         }
         
         .project {
