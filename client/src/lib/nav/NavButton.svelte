@@ -14,21 +14,22 @@
     export let href: string = undefined;
     export let click: (event?: MouseEvent) => void = undefined;
 
-    const expand = () => {
+    let expand;
+    $: expand = () => {
         if(isStaticButton) return true;
         return $expanded;
     }
 </script>
 
 {#if href !== undefined && click === undefined}
-    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand()} style="{componentStyle}" on:click={() => navigateTo(href)}>
+    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand} style="{componentStyle}" on:click={() => navigateTo(href)}>
         {#if imagePath !== ''}
             <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
         {/if}
         <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
     </button>
 {:else if click !== undefined && href === undefined}
-    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand()} style="{componentStyle}" on:click={click}>
+    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand} style="{componentStyle}" on:click={click}>
         {#if imagePath !== ''}
             <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
         {/if}
@@ -50,8 +51,8 @@
         color: white;
         outline: none;
     }
-
-    @media only screen and (pointer: precise) {
+    
+    @media (pointer: fine) {
         .nav-button:hover, .nav-button:focus {
             background-color: #3f3f3f;
         }

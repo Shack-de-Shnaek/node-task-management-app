@@ -1,4 +1,8 @@
 node_modules
 .vscode
 dist
+dist/*
+dist/**/*
+*/dist
 dist/src
+dist/src/*

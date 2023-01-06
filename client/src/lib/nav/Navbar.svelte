@@ -79,6 +79,11 @@
         justify-content: start;
     }
 
+    .main-menu.expanded {
+        width: 12rem;
+        align-items: flex-start;
+    }
+
     .project-menu {
         background-color: var(--bs-gray-dark);
     }
@@ -113,6 +118,10 @@
             padding-bottom: 0.5rem;
             padding-top: 0.25rem;
 
+        }
+        
+        .main-menu {
+            padding: 0;
         }
 
         .project-menu {
