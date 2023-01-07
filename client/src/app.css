@@ -1,13 +1,16 @@
 :root {
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: 16px;
+  --light: #E7EBEE;
   --light-gray: #CFD6DD;
   --gray: #708599;
-  --dark-gray: #40474F;
+  --dark-gray: #343A40;
   --black: #151413;
   --light-blue: #3485FE;
   --dark-blue: #0152CB;
-  --red: #dc3545;
+  --light-red: #DC2E3F;
+  --red: #DC2E3F;
+  --dark-red: #8B1824;
   --light-green: #3BCE65;
   --green: #2EB254;
   --dark-green: #21823D;
@@ -28,6 +31,7 @@ body, #app {
   height: 100vh;
   width: 100vw;
   margin: 0;
+  background-color: var(--light);
 }
 
 a {

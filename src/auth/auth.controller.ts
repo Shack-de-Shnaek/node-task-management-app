@@ -42,6 +42,7 @@ export class AuthController {
     }
 
     @Get('current-user')
+    @HttpCode(200)
     @Header('Content-Type', 'application/json')
     async currentUser(@Req() request) {
         if (request.user) {

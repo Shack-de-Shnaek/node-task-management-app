@@ -1,32 +1,32 @@
 import type { Route } from "svelte-router-spa/types/components/router"
 import userIsLoggedInGuard from "./lib/guards/userIsLoggedIn"
 import MainLayout from "./lib/MainLayout.svelte"
-import Index from "./lib/pages/Index.svelte"
-import Login from "./lib/pages/Login.svelte"
-import Project from "./lib/pages/Project.svelte"
-import Projects from "./lib/pages/Projects.svelte"
+import IndexPage from "./lib/pages/IndexPage.svelte"
+import LoginPage from "./lib/pages/LoginPage.svelte"
+import ProjectPage from "./lib/pages/ProjectPage.svelte"
+import ProjectsPage from "./lib/pages/ProjectsPage.svelte"
 
 export const routes: Route[] = [
     {
         name: '/',
         // onlyIf: { guard: userIsLoggedInGuard, redirect: '/login' },
-        component: Index,
+        component: IndexPage,
         layout: MainLayout,
     },
     {
         name: '/login',
-        component: Login
+        component: LoginPage
     },
     {
         name: '/project/:id',
         // onlyIf: { guard: userIsLoggedInGuard, redirect: '/login' },
-        component: Project,
+        component: ProjectPage,
         layout: MainLayout,
     },
     {
         name: '/test',
         // onlyIf: { guard: userIsLoggedInGuard, redirect: '/login' }, 
-        component: Projects,
+        component: ProjectsPage,
         layout: MainLayout,
     }
 ]

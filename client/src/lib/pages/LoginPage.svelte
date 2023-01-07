@@ -1,12 +1,9 @@
 <script lang="ts">
-	import { currentUserData } from '../../../src/store';
 	import { navigateTo } from 'svelte-router-spa';
     import { fade } from 'svelte/transition';
-	import type { UserData } from '../../../../interfaces/UserData';
 	import getCurrentUser from '../utilities/getCurrentUser';
 
     let mode = 'Login';
-    let welcomeBackUser = '';
 
     const loginUserData = {
         email: '',
