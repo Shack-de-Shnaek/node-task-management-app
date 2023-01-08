@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { Route } from "svelte-router-spa";
+	import Header from "./nav/Header.svelte";
 	import Navbar from "./nav/Navbar.svelte";
+	import NavButton from "./nav/NavButton.svelte";
     
 	export let currentRoute;
 
 	const params = {}
 </script>
 
+<Header />
 <Navbar />
 <div class="main-layout-container">
 	<Route {currentRoute} {params} />

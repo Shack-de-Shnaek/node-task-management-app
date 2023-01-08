@@ -28,7 +28,7 @@
     const getProject = async(id: number): Promise<ProjectData | null> => {
         try {
             const res = await fetch(`/api/projects/${currentRoute.namedParams.id}`);
-            if(res.status < 400) {
+            if(res.ok) {
                 const projectData = await res.json();
                 return projectData;
             } else {

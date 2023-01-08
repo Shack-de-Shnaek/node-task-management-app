@@ -24,7 +24,7 @@ export class ProjectsController {
         throw new NotFoundException('Project does not exist');
     }
 
-    @Post('create')
+    @Post()
     @HttpCode(201)
     async create(@Body(new ValidationPipe()) body: CreateProjectDto, @Req() request) {
         const leaderId: number = request.user.id

@@ -5,8 +5,6 @@
 	import type { Writable } from "svelte/store";
     import NavButton from "./NavButton.svelte";
 	import { currentUserData } from "../../store";
-	import { headerData } from "../../store";
-	import calculateTextColor from "../guards/calculateTextColor";
 
     const windowWidth: Writable<number> = getContext('windowWidth');
 
@@ -36,48 +34,37 @@
     }
 </script>
 
-<header class="px-2 py-1 py-sm-2 d-flex justify-content-between bg-light">
-    <h1 class="m-0">{$headerData.title}</h1>
-    <ul class="header-widget-list list-unstyled m-0 ms-auto d-flex align-items-center justify-content-end gap-1">
-        {#each $headerData.widgets as widget}
-            <li class="widget px-2 py-1" style="background-color: {widget.color}">
-                <a href={widget.href} style="color: {calculateTextColor(widget.color)}">
-                    <span>{widget.label}</span>
-                    {#if widget.value !== undefined}
-                        <span>: {widget.value}</span>
-                    {/if}
-                </a> 
-            </li>
-        {/each}
-    </ul>
-</header>
 <nav class="position-fixed bg-dark text-light d-flex flex-sm-row flex-column-reverse">
     <div class="main-menu sub-menu" class:expanded={$mainMenuExpanded}
     on:mouseenter={expandMainMenu} on:focusin={expandMainMenu} on:focusout={closeMainMenu} on:mouseleave={closeMainMenu}>
-        <NavButton label="Home" imagePath="icons/home.png" href="/" />
-        <NavButton label="Projects" imagePath="icons/project.png" click={toggleProjectMenu} />
+        <NavButton label="Home" imagePath="/icons/home.png" href="/" />
+        <NavButton label="Projects" imagePath="/icons/project.png" click={toggleProjectMenu} />
         {#if $windowWidth < 576}
-            <NavButton label="Menu" imagePath="icons/menu.png" click={toggleMobileMenu} />
+            <NavButton label="Menu" imagePath="/icons/menu.png" click={toggleMobileMenu} />
         {:else}
-            <NavButton label="Tasks" imagePath="icons/bug.png" href="test" />
-            <NavButton label="Posts" imagePath="icons/post.png" href="posts" />
-            <NavButton label="Calendar" imagePath="icons/calendar.png" href="calendar" />
+            <NavButton label="Tasks" imagePath="/icons/bug.png" href="test" />
+            <NavButton label="Posts" imagePath="/icons/post.png" href="posts" />
+            <NavButton label="Calendar" imagePath="/icons/calendar.png" href="calendar" />
             <div class="w-100 mt-0 mt-sm-auto p-0">
-                <NavButton label="My account" imagePath="icons/user.png" href="my-account" />
+                <NavButton label="My account" imagePath="/icons/user.png" href="my-account" />
             </div>
         {/if}
     </div>
     <div class="mobile-menu sub-menu" class:d-none={!mobileMenuExpanded || $windowWidth >= 576} >
-        <NavButton label="Tasks" imagePath="icons/bug.png" href="test" />
-        <NavButton label="Posts" imagePath="icons/post.png" href="posts" />
-        <NavButton label="Calendar" imagePath="icons/calendar.png" href="calendar" />    
-        <NavButton label="My account" imagePath="icons/user.png" href="my-account" />
+        <NavButton label="Tasks" imagePath="/icons/bug.png" href="test" />
+        <NavButton label="Posts" imagePath="/icons/post.png" href="posts" />
+        <NavButton label="Calendar" imagePath="/icons/calendar.png" href="calendar" />    
+        <NavButton label="My account" imagePath="/icons/user.png" href="my-account" />
     </div>
     <ul class="project-menu sub-menu m-0 list-unstyled" class:d-none={!projectMenuExpanded}>
+        <button on:click={() => navigateTo('/projects/new')} class="new-project w-100 m-0 p-2 d-flex align-items-center gap-1 text-light">
+            <img src="/icons/add.png" alt="" style="width: 1rem; filter: invert(1)">
+            <span>New project</span>
+        </button>
         {#each $currentUserData.projects as project}
             <li class="project px-2 py-1">
                 <button class="border-0 w-100 text-white text-start"
-                on:click={() => navigateTo(`/project/${project.id}`)}>
+                on:click={() => navigateTo(`/projects/${project.id}`)}>
                     {project.name}
                 </button>
             </li>
@@ -86,17 +73,6 @@
 </nav>
 
 <style>
-    header {
-        width: calc(100% - 4rem);
-        margin-left: 4rem;
-        box-shadow: 0px 5px 6px -1px var(--light-gray);
-    }
-
-    header .widget {
-        border-radius: 0.9rem;
-        width: fit-content;
-    }
-
     nav {
         left: 0;
         top: 0;
@@ -134,12 +110,19 @@
         background-color: #3f3f3f;
     }
 
+    button.new-project {
+        background-color: var(--dark-green);
+        outline: none;
+        border: none;
+    }
+
+    button.new-project:hover, button.new-project:focus {
+        background-color: var(--green);
+        outline: none;
+        border: none;
+    }
+
     @media only screen and (max-width: 576px) {
-        header {
-            width: 100%;
-            margin-left: 0rem;
-        }
-        
         nav {
             top: unset;
             bottom: 0;
@@ -152,9 +135,7 @@
             gap: 2rem;
             justify-content: center;
             flex-direction: row;
-            padding-bottom: 0.5rem;
-            padding-top: 0.25rem;
-
+            padding-bottom: 0.75rem;
         }
         
         .main-menu {

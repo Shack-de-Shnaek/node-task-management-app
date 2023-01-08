@@ -10,7 +10,7 @@
     export let componentClass = '';
     export let componentStyle = '';
     export let imagePath = '';
-    export let label: string;
+    export let label: string = undefined;
     export let href: string = undefined;
     export let click: (event?: MouseEvent) => void = undefined;
 
@@ -19,23 +19,19 @@
         if(isStaticButton) return true;
         return $expanded;
     }
+
+    const buttonAction = (event?: MouseEvent) => {
+        if (href !== undefined && click === undefined) navigateTo(href);
+        else if (click !== undefined && href === undefined) click(event);
+    }
 </script>
 
-{#if href !== undefined && click === undefined}
-    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand} style="{componentStyle}" on:click={() => navigateTo(href)}>
-        {#if imagePath !== ''}
-            <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
-        {/if}
-        <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
-    </button>
-{:else if click !== undefined && href === undefined}
-    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand} style="{componentStyle}" on:click={click}>
-        {#if imagePath !== ''}
-            <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
-        {/if}
-        <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
-    </button>
-{/if}
+<button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand} style="{componentStyle}" on:click={buttonAction}>
+    {#if imagePath !== ''}
+        <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
+    {/if}
+    <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
+</button>
 
 <style>
     button {
