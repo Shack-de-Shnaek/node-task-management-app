@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
-import { projectLimitedSelector } from 'prisma/selectors/projectSelectors';
+import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
 import { userLimitedSelector } from 'prisma/selectors/userSelectors';
 import { PrismaService } from 'src/prisma.service';
 
@@ -11,21 +11,7 @@ export class ProjectsService implements ICrudService {
 
     async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput) {
         return this.prisma.project.findUnique({
-            select: {
-                id: true,
-                name: true,
-                description: true,
-                createdAt: true,
-                updatedAt: true,
-                leader: {
-                    select: userLimitedSelector
-                },
-                members: {
-                    select: userLimitedSelector
-                },
-                posts: true,
-                tasks: true,
-            },
+            select: projectSelector,
             where: projectWhereUniqueImport
         });
     }
@@ -62,7 +48,8 @@ export class ProjectsService implements ICrudService {
                         id: data.leaderId
                     }
                 }
-            }
+            },
+            select: projectSelector
         });
     }
 
@@ -71,7 +58,8 @@ export class ProjectsService implements ICrudService {
             where: {
                 id: id
             },
-            data: data
+            data: data,
+            select: projectLimitedSelector
         });
     }
 
@@ -79,6 +67,9 @@ export class ProjectsService implements ICrudService {
         return this.prisma.project.delete({
             where: {
                 id: id
+            },
+            select: {
+                id: true
             }
         });
     }

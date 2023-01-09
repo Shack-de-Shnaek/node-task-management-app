@@ -6,6 +6,8 @@
     
 	export let currentRoute;
 
+    console.log(currentRoute);
+
 	const params = {}
 </script>
 

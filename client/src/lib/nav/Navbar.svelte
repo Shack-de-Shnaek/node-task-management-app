@@ -56,20 +56,18 @@
         <NavButton label="Calendar" imagePath="/icons/calendar.png" href="calendar" />    
         <NavButton label="My account" imagePath="/icons/user.png" href="my-account" />
     </div>
-    <ul class="project-menu sub-menu m-0 list-unstyled" class:d-none={!projectMenuExpanded}>
-        <button on:click={() => navigateTo('/projects/new')} class="new-project w-100 m-0 p-2 d-flex align-items-center gap-1 text-light">
+    <div class="project-menu sub-menu m-0" class:d-none={!projectMenuExpanded}>
+        <button on:click={() => navigateTo('/new-project')} class="new-project w-100 m-0 p-2 d-flex align-items-center gap-1 text-light">
             <img src="/icons/add.png" alt="" style="width: 1rem; filter: invert(1)">
             <span>New project</span>
         </button>
         {#each $currentUserData.projects as project}
-            <li class="project px-2 py-1">
-                <button class="border-0 w-100 text-white text-start"
-                on:click={() => navigateTo(`/projects/${project.id}`)}>
-                    {project.name}
-                </button>
-            </li>
+            <button class="project px-2 py-1 border-0 w-100 text-white text-start"
+            on:click={() => navigateTo(`/projects/${project.id}`)}>
+                {project.name}
+            </button>
         {/each}
-    </ul>
+    </div>
 </nav>
 
 <style>
@@ -85,6 +83,11 @@
         display: flex;
         flex-direction: column;
         justify-content: start;
+        transition: 0.2s;
+    }
+
+    .main-menu {
+        transition: 0.2s;
     }
 
     .main-menu.expanded {
@@ -100,10 +103,9 @@
         width: 12rem;
     }
 
-    .project button {
+    .project {
         background: inherit;
         outline: none;
-        padding: 0;
     }
 
     .project:hover, .project:focus {

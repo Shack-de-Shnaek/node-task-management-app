@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
+import { projectLimitedSelector } from 'prisma/selectors/projectSelectors';
 import { userLimitedSelector } from 'prisma/selectors/userSelectors';
 import { PrismaService } from 'src/prisma.service';
 
@@ -99,18 +100,10 @@ export class UsersService implements ICrudService {
             },
             select: {
                 projects: {
-                    select: {
-                        id: true,
-                        name: true,
-                        description: true
-                    }
+                    select: projectLimitedSelector
                 },
                 leaderOfProjects: {
-                    select: {
-                        id: true,
-                        name: true,
-                        description: true
-                    }
+                    select: projectLimitedSelector
                 }
             }
         });
@@ -137,6 +130,6 @@ export class UsersService implements ICrudService {
                     }
                 }
             }
-        })
+        });
     }
 }

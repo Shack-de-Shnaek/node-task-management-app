@@ -3,7 +3,7 @@
     import { fade } from 'svelte/transition';
 	import getCurrentUser from '../utilities/getCurrentUser';
 
-    let mode = 'Login';
+    let mode: 'Login' | 'Register' = 'Login';
 
     const loginUserData = {
         email: '',
@@ -16,6 +16,19 @@
         confirmPassword: '',
         firstName: '',
         lastName: ''
+    }
+
+    const switchMode = (newMode: 'Login' | 'Register') => {
+        mode = newMode;
+        if(newMode === 'Login') {
+            for(const key in registerUserData) {
+                registerUserData[key] = '';
+            }
+        } else {
+            for(const key in loginUserData) {
+                loginUserData[key] = '';
+            }
+        }
     }
 
     const login = async() => {
@@ -78,9 +91,9 @@
         <form id="login-form" class="d-flex flex-column gap-3" in:fade on:submit|preventDefault={login} >
             <input type="email" name="email" class="" id="login-email-input" placeholder="Email" required bind:value={loginUserData.email}>
             <input type="password" name="password" class="" id="login-password-input" placeholder="Password" required bind:value={loginUserData.password}>
-            <input type="submit" value="Log in" class="rounded-1 py-1 px-2 bg-primary align-self-center">
+            <button type="submit" class="btn btn-primary w-25 mx-auto">Log in</button>
         </form>
-        <button on:click={() => mode='Register'} class="change-mode-button border-0 rounded-1 p-1">I don't have an account</button>
+        <button on:click={() => switchMode('Register')} class="change-mode-button border-0 rounded-1 p-1">I don't have an account</button>
         {:else if mode === 'Register'}
         <form id="register-form" class="d-flex flex-column gap-3" in:fade on:submit|preventDefault={register} >
             <input type="text" name="firstName" class="" id="register-first-name-input" placeholder="First name" required bind:value={registerUserData.firstName}>
@@ -88,9 +101,9 @@
             <input type="email" name="email" class="" id="register-email-input" placeholder="Email" required bind:value={registerUserData.email}>
             <input type="password" name="password" class="" id="register-password-input" placeholder="Password" required bind:value={registerUserData.password}>
             <input type="password" name="" class="" id="register-confirm-password-input" placeholder="Confirm password" required bind:value={registerUserData.confirmPassword}>
-            <input type="submit" value="Sign up" class="rounded-1 py-1 px-2 bg-primary align-self-center">
+            <button type="submit" class="btn btn-primary w-25 mx-auto">Sign up</button>
         </form>
-        <button on:click={() => mode='Login'} class="change-mode-button border-0 rounded-1 p-1">I already have an account</button>
+        <button on:click={() => switchMode('Login')} class="change-mode-button border-0 rounded-1 p-1">I already have an account</button>
         {/if}
     </div>
 </div>
@@ -110,18 +123,12 @@
         transition: 0.2s;
     }
 
-    input:not([type=submit]):hover {
+    input:not([type=submit]):focus, input:not([type=submit]):hover {
         border-bottom-color: var(--bs-primary);
     }
 
-    input[type=submit] {
-        /* background-color:  */
-        width: fit-content;
-        transition: 0.2s;
-    }
-
-    input[type=submit]:hover {
-        background-color: var(--light-blue) !important;
+    button[type=submit] {
+        min-width: fit-content;
     }
 
     form {

@@ -46,6 +46,7 @@
         flex-direction: column;
         color: white;
         outline: none;
+        transition: 0.2s;
     }
     
     @media (pointer: fine) {

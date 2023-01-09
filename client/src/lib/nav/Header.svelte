@@ -1,20 +1,22 @@
 <script lang="ts">
+	import { navigateTo } from "svelte-router-spa";
     import { headerData } from "../../store";
 	import calculateTextColor from "../utilities/calculateTextColor";
 
 </script>
 
-<header class="px-2 py-1 py-sm-2 d-flex justify-content-between bg-light">
-    <h1 class="m-0">{$headerData.title}</h1>
-    <ul class="header-widget-list list-unstyled m-0 ms-auto d-flex align-items-center justify-content-end gap-1">
+<header class="px-2 py-1 d-flex flex-wrap justify-content-between gap-1 bg-light">
+    <h2 class="m-0 me-4">{$headerData.title}</h2>
+    <ul class="header-widget-list list-unstyled m-0 ms-auto d-flex align-items-center justify-content-center gap-1">
         {#each $headerData.widgets as widget}
             <li class="widget px-2 py-1" style="background-color: {widget.color}">
-                <a href={widget.href} style="color: {calculateTextColor(widget.color)}">
+                <button class="p-0" type="button" style="color: {calculateTextColor(widget.color)}"
+                on:click={() => {if(widget.href) navigateTo(widget.href)}}>
                     <span>{widget.label}</span>
                     {#if widget.value !== undefined}
                         <span>: {widget.value}</span>
                     {/if}
-                </a> 
+                </button> 
             </li>
         {/each}
     </ul>
@@ -27,9 +29,27 @@
         box-shadow: 0px 5px 6px -1px var(--light-gray);
     }
 
-    header .widget {
+    header > * {
+        width: max-content;
+    }
+
+    h2 {
+        flex-grow: 1;
+    }
+
+    ul {
+        flex-grow: 1;
+    }
+
+    .widget {
         border-radius: 0.9rem;
         width: fit-content;
+    }
+
+    button {
+        background: inherit;
+        outline: none;
+        border: none;
     }
 
     @media only screen and (max-width: 576px) {
