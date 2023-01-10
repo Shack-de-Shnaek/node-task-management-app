@@ -5,9 +5,9 @@
 
 </script>
 
-<header class="px-2 py-1 d-flex flex-wrap justify-content-between gap-1 bg-light">
-    <h2 class="m-0 me-4">{$headerData.title}</h2>
-    <ul class="header-widget-list list-unstyled m-0 ms-auto d-flex align-items-center justify-content-center gap-1">
+<header class="px-2 py-1 d-flex flex-wrap justify-content-between flex-column flex-sm-row gap-1 bg-light">
+    <h2 class="m-0 me-sm-4 me-0">{$headerData.title}</h2>
+    <ul class="header-widget-list list-unstyled m-0 ms-sm-auto ms-0 d-flex align-items-center justify-content-center justify-content-sm-end gap-1">
         {#each $headerData.widgets as widget}
             <li class="widget px-2 py-1" style="background-color: {widget.color}">
                 <button class="p-0" type="button" style="color: {calculateTextColor(widget.color)}"
@@ -56,6 +56,14 @@
         header {
             width: 100%;
             margin-left: 0rem;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        header > * {
+            width: 100%;
         }
     }
 </style>
