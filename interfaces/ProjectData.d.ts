@@ -10,9 +10,11 @@ export type ProjectData = {
     id: number;
     name: string;
     description: string;
+    isActve: boolean;
     createdAt: string;
     updatedAt: string;
     leader: LimitedUserData;
+    admins: LimitedUserData[];
     members: LimitedUserData[];
     posts: [];
     tasks: [];

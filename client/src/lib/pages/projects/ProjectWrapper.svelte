@@ -12,19 +12,21 @@
 
     const project: Writable<ProjectData> = writable({
         id: 0,
-        name: '',
-        description: '',
+        name: undefined,
+        description: undefined,
+        isActve: undefined,
         tasks: [],
         taskCategories: [],
         posts: [],
-        createdAt: '',
-        updatedAt: '',
+        createdAt: undefined,
+        updatedAt: undefined,
         members: [],
+        admins: [],
         leader: {
             id: 0,
-            email: '',
-            firstName: '',
-            lastName: ''
+            email: undefined,
+            firstName: undefined,
+            lastName: undefined
         }
     });
 
@@ -51,7 +53,7 @@
             title: $project.name,
             widgets: [
                 {
-                    label: 'Home',
+                    label: 'Dashboard',
                     href: `/projects/${$project.id}`,
                     color: '#3485FE'
                 },    
@@ -72,11 +74,11 @@
                     href: `/projects/${$project.id}/about`,
                     color: '#0dcaf0'
                 },
-                {
-                    label: 'Settings',
-                    href: `/projects/${$project.id}/settings`,
-                    color: '#3485FE'
-                }
+                // {
+                //     label: 'Settings',
+                //     href: `/projects/${$project.id}/settings`,
+                //     color: '#3485FE'
+                // }
             ]
         })
     }

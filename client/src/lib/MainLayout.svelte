@@ -6,8 +6,6 @@
     
 	export let currentRoute;
 
-    console.log(currentRoute);
-
 	const params = {}
 </script>
 
@@ -26,6 +24,7 @@
 	@media only screen and (max-width: 576px) {
 		.main-layout-container {
 			margin-left: 0;
+			padding-bottom: 6rem;
 			margin-bottom: 4rem;
 		}
 	}

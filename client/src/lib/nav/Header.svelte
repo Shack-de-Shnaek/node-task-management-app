@@ -2,7 +2,6 @@
 	import { navigateTo } from "svelte-router-spa";
     import { headerData } from "../../store";
 	import calculateTextColor from "../utilities/calculateTextColor";
-
 </script>
 
 <header class="px-2 py-1 d-flex flex-wrap justify-content-between flex-column flex-sm-row gap-1 bg-light">
@@ -26,7 +25,7 @@
     header {
         width: calc(100% - 4rem);
         margin-left: 4rem;
-        box-shadow: 0px 5px 6px -1px var(--light-gray);
+        box-shadow: var(--container-shadow);
     }
 
     header > * {

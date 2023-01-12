@@ -3,6 +3,7 @@ import { Request } from 'express';
 import { SessionAuthGuard } from 'src/auth/sessionAuth.guard';
 import { CreateProjectDto } from './project-create.dto';
 import { ProjectsService } from './projects.service';
+import { ProjectAdminGuard } from './projectsAdmin.guard';
 
 @Controller('api/projects')
 @UseGuards(SessionAuthGuard)
@@ -34,5 +35,23 @@ export class ProjectsController {
         }
         const project = await this.projectsService.create(data);
         return project;
+    }
+
+    @Post(':id/members')
+    @HttpCode(200)
+    @UseGuards(ProjectAdminGuard)
+    async addMember(@Body('email') email: string, @Param('id', ParseIntPipe) projectId: number) {
+        const project = await this.projectsService.get({ id: projectId });
+        if (project === null) throw new NotFoundException('Project does not exist');
+        return this.projectsService.addMember(projectId, email);
+    }
+
+    @Post(':id/admins')
+    @HttpCode(200)
+    @UseGuards(ProjectAdminGuard)
+    async addAdmin(@Body('email') email: string, @Param('id', ParseIntPipe) projectId: number) {
+        const project = await this.projectsService.get({ id: projectId });
+        if (project === null) throw new NotFoundException('Project does not exist');
+        return this.projectsService.addAdmin(projectId, email);
     }
 }

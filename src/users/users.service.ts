@@ -20,18 +20,13 @@ export class UsersService implements ICrudService {
                 password: getPassword,
                 description: true,
                 projects: {
-                    select: {
-                        id: true,
-                        name: true,
-                        description: true
-                    }
+                    select: projectLimitedSelector,
                 },
                 leaderOfProjects: {
-                    select: {
-                        id: true,
-                        name: true,
-                        description: true
-                    }
+                    select: projectLimitedSelector,
+                },
+                adminOfProjects: {
+                    select: projectLimitedSelector,
                 },
                 posts: {
                     select: {
