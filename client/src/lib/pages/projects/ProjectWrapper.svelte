@@ -2,35 +2,20 @@
     import type { Writable } from "svelte/store";
 	import { writable } from "svelte/store";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
-    import { headerData } from "../../../store";
+    import { currentUserData, headerData } from "../../../store";
     import { cachedProjects } from "../../../store";
-    import { setContext } from "svelte";
+    import { onDestroy, setContext } from "svelte";
     import { Route } from "svelte-router-spa";
+    import { project } from "./projectStore";
 
     export let currentRoute;
     export let params;
 
-    const project: Writable<ProjectData> = writable({
-        id: 0,
-        name: undefined,
-        description: undefined,
-        isActve: undefined,
-        tasks: [],
-        taskCategories: [],
-        posts: [],
-        createdAt: undefined,
-        updatedAt: undefined,
-        members: [],
-        admins: [],
-        leader: {
-            id: 0,
-            email: undefined,
-            firstName: undefined,
-            lastName: undefined
-        }
-    });
+    const currentUserIsLeader: Writable<boolean> = writable();
+    const currentUserIsAdmin: Writable<boolean> = writable();
 
-    setContext('project', project);
+    setContext('currentUserIsLeader', currentUserIsLeader);
+    setContext('currentUserIsAdmin', currentUserIsAdmin);
 
     const getProject = async(id: number): Promise<ProjectData | null> => {
         try {
@@ -101,8 +86,17 @@
             project.set(res);
             $cachedProjects[$project.id] = $project;
             updateHeaderWithProjectData();
-        })()
+        })();
     }
+
+    $: if($project) {
+        currentUserIsLeader.set($project.leader.id === $currentUserData.id);
+        currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
+    }
+
+    onDestroy(() => {
+        $project.id = 0;
+    });
 </script>
 
 <Route {currentRoute} {params} />

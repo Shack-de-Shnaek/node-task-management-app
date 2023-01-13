@@ -1,11 +1,13 @@
 <script lang="ts">
-    import UserEntry from "../../../lib/misc/UserEntry.svelte";
-    import { getContext } from "svelte";
-    import type { Writable } from "svelte/store";
-	import type { ProjectData } from "../../../../../interfaces/ProjectData";
-	import parseDate from "../../../lib/utilities/parseDate";
+    import UserEntry from "../../projects/UserEntry.svelte";
+    import { project } from "./projectStore";
+    import { currentUserData } from "../../../store";
+	import parseDate from "../../utilities/parseDate";
+	import EditableTextField from "../../misc/EditableTextField.svelte";
+	import { getContext } from "svelte";
+	import type { Writable } from "svelte/store";
 
-    const project: Writable<ProjectData> = getContext('project');
+    const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
 </script>
 
 <h1 class="mt-3">About Project</h1>
@@ -16,11 +18,13 @@
     <div class="col-sm-11 col-10">
         <div>
             <h3>Name</h3>
-            <p>{$project.name}</p>
+            <EditableTextField value={$project.name} 
+            module='projects' field='name' textType='span' objectId={$project.id} allowEditing={$currentUserIsAdmin} />
         </div>
         <div>
             <h3>Description</h3>
-            <p>{$project.description}</p>
+            <EditableTextField value={$project.description} 
+            module='projects' field='description' textType='paragraph' objectId={$project.id} allowEditing={$currentUserIsAdmin} />
         </div>
         <div>
             <h4>Created On: </h4>
@@ -39,14 +43,14 @@
             <div class="admin-list col-12">
                 <h3>Admins</h3>
                 {#each $project.admins as admin}
-                    <UserEntry user={admin} />
+                    <UserEntry user={admin} isAdmin={true} />
                 {/each}
             </div>
     </div>
         <div class="member-list col-md-6 col-12">
             <h3>Members</h3>
             {#each $project.members as member}
-                <UserEntry user={member} />
+                <UserEntry user={member}  />
             {/each}
         </div>
 </section>

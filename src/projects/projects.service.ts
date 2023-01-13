@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, Project } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
@@ -70,7 +70,12 @@ export class ProjectsService implements ICrudService {
     }
 
     async addMember(projectId: number, email: string) {
-        const user = await this.usersService.get({ email: email });
+        const user = await this.prisma.user.findUnique({
+            where: { email: email },
+            select: {
+                id: true
+            }
+        });
         if (user === null) throw new NotFoundException('User does not exist');
         return this.prisma.project.update({
             where: {
@@ -87,7 +92,54 @@ export class ProjectsService implements ICrudService {
         });
     }
 
-    async addAdmin(projectId: number, email: string) {
+    async removeMember(projectId: number, userId: number) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id: userId
+            },
+            select: {
+                id: true
+            }
+        });
+        const project = await this.prisma.project.findUnique({
+            where: {
+                id: projectId
+            },
+            select: {
+                leaderId: true,
+                members: {
+                    select: {
+                        id: true
+                    }
+                }
+            }
+        });
+        
+        if (user === null) throw new NotFoundException('User does not exist');
+        if (!project.members.flatMap(member => member.id).includes(userId)) throw new BadRequestException('User is not a member')
+        if (project.leaderId === userId) throw new BadRequestException('Cannot remove the leader of the project');
+            
+        return this.prisma.project.update({
+            where: {
+                id: projectId
+            },
+            data: {
+                members: {
+                    disconnect: {
+                        id: userId
+                    }
+                },
+                admins: {
+                    disconnect: {
+                        id: userId
+                    }
+                }
+            },
+            select: projectSelector
+        });
+    }
+
+    async addAdmin(projectId: number, userId: number) {
         const project = await this.prisma.project.findUnique({
             where: {
                 id: projectId
@@ -95,13 +147,13 @@ export class ProjectsService implements ICrudService {
             select: {
                 members: {
                     select: {
-                        email: true
+                        id: true
                     }
                 }
             }
         });
 
-        if (!project.members.flatMap(user => user.email).includes(email)) throw new BadRequestException('User is not a member of this project');
+        if (!project.members.flatMap(user => user.id).includes(userId)) throw new BadRequestException('User is not a member of this project');
 
         return this.prisma.project.update({
             where: {
@@ -110,9 +162,55 @@ export class ProjectsService implements ICrudService {
             data: {
                 admins: {
                     connect: {
-                        email: email
+                        id: userId
                     },
                 },
+            },
+            select: projectSelector
+        });
+    }
+
+    async removeAdmin(projectId: number, userId: number) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true
+            }
+        });
+        const project = await this.prisma.project.findUnique({
+            where: {
+                id: projectId
+            },
+            select: {
+                members: {
+                    select: {
+                        id: true
+                    }
+                },
+                admins: {
+                    select: {
+                        id: true
+                    },
+                },
+                leaderId: true
+            }
+        });
+        
+        if (user === null) throw new NotFoundException('User does not exist');
+        if (!project.members.flatMap(member => member.id).includes(userId)) throw new BadRequestException('User is not a member')
+        if (!project.admins.flatMap(admin => admin.id).includes(userId)) throw new BadRequestException('User is not an admin')
+        if (project.leaderId === userId) throw new ForbiddenException('Cannot remove the leader of the project')
+            
+        return this.prisma.project.update({
+            where: {
+                id: projectId
+            },
+            data: {
+                admins: {
+                    disconnect: {
+                        id: userId
+                    }
+                }
             },
             select: projectSelector
         });
