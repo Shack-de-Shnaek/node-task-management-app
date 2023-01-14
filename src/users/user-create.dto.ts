@@ -10,10 +10,12 @@ export class CreateUserDto {
     password: string;
 
     @IsNotEmpty()
+    @MinLength(2)
     @MaxLength(20)
     firstName: string;
 
     @IsNotEmpty()
+    @MinLength(2)
     @MaxLength(20)
     lastName: string;
 }

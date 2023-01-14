@@ -17,11 +17,16 @@ const prisma_service_1 = require("./prisma.service");
 const projects_module_1 = require("./projects/projects.module");
 const posts_module_1 = require("./posts/posts.module");
 const tasks_module_1 = require("./tasks/tasks.module");
+const images_module_1 = require("./images/images.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(__dirname, '..', '..', 'static'),
+                serveRoot: '/static',
+            }),
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(__dirname, '..', '..', 'client', 'dist'),
             }),
@@ -29,7 +34,8 @@ AppModule = __decorate([
             users_module_1.UsersModule,
             projects_module_1.ProjectsModule,
             posts_module_1.PostsModule,
-            tasks_module_1.TasksModule
+            tasks_module_1.TasksModule,
+            images_module_1.ImagesModule
         ],
         controllers: [],
         providers: [app_service_1.AppService, prisma_service_1.PrismaService],

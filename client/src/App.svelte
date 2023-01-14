@@ -17,7 +17,6 @@
 		currentUserHasBeenRequested.set(true);
 	});
 </script>
-
 <svelte:window bind:innerWidth={$windowWidth} />
 
 <Router routes={routes} />

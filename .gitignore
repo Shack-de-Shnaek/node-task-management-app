@@ -6,3 +6,5 @@ dist/**/*
 */dist
 dist/src
 dist/src/*
+static/attachments/*
+static/thumbnails/*

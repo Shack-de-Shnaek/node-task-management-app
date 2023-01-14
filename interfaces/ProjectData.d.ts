@@ -4,12 +4,14 @@ export type LimitedProjectData = {
     id: number;
     name: string;
     description: string;
+    thumbnailPath: string | null;
 }
 
 export type ProjectData = {
     id: number;
     name: string;
     description: string;
+    thumbnailPath: string | null;
     isActve: boolean;
     createdAt: string;
     updatedAt: string;

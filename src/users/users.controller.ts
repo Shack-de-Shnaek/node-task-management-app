@@ -1,6 +1,7 @@
-import { Controller, Get, NotFoundException, Param, ParseIntPipe, Req, UseGuards, HttpCode, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, ParseIntPipe, Req, UseGuards, HttpCode, ValidationPipe, Body, Put } from '@nestjs/common';
 import { Request } from 'express';
 import { SessionAuthGuard } from 'src/auth/sessionAuth.guard';
+import { UpdateUserDto } from './user-update.dto';
 import { UserExists } from './userExists.guard';
 import { UsersService } from './users.service'; 
 
@@ -13,6 +14,12 @@ export class UsersController {
     @HttpCode(200)
     async list(@Req() request: Request)  {
         return this.usersService.list();
+    }
+
+    @Put()
+    @HttpCode(200)
+    async updateCurrentUser(@Body(new ValidationPipe()) data: UpdateUserDto, @Req() request) {
+        return this.usersService.update(request.user.id, data);
     }
 
     @Get(':id')

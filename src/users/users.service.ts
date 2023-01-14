@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { projectLimitedSelector } from 'prisma/selectors/projectSelectors';
-import { userLimitedSelector } from 'prisma/selectors/userSelectors';
+import { userLimitedSelector, userSelector } from 'prisma/selectors/userSelectors';
+import { ImagesService } from 'src/images/images.service';
 import { PrismaService } from 'src/prisma.service';
+import { UpdateUserDto } from './user-update.dto';
 
 @Injectable()
 export class UsersService implements ICrudService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService, private imagesService: ImagesService) {}
     
     async get(userWhereUniqueInput: Prisma.UserWhereUniqueInput, getPassword=false) {
         return this.prisma.user.findUnique({
@@ -65,12 +67,21 @@ export class UsersService implements ICrudService {
         });
     }
 
-    async update(id: number, data: Prisma.UserUpdateInput) {
+    async update(id: number, data: UpdateUserDto) {
+        let thumbnailPath: string = null;
+        if (data.image) {
+            thumbnailPath = await this.imagesService.generateThumbnailFile(data.image);
+            if (thumbnailPath !== null) delete data.image;
+        }
         return this.prisma.user.update({
             where: {
                 id: id
             },
-            data: data
+            data: {
+                ...data,
+                thumbnailPath: thumbnailPath
+            },
+            select: userSelector
         });
     }
 

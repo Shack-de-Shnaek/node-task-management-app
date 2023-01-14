@@ -96,6 +96,7 @@
     }
 
     .project-menu {
+        max-width: 16rem;
         background-color: var(--dark-gray);
     }
 
@@ -109,7 +110,7 @@
     }
 
     .project:hover, .project:focus {
-        background-color: #3f3f3f;
+        background-color: var(--bs-gray);
     }
 
     button.new-project {
@@ -145,10 +146,11 @@
         }
 
         .project-menu {
+            max-width: none;
+            padding-bottom: 0.75rem;
             flex-direction: column;
             justify-content: start;
             gap: 0.5rem;
-            padding-bottom: 0.75rem;
         }
         
         .project {

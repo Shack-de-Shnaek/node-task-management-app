@@ -6,13 +6,15 @@ export const userLimitedSelector: Prisma.UserSelect = {
     email: true,
     firstName: true,
     lastName: true,
+    thumbnailPath: true,
 }
 
 export const userSelector: Prisma.UserSelect = {
     id: true,
+    email: true,
     firstName: true,
     lastName: true,
-    email: true,
+    thumbnailPath: true,
     password: false,
     description: true,
     projects: {

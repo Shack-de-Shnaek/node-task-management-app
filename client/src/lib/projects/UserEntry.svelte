@@ -72,6 +72,8 @@
 </script>
 
 <div class="d-flex align-items-center flex-wrap gap-1 py-1 px-2">
+    <!-- svelte-ignore a11y-img-redundant-alt -->
+    <img src={user.thumbnailPath?user.thumbnailPath:'/icons/user.png'} alt="profile picture" style="height: 1rem;" class="rounded-circle">
     <button class="navigate p-0 m-0" on:click={() => navigateTo(`/users/${user.id}`)}>
         <span>{user.firstName} {user.lastName}</span>
     </button>
@@ -107,9 +109,5 @@
 
     .delete, .add-admin {
         font-size: 0.75rem !important;
-    }
-
-    a {
-        width: fit-content;
     }
 </style>

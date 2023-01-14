@@ -3,12 +3,14 @@ import { Prisma, Project } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
 import { userLimitedSelector } from 'prisma/selectors/userSelectors';
+import { ImagesService } from 'src/images/images.service';
 import { PrismaService } from 'src/prisma.service';
 import { UsersService } from 'src/users/users.service';
+import { UpdateProjectDto } from './project-update.dto';
 
 @Injectable()
 export class ProjectsService implements ICrudService {
-    constructor(private prisma: PrismaService, private usersService: UsersService) { }
+    constructor(private prisma: PrismaService, private usersService: UsersService, private imagesService: ImagesService) { }
 
     async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput) {
         return this.prisma.project.findUnique({
@@ -59,12 +61,20 @@ export class ProjectsService implements ICrudService {
         });
     }
 
-    async update(id: number, data: Prisma.ProjectUpdateInput) {
+    async update(id: number, data: UpdateProjectDto) {
+        let thumbnailPath: string = null;
+        if (data.image) {
+            thumbnailPath = await this.imagesService.generateThumbnailFile(data.image);
+            if (thumbnailPath !== null) delete data.image;
+        }
         return this.prisma.project.update({
             where: {
                 id: id
             },
-            data: data,
+            data: {
+                ...data,
+                thumbnailPath: thumbnailPath
+            },
             select: projectSelector
         });
     }

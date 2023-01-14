@@ -5,12 +5,14 @@ export const projectLimitedSelector: Prisma.ProjectSelect = {
     id: true,
     name: true,
     description: true,
+    thumbnailPath: true,
 }
 
 export const projectSelector: Prisma.ProjectSelect = {
     id: true,
     name: true,
     description: true,
+    thumbnailPath: true,
     isActive: true,
     createdAt: true,
     updatedAt: true,

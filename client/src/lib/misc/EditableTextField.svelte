@@ -3,6 +3,7 @@
 	import type { NestError } from "../../../../interfaces/NestError";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
 	import { project } from "../pages/projects/projectStore";
+	import parseParagraphs from "../utilities/parseParagraphs";
 
     export let value: string;
     export let textType: 'span' | 'paragraph' = 'span'
@@ -21,7 +22,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: `{"${field}": "${value}"}`
+                body: `{"${field}": "${value.replaceAll('\n', '\\n')}"}`
             });
             if(res.ok) {
                 const json: ProjectData = await res.json();
@@ -62,9 +63,15 @@
         </form>
     {:else}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <p on:click={() => {
-            if(allowEditing) editMode = true
-        }}>{value}</p>
+        {#if value}
+            <div on:click={() => {
+                if(allowEditing) editMode = true
+            }}>
+                {#each parseParagraphs(value) as paragraph}
+                    <p class="mb-1">{paragraph}</p>
+                {/each}
+            </div>
+        {/if}
     {/if}
 {/if}
 

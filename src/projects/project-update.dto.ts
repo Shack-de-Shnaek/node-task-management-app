@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsBase64, IsBoolean, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 export class UpdateProjectDto {
     @IsString()
@@ -14,4 +14,8 @@ export class UpdateProjectDto {
     @IsBoolean()
     @IsOptional()
     isActive: boolean;
+
+    // @IsBase64()
+    @IsOptional()
+    image: string;
 }
