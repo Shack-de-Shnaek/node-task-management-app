@@ -5,6 +5,7 @@ export const project: Writable<ProjectData> = writable({
     id: 0,
     name: undefined,
     description: undefined,
+    thumbnailPath: undefined,
     isActve: undefined,
     tasks: [],
     taskCategories: [],
@@ -17,6 +18,7 @@ export const project: Writable<ProjectData> = writable({
         id: 0,
         email: undefined,
         firstName: undefined,
-        lastName: undefined
+        lastName: undefined,
+        thumbnailPath: undefined
     }
 });

@@ -1,3 +1,4 @@
+import { PostData } from "./PostData";
 import { LimitedProjectData } from "./ProjectData";
 
 export type UserData = {
@@ -9,7 +10,8 @@ export type UserData = {
     description: string | null;
     projects: LimitedProjectData[];
     leaderOfProjects: LimitedProjectData[];
-    posts: [];
+    adminOfProjects: LimitedProjectData[],
+    posts: PostData[];
     createdTasks: [];
 }
 

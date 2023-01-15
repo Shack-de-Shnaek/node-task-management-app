@@ -7,6 +7,7 @@
     import { cachedProjects } from "../../store";
 	import { getContext } from "svelte";
 	import type { Writable } from "svelte/store";
+	import updateAllProjectCache from "../utilities/updateProjectCache";
     
     const currentUserIsLeader: Writable<boolean> = getContext('currentUserIsLeader');
     const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
@@ -27,11 +28,7 @@
             });
             if(res.ok) {
                 const json: ProjectData = await res.json();
-                project.set(json);
-                cachedProjects.update(cache => {
-                    cache[json.id] = json;
-                    return cache
-                });
+                updateAllProjectCache(json);
             } else {
                 const json: NestError = await res.json()
                 if(json.message) alert(json.message);
@@ -54,11 +51,7 @@
             });
             if(res.ok) {
                 const json: ProjectData = await res.json();
-                project.set(json);
-                cachedProjects.update(cache => {
-                    cache[json.id] = json;
-                    return cache
-                });
+                updateAllProjectCache(json);
             } else {
                 const json: NestError = await res.json()
                 if(json.message) alert(json.message);

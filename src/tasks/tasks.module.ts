@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { TasksService } from './tasks.service';
 
 @Module({
-    providers: [TasksService, PrismaService],
-    exports: [TasksService]
+	providers: [TasksService, PrismaService],
+	exports: [TasksService],
 })
 export class TasksModule {}

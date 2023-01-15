@@ -5,12 +5,10 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { ProjectsService } from './projects.service';
 
 @Injectable()
-export class ProjectAdminGuard implements CanActivate {
+export class ProjectMemberGuard implements CanActivate {
 	constructor(private projectsService: ProjectsService) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -20,7 +18,8 @@ export class ProjectAdminGuard implements CanActivate {
 		});
 		if (project === null) throw new NotFoundException('Project does not exist');
 
-		if (project.admins.find((admin) => admin.id === request.user.id) !== undefined) return true;
+		if (project.members.find((member) => member.id === request.user.id) !== undefined)
+			return true;
 		throw new ForbiddenException();
 	}
 }

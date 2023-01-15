@@ -4,6 +4,7 @@
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
 	import { project } from "../pages/projects/projectStore";
 	import parseParagraphs from "../utilities/parseParagraphs";
+	import updateAllProjectCache from "../utilities/updateProjectCache";
 
     export let value: string;
     export let textType: 'span' | 'paragraph' = 'span'
@@ -26,11 +27,7 @@
             });
             if(res.ok) {
                 const json: ProjectData = await res.json();
-                project.set(json);
-                cachedProjects.update(cache => {
-                    cache[json.id] = json;
-                    return cache
-                });
+                updateAllProjectCache(json);
             } else {
                 const json: NestError = await res.json()
                 if(json.message) alert(json.message);
@@ -47,7 +44,7 @@
     {#if editMode}
         <form on:submit|preventDefault={() => save()}>
             <input type="text" class="w-100" bind:value={value}>
-            <button type="submit" class="btn btn-success p-1">Save</button>
+            <button type="submit" class="btn btn-success p-1 mt-2">Save</button>
         </form>
     {:else}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -59,7 +56,7 @@
     {#if editMode}
         <form on:submit|preventDefault={() => save()}>
             <textarea rows="5" class="w-100" bind:value={value} />
-            <button type="submit" class="btn btn-success p-1">Save</button>
+            <button type="submit" class="btn btn-success p-1 mt-1">Save</button>
         </form>
     {:else}
         <!-- svelte-ignore a11y-click-events-have-key-events -->

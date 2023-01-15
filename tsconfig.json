@@ -18,5 +18,5 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src", "prisma/selectors", "interfaces"]
+  "include": ["src", "prisma/selectors", "interfaces", "test"]
 }

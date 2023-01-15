@@ -1,3 +1,4 @@
+import { PostData } from "./PostData";
 import { LimitedUserData } from "./UserData";
 
 export type LimitedProjectData = {
@@ -18,7 +19,7 @@ export type ProjectData = {
     leader: LimitedUserData;
     admins: LimitedUserData[];
     members: LimitedUserData[];
-    posts: [];
+    posts: PostData[];
     tasks: [];
     taskCategories: [];
 }

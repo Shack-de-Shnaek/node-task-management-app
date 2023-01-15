@@ -7,6 +7,7 @@
     import { onDestroy, setContext } from "svelte";
     import { Route } from "svelte-router-spa";
     import { project } from "./projectStore";
+	import updateAllProjectCache from "../../utilities/updateProjectCache";
 
     export let currentRoute;
     export let params;
@@ -83,8 +84,7 @@
                 alert("This project doesn't exist");
                 return;
             }
-            project.set(res);
-            $cachedProjects[$project.id] = $project;
+            updateAllProjectCache(res);
             updateHeaderWithProjectData();
         })();
     }

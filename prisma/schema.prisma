@@ -57,8 +57,7 @@ model Project {
 
 model Post {
 	id Int @id @default(autoincrement()) @unique
-	// images Image[]
-	// attachments Attachment[]
+	attachments PostAttachment[]
 	title String @db.VarChar(100)
 	content String @db.Text
 	createdAt DateTime @default(now())
@@ -79,6 +78,14 @@ model PostComment {
 	postId Int
 }
 
+model PostAttachment {
+	id Int @id @default(autoincrement()) @unique
+	post Post @relation(fields: [postId], references: [id])
+	postId Int
+	isImage Boolean @default(false)
+	path String @db.Text
+}
+
 model Task {
 	id Int @id @default(autoincrement()) @unique
 	title String @db.VarChar(100)
@@ -90,8 +97,7 @@ model Task {
 	dueAt DateTime?
 	completedAt DateTime?
 	assignedAt DateTime?
-	// images Image[]
-	// attachments Attachment[]
+	attachments TaskAttachment[]
 	project Project @relation(fields: [projectId], references: [id])
 	projectId Int
 	createdBy User @relation(fields: [createdById], references: [id], name: "createdTask")
@@ -119,4 +125,12 @@ model TaskComment {
 	authorId Int
 	task Task @relation(fields: [taskId], references: [id])
 	taskId Int
+}
+
+model TaskAttachment {
+	id Int @id @default(autoincrement()) @unique
+	task Task @relation(fields: [taskId], references: [id])
+	taskId Int
+	isImage Boolean @default(false)
+	path String @db.Text
 }

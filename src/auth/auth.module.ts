@@ -10,7 +10,6 @@ import { PrismaService } from 'src/prisma.service';
 @Module({
 	imports: [PassportModule.register({ session: true }), UsersModule],
 	providers: [AuthService, LocalStrategy, SessionSerializer],
-	controllers: [AuthController]
+	controllers: [AuthController],
 })
-export class AuthModule { }
-
+export class AuthModule {}

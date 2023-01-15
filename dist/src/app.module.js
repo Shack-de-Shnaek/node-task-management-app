@@ -17,7 +17,7 @@ const prisma_service_1 = require("./prisma.service");
 const projects_module_1 = require("./projects/projects.module");
 const posts_module_1 = require("./posts/posts.module");
 const tasks_module_1 = require("./tasks/tasks.module");
-const images_module_1 = require("./images/images.module");
+const files_module_1 = require("./files/files.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -35,7 +35,7 @@ AppModule = __decorate([
             projects_module_1.ProjectsModule,
             posts_module_1.PostsModule,
             tasks_module_1.TasksModule,
-            images_module_1.ImagesModule
+            files_module_1.FilesModule,
         ],
         controllers: [],
         providers: [app_service_1.AppService, prisma_service_1.PrismaService],

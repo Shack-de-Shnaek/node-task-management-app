@@ -20,9 +20,11 @@ export const currentUserData: Writable<UserData> = writable({
     firstName: '',
     lastName: '',
     email: '',
+    thumbnailPath: '',
     description: '',
     projects: [],
     leaderOfProjects: [],
+    adminOfProjects: [],
     posts: [],
     createdTasks: []
 });

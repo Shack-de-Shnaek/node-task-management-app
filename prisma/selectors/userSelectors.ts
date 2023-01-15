@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client"
+import { postSelector } from "./postSelectors"
 import { projectLimitedSelector } from "./projectSelectors"
 
 export const userLimitedSelector: Prisma.UserSelect = {
@@ -31,11 +32,7 @@ export const userSelector: Prisma.UserSelect = {
         select: projectLimitedSelector
     },
     posts: {
-        select: {
-            id: true,
-            title: true,
-            content: true
-        }
+        select: postSelector
     },
     createdTasks: {
         select: {

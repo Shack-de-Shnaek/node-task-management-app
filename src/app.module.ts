@@ -8,25 +8,25 @@ import { PrismaService } from './prisma.service';
 import { ProjectsModule } from './projects/projects.module';
 import { PostsModule } from './posts/posts.module';
 import { TasksModule } from './tasks/tasks.module';
-import { ImagesModule } from './images/images.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
-  imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'static'),
-      serveRoot: '/static',
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'client', 'dist'),
-    }),
-    AuthModule,
-    UsersModule,
-    ProjectsModule,
-    PostsModule,
-    TasksModule,
-    ImagesModule
-  ],
-  controllers: [],
-  providers: [AppService, PrismaService],
+	imports: [
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', '..', 'static'),
+			serveRoot: '/static',
+		}),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', '..', 'client', 'dist'),
+		}),
+		AuthModule,
+		UsersModule,
+		ProjectsModule,
+		PostsModule,
+		TasksModule,
+		FilesModule,
+	],
+	controllers: [],
+	providers: [AppService, PrismaService],
 })
 export class AppModule {}
