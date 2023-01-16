@@ -14,5 +14,5 @@ export type PostData = {
         id: number;
         path: string;
         isImage: boolean;
-    }
+    }[]
 }
