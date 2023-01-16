@@ -32,7 +32,7 @@
         {/each}
     </div>
     {#if images.length > 0}
-        <div class="carousel slide" id="post-{post.id}-carousel" data-bs-ride="carousel">
+        <div class="carousel slide" id="post-{post.id}-carousel" data-bs-ride="carousel" data-bs-interval="0">
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img src={images[0].path} alt="" class="w-100">
