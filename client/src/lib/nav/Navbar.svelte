@@ -5,6 +5,7 @@
 	import type { Writable } from "svelte/store";
     import NavButton from "./NavButton.svelte";
 	import { currentUserData } from "../../store";
+	import clickOutside from "../utilities/clickOutside";
 
     const windowWidth: Writable<number> = getContext('windowWidth');
 
@@ -25,12 +26,10 @@
 
     const toggleMobileMenu = () => {
         mobileMenuExpanded = !mobileMenuExpanded;
-        projectMenuExpanded = false;
     }
 
     const toggleProjectMenu = () => {
         projectMenuExpanded = !projectMenuExpanded;
-        mobileMenuExpanded = false;
     }
 </script>
 
@@ -50,13 +49,13 @@
             </div>
         {/if}
     </div>
-    <div class="mobile-menu sub-menu" class:d-none={!mobileMenuExpanded || $windowWidth >= 576} >
+    <div class="mobile-menu sub-menu" class:d-none={!mobileMenuExpanded || $windowWidth >= 576}  use:clickOutside on:click_outside={() => { mobileMenuExpanded = false }}>
         <NavButton label="Tasks" imagePath="/icons/bug.png" href="test" />
         <NavButton label="Posts" imagePath="/icons/post.png" href="posts" />
         <NavButton label="Calendar" imagePath="/icons/calendar.png" href="calendar" />    
         <NavButton label="My account" imagePath="/icons/user.png" href="my-account" />
     </div>
-    <div class="project-menu sub-menu m-0" class:d-none={!projectMenuExpanded}>
+    <div class="project-menu sub-menu m-0" class:d-none={!projectMenuExpanded} use:clickOutside on:click_outside={() => { projectMenuExpanded = false }}>
         <button on:click={() => navigateTo('/new-project')} class="new-project w-100 m-0 p-2 d-flex align-items-center gap-1 text-light">
             <img src="/icons/add.png" alt="" style="width: 1rem; filter: invert(1)">
             <span>New project</span>
@@ -76,6 +75,7 @@
         top: 0;
         width: fit-content;
         height: 100%;
+        z-index: 1000;
     }
 
     .sub-menu {

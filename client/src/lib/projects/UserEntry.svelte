@@ -8,6 +8,7 @@
 	import { getContext } from "svelte";
 	import type { Writable } from "svelte/store";
 	import updateAllProjectCache from "../utilities/updateProjectCache";
+	import handleResponse from "../utilities/handleResponse";
     
     const currentUserIsLeader: Writable<boolean> = getContext('currentUserIsLeader');
     const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
@@ -26,14 +27,9 @@
                 },
                 body: JSON.stringify({userId: user.id})
             });
-            if(res.ok) {
-                const json: ProjectData = await res.json();
+            handleResponse<ProjectData>(res, (json) => {
                 updateAllProjectCache(json);
-            } else {
-                const json: NestError = await res.json()
-                if(json.message) alert(json.message);
-                else alert('Could not remove the user');
-            }
+            });
         } catch(e) {
             console.log(e);
             alert('Could not remove the user');
@@ -49,14 +45,9 @@
                 },
                 body: JSON.stringify({userId: user.id})
             });
-            if(res.ok) {
-                const json: ProjectData = await res.json();
+            handleResponse<ProjectData>(res, (json) => {
                 updateAllProjectCache(json);
-            } else {
-                const json: NestError = await res.json()
-                if(json.message) alert(json.message);
-                else alert('Could not remove the user');
-            }
+            });
         } catch (e) {
             console.log(e);
             alert('Could not add admin');

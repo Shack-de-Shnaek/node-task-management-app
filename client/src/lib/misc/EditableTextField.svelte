@@ -5,6 +5,8 @@
 	import { project } from "../pages/projects/projectStore";
 	import parseParagraphs from "../utilities/parseParagraphs";
 	import updateAllProjectCache from "../utilities/updateProjectCache";
+	import clickOutside from "../utilities/clickOutside";
+	import handleResponse from "../utilities/handleResponse";
 
     export let value: string;
     export let textType: 'span' | 'paragraph' = 'span'
@@ -25,14 +27,9 @@
                 },
                 body: `{"${field}": "${value.replaceAll('\n', '\\n')}"}`
             });
-            if(res.ok) {
-                const json: ProjectData = await res.json();
+            handleResponse<ProjectData>(res, (json) => {
                 updateAllProjectCache(json);
-            } else {
-                const json: NestError = await res.json()
-                if(json.message) alert(json.message);
-                else alert('Could not save changes')
-            }
+            });
         } catch (e) {
             console.log(e);
             alert('Could not save changes')
@@ -42,7 +39,7 @@
 
 {#if textType === 'span'}
     {#if editMode}
-        <form on:submit|preventDefault={() => save()}>
+        <form on:submit|preventDefault={() => save()} use:clickOutside on:click_outside={() => { editMode = false }}>
             <input type="text" class="w-100" bind:value={value}>
             <button type="submit" class="btn btn-success p-1 mt-2">Save</button>
         </form>
@@ -54,7 +51,7 @@
     {/if}
 {:else}
     {#if editMode}
-        <form on:submit|preventDefault={() => save()}>
+        <form on:submit|preventDefault={() => save()} use:clickOutside on:click_outside={() => { editMode = false }}>
             <textarea rows="5" class="w-100" bind:value={value} />
             <button type="submit" class="btn btn-success p-1 mt-1">Save</button>
         </form>

@@ -19,12 +19,12 @@
 	.main-layout-container {
 		margin-left: 4rem;
 		padding: 0.25rem 0.5rem;
+		padding-bottom: 6rem;
 	}
 
 	@media only screen and (max-width: 576px) {
 		.main-layout-container {
 			margin-left: 0;
-			padding-bottom: 6rem;
 			margin-bottom: 4rem;
 		}
 	}

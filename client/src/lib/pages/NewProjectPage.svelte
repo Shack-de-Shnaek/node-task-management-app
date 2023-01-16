@@ -2,6 +2,7 @@
 	import { navigateTo } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
 	import { cachedProjects, currentUserData, headerData } from "../../store";
+	import handleResponse from "../utilities/handleResponse";
 
     headerData.set({
         title: 'New project',
@@ -14,28 +15,31 @@
     }
     
     const createProject = async () => {
-        const res = await fetch('/api/projects', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newProjectData)
-        });
-        if(res.ok) {
-            const newProject: ProjectData = await res.json();
-            cachedProjects.update(cache => {
-                cache[newProject.id] = newProject;
-                return cache;
+        try {
+            const res = await fetch('/api/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newProjectData)
             });
-            currentUserData.update(user => {
-                user.projects.push(newProject);
-                user.leaderOfProjects.push(newProject);
-                return user;
+            handleResponse<ProjectData>(res, (json) => {
+                cachedProjects.update(cache => {
+                    cache[json.id] = json;
+                    return cache;
+                });
+                currentUserData.update(user => {
+                    user.projects.push(json);
+                    user.leaderOfProjects.push(json);
+                    return user;
+                });
+                navigateTo(`/projects/${json.id}`);
+                return;
             });
-            navigateTo(`/projects/${newProject.id}`);
-            return;
+        } catch (e) {
+            console.log(e);
+            alert('Could not create the project');
         }
-        alert('Could not create the project');
     }
 </script>
 

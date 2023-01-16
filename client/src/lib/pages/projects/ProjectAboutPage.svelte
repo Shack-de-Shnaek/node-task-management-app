@@ -9,6 +9,7 @@
 	import type { NestError } from "../../../../../interfaces/NestError";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
+	import handleResponse from "../../utilities/handleResponse";
 
     const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
 
@@ -22,14 +23,10 @@
                 },
                 body: JSON.stringify({email: newMemberEmail})
             });
-            if(res.ok) {
-                const json: ProjectData = await res.json();
+            handleResponse<ProjectData>(res, (json) => {
                 updateAllProjectCache(json);
                 newMemberEmail = '';
-            } else {
-                const json: NestError = await res.json();
-                alert(json.message);
-            }
+            });
         } catch (e) {
             console.log(e);
             alert('Could not add member to project');
@@ -52,13 +49,9 @@
                     },
                     body: JSON.stringify({ image: reader.result })
                 });
-                if(res.ok) {
-                    const json: ProjectData = await res.json();
+                handleResponse<ProjectData>(res, (json) => {
                     updateAllProjectCache(json);
-                } else {
-                    const json: NestError = await res.json();
-                    alert(json.message);
-                }
+                });
             } catch (e) {
                 alert('Could not change image');
                 console.log(e)

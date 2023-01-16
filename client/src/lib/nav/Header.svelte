@@ -26,6 +26,7 @@
         width: calc(100% - 4rem);
         margin-left: 4rem;
         box-shadow: var(--container-shadow);
+        z-index: 1000;
     }
 
     header > * {

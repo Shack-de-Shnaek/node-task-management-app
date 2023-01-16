@@ -14,9 +14,11 @@
 
     const currentUserIsLeader: Writable<boolean> = writable();
     const currentUserIsAdmin: Writable<boolean> = writable();
+    const currentUserIsMember: Writable<boolean> = writable();
 
     setContext('currentUserIsLeader', currentUserIsLeader);
     setContext('currentUserIsAdmin', currentUserIsAdmin);
+    setContext('currentUserIsMember', currentUserIsMember);
 
     const getProject = async(id: number): Promise<ProjectData | null> => {
         try {
@@ -92,6 +94,7 @@
     $: if($project) {
         currentUserIsLeader.set($project.leader.id === $currentUserData.id);
         currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
+        currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));
     }
 
     onDestroy(() => {

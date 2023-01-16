@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Post } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
+import { postSelector } from 'prisma/selectors/postSelectors';
 import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma.service';
 import { ProjectsService } from 'src/projects/projects.service';
@@ -40,6 +41,7 @@ export class PostsService {
 					  }
 					: {}),
 			},
+			select: postSelector.select,
 		});
 	}
 
@@ -69,6 +71,7 @@ export class PostsService {
 				id: id,
 			},
 			data: data,
+			select: postSelector.select
 		});
 	}
 

@@ -1,33 +1,36 @@
-import { Prisma } from "@prisma/client"
-import { postSelector } from "./postSelectors"
-import { userLimitedSelector } from "./userSelectors"
+import { Prisma } from "@prisma/client";
+import { userLimitedSelector } from "./userSelectors";
+import { postSelector } from "./postSelectors";
 
-export const projectLimitedSelector: Prisma.ProjectSelect = {
-    id: true,
-    name: true,
-    description: true,
-    thumbnailPath: true,
+export const projectLimitedSelector: { select: Prisma.ProjectSelect, orderBy?: Prisma.ProjectOrderByWithRelationInput  } = {
+    select: {
+        id: true,
+        name: true,
+        thumbnailPath: true,
+    },
+    orderBy: {
+        updatedAt: 'desc'
+    }
 }
 
-export const projectSelector: Prisma.ProjectSelect = {
-    id: true,
-    name: true,
-    description: true,
-    thumbnailPath: true,
-    isActive: true,
-    createdAt: true,
-    updatedAt: true,
-    leader: {
-        select: userLimitedSelector
+export const projectSelector: { select: Prisma.ProjectSelect, orderBy?: Prisma.ProjectOrderByWithRelationInput  } = {
+    select: {
+        id: true,
+        name: true,
+        description: true,
+        thumbnailPath: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+        leader: {
+            select: userLimitedSelector.select
+        },
+        members: userLimitedSelector,
+        admins: userLimitedSelector,
+        posts: postSelector,
+        tasks: true,
     },
-    members: {
-        select: userLimitedSelector
-    },
-    admins: {
-        select: userLimitedSelector
-    },
-    posts: {
-        select: postSelector
-    },
-    tasks: true,
+    orderBy: {
+        updatedAt: 'desc'
+    }
 }

@@ -17,7 +17,7 @@ export class ProjectsService implements ICrudService {
 
 	async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput) {
 		return this.prisma.project.findUnique({
-			select: projectSelector,
+			select: projectSelector.select,
 			where: projectWhereUniqueImport,
 		});
 	}
@@ -30,7 +30,7 @@ export class ProjectsService implements ICrudService {
 		orderBy?: Prisma.ProjectOrderByWithRelationInput;
 	}) {
 		return this.prisma.project.findMany({
-			select: projectLimitedSelector,
+			...projectLimitedSelector,
 			...params,
 		});
 	}
@@ -56,7 +56,7 @@ export class ProjectsService implements ICrudService {
 					},
 				},
 			},
-			select: projectSelector,
+			select: projectSelector.select,
 		});
 	}
 
@@ -74,7 +74,7 @@ export class ProjectsService implements ICrudService {
 				...data,
 				...(thumbnailPath ? { thumbnailPath: thumbnailPath } : {}),
 			},
-			select: projectSelector,
+			select: projectSelector.select,
 		});
 	}
 
@@ -97,7 +97,7 @@ export class ProjectsService implements ICrudService {
 					},
 				},
 			},
-			select: projectSelector,
+			select: projectSelector.select,
 		});
 	}
 
@@ -146,7 +146,7 @@ export class ProjectsService implements ICrudService {
 					},
 				},
 			},
-			select: projectSelector,
+			select: projectSelector.select,
 		});
 	}
 
@@ -178,7 +178,7 @@ export class ProjectsService implements ICrudService {
 					},
 				},
 			},
-			select: projectSelector,
+			select: projectSelector.select,
 		});
 	}
 
@@ -227,7 +227,7 @@ export class ProjectsService implements ICrudService {
 					},
 				},
 			},
-			select: projectSelector,
+			select: projectSelector.select,
 		});
 	}
 

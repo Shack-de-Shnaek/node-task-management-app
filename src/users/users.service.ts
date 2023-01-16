@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
+import { postSelector } from 'prisma/selectors/postSelectors';
 import { projectLimitedSelector } from 'prisma/selectors/projectSelectors';
 import { userLimitedSelector, userSelector } from 'prisma/selectors/userSelectors';
 import { FilesService } from 'src/files/files.service';
@@ -22,20 +23,16 @@ export class UsersService implements ICrudService {
 				password: getPassword,
 				description: true,
 				projects: {
-					select: projectLimitedSelector,
+					...projectLimitedSelector,
 				},
 				leaderOfProjects: {
-					select: projectLimitedSelector,
+					...projectLimitedSelector,
 				},
 				adminOfProjects: {
-					select: projectLimitedSelector,
+					...projectLimitedSelector,
 				},
 				posts: {
-					select: {
-						id: true,
-						title: true,
-						content: true,
-					},
+					...postSelector
 				},
 				createdTasks: {
 					select: {
@@ -43,6 +40,9 @@ export class UsersService implements ICrudService {
 						title: true,
 						description: true,
 					},
+					orderBy: {
+						createdAt: 'desc'
+					}
 				},
 			},
 		});
@@ -57,7 +57,7 @@ export class UsersService implements ICrudService {
 	}) {
 		return this.prisma.user.findMany({
 			...params,
-			select: userLimitedSelector,
+			...userLimitedSelector,
 		});
 	}
 
@@ -81,7 +81,7 @@ export class UsersService implements ICrudService {
 				...data,
 				...(thumbnailPath ? { thumbnailPath: thumbnailPath } : {}),
 			},
-			select: userSelector,
+			select: userSelector.select,
 		});
 	}
 
@@ -105,11 +105,14 @@ export class UsersService implements ICrudService {
 			},
 			select: {
 				projects: {
-					select: projectLimitedSelector,
+					...projectLimitedSelector,
 				},
 				leaderOfProjects: {
-					select: projectLimitedSelector,
+					...projectLimitedSelector,
 				},
+				adminOfProjects: {
+					...projectLimitedSelector
+				}
 			},
 		});
 	}
@@ -121,18 +124,7 @@ export class UsersService implements ICrudService {
 			},
 			select: {
 				posts: {
-					select: {
-						id: true,
-						title: true,
-						content: true,
-						createdAt: true,
-						project: {
-							select: {
-								id: true,
-								name: true,
-							},
-						},
-					},
+					...postSelector,
 				},
 			},
 		});
