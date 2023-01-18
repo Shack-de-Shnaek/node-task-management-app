@@ -68,8 +68,8 @@
         {#if $currentUserIsAdmin}
             <form id="change-img-form" class="mt-2 d-flex flex-column align-items-center gap-1"
             on:submit|preventDefault={() => changeImage()}>
-                <input type="file" id="project-img" class="d-none" bind:files={newImage}>
-                <label for="project-img" class="text-center" style="cursor: pointer;" 
+                <input type="file" id="project-img" class="d-none" accept="image/jpg, image/jpeg, image/png, image/gif" bind:files={newImage}>
+                <label for="project-img" class="text-center" style="cursor: pointer;"
                 class:text-success={newImage!==undefined && newImage[0]!==undefined}>Choose</label>
                 <button type="submit" class="p-1 btn btn-success">Save</button>
             </form>

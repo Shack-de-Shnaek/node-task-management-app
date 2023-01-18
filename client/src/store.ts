@@ -6,12 +6,12 @@ import type { ProjectData } from "../../interfaces/ProjectData";
 export type headerWidgetType = {
     label: string;
     color: string;
-    value?: string | number;
+    value?: string | number | Writable<string | number>;
     href?: string;
 }
 
 export type headerDataType = {
-    title: string;
+    title: string | Writable<string>;
     widgets: headerWidgetType[];
 }
 

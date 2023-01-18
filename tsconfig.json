@@ -18,5 +18,5 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src", "prisma/selectors", "interfaces", "test"]
+  "include": ["src", "prisma/selectors", "interfaces", "test", "prisma-exceptions.filter.ts"]
 }

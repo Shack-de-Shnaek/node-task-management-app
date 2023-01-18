@@ -28,6 +28,24 @@ export const postSelector: { select: Prisma.PostSelect, orderBy?: Prisma.PostOrd
                 isImage: true,
             }
         },
+        comments: {
+            select: {
+                id: true,
+                author: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        thumbnailPath: true,
+                    }
+                },
+                content: true,
+                createdAt: true,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            }
+        }
     },
     orderBy: {
         createdAt: 'desc'

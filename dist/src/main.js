@@ -8,8 +8,12 @@ const passport = require("passport");
 const express_1 = require("express");
 const app_module_1 = require("./app.module");
 const unauthorizedRedirect_filter_1 = require("./auth/unauthorizedRedirect.filter");
+const prisma_exceptions_interceptor_1 = require("./prisma-exceptions.interceptor");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.useGlobalInterceptors(new prisma_exceptions_interceptor_1.PrismaExceptionsInterceptor());
+    app.useGlobalFilters(new unauthorizedRedirect_filter_1.UnauthorizedRedirectFilter());
+    app.use((0, express_1.json)({ limit: '50mb' }));
     app.use(session({
         secret: 'dmVyeWVwaWNzZWNyZXRrZXl2ZXJ5c2VjcmV0',
         resave: false,
@@ -23,10 +27,8 @@ async function bootstrap() {
             dbRecordIdFunction: undefined,
         }),
     }));
-    app.useGlobalFilters(new unauthorizedRedirect_filter_1.UnauthorizedRedirectFilter());
-    app.use((0, express_1.json)({ limit: '50mb' }));
-    app.use(passport.initialize());
     app.use(passport.session());
+    app.use(passport.initialize());
     await app.listen(3000);
 }
 bootstrap();

@@ -27,7 +27,7 @@ import { ProjectMemberGuard } from './projectsMember.guard';
 @Controller('api/projects')
 @UseGuards(SessionAuthGuard)
 export class ProjectsController {
-	constructor(private projectsService: ProjectsService, private postsService: PostsService) {}
+	constructor(private projectsService: ProjectsService) {}
 
 	@Get()
 	@HttpCode(200)
@@ -35,12 +35,10 @@ export class ProjectsController {
 		return this.projectsService.list();
 	}
 
-	@Get(':id')
+	@Get(':projectId')
 	@HttpCode(200)
-	async get(@Param('id', ParseIntPipe, new ValidationPipe()) id: number) {
-		const project = await this.projectsService.get({ id: id });
-		if (project === null) throw new NotFoundException('Project does not exist');
-		return project;
+	async get(@Param('projectId', ParseIntPipe) projectId: number) {
+		return this.projectsService.get({ id: projectId })
 	}
 
 	@Post()
@@ -54,77 +52,77 @@ export class ProjectsController {
 		return this.projectsService.create(data);
 	}
 
-	@Put(':id')
+	@Put(':projectId')
 	@HttpCode(200)
 	@UseGuards(ProjectAdminGuard)
 	async update(
 		@Body(new ValidationPipe()) data: UpdateProjectDto,
-		@Param('id', ParseIntPipe) id: number,
+		@Param('projectId', ParseIntPipe) id: number,
 	) {
-		const project = await this.projectsService.get({ id: id });
-		if (project === null) throw new NotFoundException('Project does not exist');
 		return this.projectsService.update(id, data);
 	}
 
-	@Post(':id/members')
+	@Post(':projectId/members')
 	@HttpCode(200)
 	@UseGuards(ProjectAdminGuard)
 	async addMember(
 		@Body(new ValidationPipe()) email: UserEmail,
-		@Param('id', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe) projectId: number,
 	) {
-		const project = await this.projectsService.get({ id: projectId });
-		if (project === null) throw new NotFoundException('Project does not exist');
+		console.log('add member route')
 		return this.projectsService.addMember(projectId, email.email);
 	}
 
-	@Post(':id/admins')
+	@Post(':projectId/admins')
 	@HttpCode(200)
 	@UseGuards(ProjectLeaderGuard)
 	async addAdmin(
 		@Body('userId', new ValidationPipe()) userId: number,
-		@Param('id', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe) projectId: number,
 	) {
-		const project = await this.projectsService.get({ id: projectId });
-		if (project === null) throw new NotFoundException('Project does not exist');
 		return this.projectsService.addAdmin(projectId, userId);
 	}
 
-	@Delete(':id/members')
+	@Delete(':projectId/members')
 	@HttpCode(200)
 	@UseGuards(ProjectAdminGuard)
 	async removeMember(
 		@Body('userId', new ValidationPipe()) userId: number,
-		@Param('id', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe) projectId: number,
 	) {
-		const project = await this.projectsService.get({ id: projectId });
-		if (project === null) throw new NotFoundException('Project does not exist');
 		return this.projectsService.removeMember(projectId, userId);
 	}
 
-	@Delete(':id/admins')
+	@Delete(':projectId/admins')
 	@HttpCode(200)
 	@UseGuards(ProjectLeaderGuard)
 	async removeAdmin(
 		@Body('userId', new ValidationPipe()) userId: number,
-		@Param('id', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe) projectId: number,
 	) {
-		const project = await this.projectsService.get({ id: projectId });
-		if (project === null) throw new NotFoundException('Project does not exist');
 		return this.projectsService.removeAdmin(projectId, userId);
 	}
 
-	@Post(':id/posts')
+	@Post(':projectId/posts')
 	@HttpCode(201)
 	@UseGuards(ProjectMemberGuard)
 	async addPost(
 		@Body(new ValidationPipe()) data: CreatePostDto,
-		@Param('id', ParseIntPipe) id: number,
+		@Param('projectId', ParseIntPipe) projectId: number,
 		@Req() request,
 	) {
-		const project = await this.projectsService.get({ id: id });
-		if (project === null) throw new NotFoundException('Project does not exist');
-		await this.postsService.create(data, id, request.user.id);
-		return this.projectsService.get({ id: id });
+		return this.projectsService.addPost(projectId, request.user.id, data);
+	}
+
+	@Post(':projectId/posts/:postId/comments')
+	@HttpCode(201)
+	@UseGuards(ProjectMemberGuard)
+	async addComment(
+		@Body('content', new ValidationPipe()) content: string,
+		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('postId', ParseIntPipe) postId: number,
+		@Req() request,
+	) {
+		return this.projectsService.addPostComment(projectId, request.user.id, postId, content);
 	}
 }

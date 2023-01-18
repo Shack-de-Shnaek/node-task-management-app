@@ -22,11 +22,11 @@ import { UsersService } from './users.service';
 export class UsersController {
 	constructor(private usersService: UsersService) {}
 
-	@Get()
-	@HttpCode(200)
-	async list(@Req() request: Request) {
-		return this.usersService.list();
-	}
+	// @Get()
+	// @HttpCode(200)
+	// async list() {
+	// 	return this.usersService.list();
+	// }
 
 	@Put()
 	@HttpCode(200)
@@ -40,11 +40,7 @@ export class UsersController {
 		@Req() request: Request,
 		@Param('id', ParseIntPipe, new ValidationPipe()) id: number,
 	) {
-		const user = await this.usersService.get({
-			id: id,
-		});
-		if (user === null) throw new NotFoundException();
-		return user;
+		return this.usersService.get({ id: id, });
 	}
 
 	@Get(':id/projects')

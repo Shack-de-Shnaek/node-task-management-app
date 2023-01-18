@@ -65,6 +65,27 @@ export class PostsService {
 		});
 	}
 
+	async createComment(postId: number, content: string, authorId: number) {
+		return this.prisma.post.update({
+			select: postSelector.select,
+			where: {
+				id: postId,
+			},
+			data: {
+				comments: {
+					create: {
+						content: content,
+						author: {
+							connect: {
+								id: authorId
+							}
+						},
+					}
+				}
+			},
+		});
+	}
+
 	async update(id: number, data: Prisma.PostUpdateInput) {
 		return this.prisma.post.update({
 			where: {

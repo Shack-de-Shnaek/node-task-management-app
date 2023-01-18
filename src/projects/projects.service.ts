@@ -8,14 +8,22 @@ import { Prisma, Project } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
 import { FilesService } from 'src/files/files.service';
+import { CreatePostDto } from 'src/posts/post-create.dto';
+import { PostsService } from 'src/posts/posts.service';
 import { PrismaService } from 'src/prisma.service';
 import { UpdateProjectDto } from './project-update.dto';
 
 @Injectable()
 export class ProjectsService implements ICrudService {
-	constructor(private prisma: PrismaService, private filesService: FilesService) {}
+	constructor(private prisma: PrismaService, private filesService: FilesService, private postsService: PostsService) {}
 
-	async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput) {
+	async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput, raiseException=true) {
+		if (raiseException) {
+			return this.prisma.project.findUniqueOrThrow({
+				select: projectSelector.select,
+				where: projectWhereUniqueImport,
+			});
+		}
 		return this.prisma.project.findUnique({
 			select: projectSelector.select,
 			where: projectWhereUniqueImport,
@@ -79,13 +87,22 @@ export class ProjectsService implements ICrudService {
 	}
 
 	async addMember(projectId: number, email: string) {
-		const user = await this.prisma.user.findUnique({
+		await this.prisma.user.findUniqueOrThrow({
 			where: { email: email },
 			select: {
 				id: true,
 			},
 		});
-		if (user === null) throw new NotFoundException('User does not exist');
+
+		await this.prisma.project.findUniqueOrThrow({
+			where: {
+				id: projectId
+			},
+			select: {
+				id: true,
+			}
+		});
+
 		return this.prisma.project.update({
 			where: {
 				id: projectId,
@@ -102,7 +119,7 @@ export class ProjectsService implements ICrudService {
 	}
 
 	async removeMember(projectId: number, userId: number) {
-		const user = await this.prisma.user.findUnique({
+		const user = await this.prisma.user.findUniqueOrThrow({
 			where: {
 				id: userId,
 			},
@@ -110,7 +127,7 @@ export class ProjectsService implements ICrudService {
 				id: true,
 			},
 		});
-		const project = await this.prisma.project.findUnique({
+		const project = await this.prisma.project.findUniqueOrThrow({
 			where: {
 				id: projectId,
 			},
@@ -124,7 +141,6 @@ export class ProjectsService implements ICrudService {
 			},
 		});
 
-		if (user === null) throw new NotFoundException('User does not exist');
 		if (!project.members.flatMap((member) => member.id).includes(userId))
 			throw new BadRequestException('User is not a member');
 		if (project.leaderId === userId)
@@ -151,7 +167,7 @@ export class ProjectsService implements ICrudService {
 	}
 
 	async addAdmin(projectId: number, userId: number) {
-		const project = await this.prisma.project.findUnique({
+		const project = await this.prisma.project.findUniqueOrThrow({
 			where: {
 				id: projectId,
 			},
@@ -183,13 +199,13 @@ export class ProjectsService implements ICrudService {
 	}
 
 	async removeAdmin(projectId: number, userId: number) {
-		const user = await this.prisma.user.findUnique({
+		await this.prisma.user.findUniqueOrThrow({
 			where: { id: userId },
 			select: {
 				id: true,
 			},
 		});
-		const project = await this.prisma.project.findUnique({
+		const project = await this.prisma.project.findUniqueOrThrow({
 			where: {
 				id: projectId,
 			},
@@ -208,7 +224,6 @@ export class ProjectsService implements ICrudService {
 			},
 		});
 
-		if (user === null) throw new NotFoundException('User does not exist');
 		if (!project.members.flatMap((member) => member.id).includes(userId))
 			throw new BadRequestException('User is not a member');
 		if (!project.admins.flatMap((admin) => admin.id).includes(userId))
@@ -226,6 +241,72 @@ export class ProjectsService implements ICrudService {
 						id: userId,
 					},
 				},
+			},
+			select: projectSelector.select,
+		});
+	}
+
+	async addPost(projectId: number, authorId: number, data: CreatePostDto) {
+		const project = await this.prisma.project.findUniqueOrThrow({
+			where: {
+				id: projectId,
+			},
+			select: {
+				id: true,
+			}
+		});
+		// await this.postsService.create(data, project.id, authorId);
+		// return this.get({ id: projectId }, false);
+
+		let attachmentData = [];
+		if (data.attachments) {
+			attachmentData = await this.filesService.generateAttachmentFiles(data.attachments);
+		}
+		return this.prisma.project.update({
+			where: {
+				id: projectId
+			},
+			select: projectSelector.select,
+			data: {
+				posts: {
+					create: {
+						authorId: authorId,
+						title: data.title,
+						content: data.content,
+						...(attachmentData
+							? {
+									attachments: {
+										createMany: {
+											data: attachmentData,
+										},
+									},
+							  }
+							: {}),
+					}
+				}
+			}
+		})
+	}
+
+	async addPostComment(projectId: number, authorId: number, postId: number, content: string) {
+		const project = await this.prisma.project.findUniqueOrThrow({
+			where: {
+				id: projectId,
+			},
+			select: {
+				id: true,
+				posts: {
+					select: {
+						id: true,
+					},
+				},
+			},
+		});
+		if (!project.posts.flatMap(post => post.id).includes(postId)) throw new NotFoundException('Post is not in this project');
+		await this.postsService.createComment(postId, content, authorId);
+		return this.prisma.project.findUnique({
+			where: {
+				id: projectId,
 			},
 			select: projectSelector.select,
 		});

@@ -14,8 +14,8 @@ export class ProjectMemberGuard implements CanActivate {
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
 		const project = await this.projectsService.get({
-			id: parseInt(request.params.id),
-		});
+			id: parseInt(request.params.projectId),
+		}, false);
 		if (project === null) throw new NotFoundException('Project does not exist');
 
 		if (project.members.find((member) => member.id === request.user.id) !== undefined)

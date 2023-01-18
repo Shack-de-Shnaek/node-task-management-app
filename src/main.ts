@@ -6,9 +6,13 @@ import * as passport from 'passport';
 import { json } from 'express';
 import { AppModule } from './app.module';
 import { UnauthorizedRedirectFilter } from './auth/unauthorizedRedirect.filter';
+import { PrismaExceptionsInterceptor } from './prisma-exceptions.interceptor';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
+	app.useGlobalInterceptors(new PrismaExceptionsInterceptor());
+	app.useGlobalFilters(new UnauthorizedRedirectFilter());
+	app.use(json({ limit: '50mb' }));
 	app.use(
 		session({
 			secret: 'dmVyeWVwaWNzZWNyZXRrZXl2ZXJ5c2VjcmV0',
@@ -24,11 +28,9 @@ async function bootstrap() {
 			}),
 		}),
 	);
-	app.useGlobalFilters(new UnauthorizedRedirectFilter());
-	app.use(json({ limit: '50mb' }));
-
-	app.use(passport.initialize());
 	app.use(passport.session());
+	app.use(passport.initialize());
+
 	await app.listen(3000);
 }
 bootstrap();

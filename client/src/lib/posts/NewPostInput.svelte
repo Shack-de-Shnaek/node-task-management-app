@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { request } from "http";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
     import { project } from "../pages/projects/projectStore";
 	import clickOutside from "../utilities/clickOutside";
 	import handleResponse from "../utilities/handleResponse";
+	import parseFileSize from "../utilities/parseFileSize";
 	import updateAllProjectCache from "../utilities/updateProjectCache";
     
     let expanded = false;
@@ -18,14 +20,47 @@
     }
 
     const post = async() => {
+        let attachments = [];
+
         if(newPostData.content === '') {
             alert('Posts must have a description');
             return;
         }
         
-        let attachments = [];
-    
+        const request = async() => {
+            try {
+                const res = await fetch(`/api/projects/${$project.id}/posts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: newPostData.title,
+                        content: newPostData.content,
+                        attachments: attachments
+                    })
+                });
+                handleResponse<ProjectData>(res, (json) => {
+                    updateAllProjectCache(json);
+                    newPostData = {
+                        title: '',
+                        content: '',
+                        attachments: undefined
+                    }
+                    expanded = false;
+                });
+            } catch (e) {
+                alert('Could not create post');
+                console.log(e);
+            }
+        }
+
         const read = async(i=0) => {
+            if(newPostData.attachments === undefined || newPostData.attachments.length === 0) {
+                await request();
+                return;
+            }
+            
             if(i < newPostData.attachments.length) {
                 const reader = new FileReader();
                 reader.onloadend = () => {
@@ -34,31 +69,7 @@
                 }
                 reader.readAsDataURL(newPostData.attachments[i]);
             } else {
-                try {
-                    const res = await fetch(`/api/projects/${$project.id}/posts`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            title: newPostData.title,
-                            content: newPostData.content,
-                            attachments: attachments
-                        })
-                    });
-                    handleResponse<ProjectData>(res, (json) => {
-                        updateAllProjectCache(json);
-                        newPostData = {
-                            title: '',
-                            content: '',
-                            attachments: undefined
-                        }
-                        expanded = false;
-                    });
-                } catch (e) {
-                    alert('Could not create post');
-                    console.log(e);
-                }
+                request();
             }
         }
 
@@ -76,7 +87,18 @@
             <textarea rows="5" class="w-100" 
             bind:value={newPostData.content}></textarea>
 
-            <input type="file" bind:files={newPostData.attachments} multiple={true}>
+            <label style="cursor: pointer" for="post-attachment-input" class="jkk"
+            class:text-success={newPostData.attachments !== undefined && newPostData.attachments.length > 0}>Attach files</label>
+            <input type="file" id="post-attachment-input" class="d-none" 
+            bind:files={newPostData.attachments} multiple={true}>
+
+            {#if newPostData.attachments}
+                <div class="d-flex flex-column gap-1">
+                    {#each newPostData.attachments as attachment}
+                        <p class="small m-0">{attachment.name} {parseFileSize(attachment.size)}</p>
+                    {/each}
+                </div>
+            {/if}
 
             <button type="submit" class="btn btn-success w-100 p-1">Post</button>
         </form>

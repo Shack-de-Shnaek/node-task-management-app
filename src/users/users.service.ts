@@ -13,7 +13,7 @@ export class UsersService implements ICrudService {
 	constructor(private prisma: PrismaService, private filesService: FilesService) {}
 
 	async get(userWhereUniqueInput: Prisma.UserWhereUniqueInput, getPassword = false) {
-		return this.prisma.user.findUnique({
+		return this.prisma.user.findUniqueOrThrow({
 			where: userWhereUniqueInput,
 			select: {
 				id: true,
@@ -99,7 +99,7 @@ export class UsersService implements ICrudService {
 	}
 
 	async getProjects(id: number) {
-		return this.prisma.user.findUnique({
+		return this.prisma.user.findUniqueOrThrow({
 			where: {
 				id: id,
 			},
@@ -118,7 +118,7 @@ export class UsersService implements ICrudService {
 	}
 
 	async getPosts(id: number) {
-		return this.prisma.user.findUnique({
+		return this.prisma.user.findUniqueOrThrow({
 			where: {
 				id: id,
 			},

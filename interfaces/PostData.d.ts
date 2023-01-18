@@ -1,5 +1,12 @@
 import { LimitedUserData } from "./UserData";
 
+export type PostCommentData = {
+    id: number;
+    content: string;
+    createdAt: string;
+    author: LimitedUserData;
+}
+
 export type PostData = {
     id: number;
     project: {
@@ -14,5 +21,7 @@ export type PostData = {
         id: number;
         path: string;
         isImage: boolean;
-    }[]
+    }[],
+    createdAt: string;
+    comments: PostCommentData[];
 }
