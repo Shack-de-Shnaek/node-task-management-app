@@ -12,8 +12,47 @@ import { UpdateUserDto } from './user-update.dto';
 export class UsersService implements ICrudService {
 	constructor(private prisma: PrismaService, private filesService: FilesService) {}
 
-	async get(userWhereUniqueInput: Prisma.UserWhereUniqueInput, getPassword = false) {
-		return this.prisma.user.findUniqueOrThrow({
+	async get(
+		userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+		getPassword = false,
+		raiseException = true,
+	) {
+		if (raiseException) {
+			return this.prisma.user.findUniqueOrThrow({
+				where: userWhereUniqueInput,
+				select: {
+					id: true,
+					firstName: true,
+					lastName: true,
+					email: true,
+					password: getPassword,
+					description: true,
+					projects: {
+						...projectLimitedSelector,
+					},
+					leaderOfProjects: {
+						...projectLimitedSelector,
+					},
+					adminOfProjects: {
+						...projectLimitedSelector,
+					},
+					posts: {
+						...postSelector,
+					},
+					createdTasks: {
+						select: {
+							id: true,
+							title: true,
+							description: true,
+						},
+						orderBy: {
+							createdAt: 'desc',
+						},
+					},
+				},
+			});
+		}
+		return this.prisma.user.findUnique({
 			where: userWhereUniqueInput,
 			select: {
 				id: true,
@@ -32,7 +71,7 @@ export class UsersService implements ICrudService {
 					...projectLimitedSelector,
 				},
 				posts: {
-					...postSelector
+					...postSelector,
 				},
 				createdTasks: {
 					select: {
@@ -41,8 +80,8 @@ export class UsersService implements ICrudService {
 						description: true,
 					},
 					orderBy: {
-						createdAt: 'desc'
-					}
+						createdAt: 'desc',
+					},
 				},
 			},
 		});
@@ -111,8 +150,8 @@ export class UsersService implements ICrudService {
 					...projectLimitedSelector,
 				},
 				adminOfProjects: {
-					...projectLimitedSelector
-				}
+					...projectLimitedSelector,
+				},
 			},
 		});
 	}

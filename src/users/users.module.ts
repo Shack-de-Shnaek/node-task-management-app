@@ -6,7 +6,6 @@ import { FilesModule } from 'src/files/files.module';
 import { FilesService } from 'src/files/files.service';
 
 @Module({
-	imports: [FilesModule],
 	providers: [UsersService, PrismaService, FilesService],
 	controllers: [UsersController],
 	exports: [UsersService],

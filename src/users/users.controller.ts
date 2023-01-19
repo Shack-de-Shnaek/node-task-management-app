@@ -40,7 +40,7 @@ export class UsersController {
 		@Req() request: Request,
 		@Param('id', ParseIntPipe, new ValidationPipe()) id: number,
 	) {
-		return this.usersService.get({ id: id, });
+		return this.usersService.get({ id: id });
 	}
 
 	@Get(':id/projects')

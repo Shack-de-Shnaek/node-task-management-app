@@ -1,53 +1,230 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Task } from '@prisma/client';
-import ICrudService from 'interfaces/ICrudService';
+import { taskSelector } from 'prisma/selectors/taskSelectors';
+import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma.service';
+import { CreateTaskDto } from './task-create.dto';
+import { CreateTaskCategoryDto } from './taskCategory-create.dto';
 
 @Injectable()
-export class TasksService implements ICrudService {
-	constructor(private prisma: PrismaService) {}
+export class TasksService {
+	constructor(private prisma: PrismaService, private filesService: FilesService) {}
 
-	async get(taskWhereUniqueImport: Prisma.TaskWhereUniqueInput) {
-		const task = await this.prisma.task.findUnique({
-			where: taskWhereUniqueImport,
-		});
-		return task;
-	}
+	async create(data: CreateTaskDto, projectId: number, creatorId: number) {
+		let attachmentData = [];
+		if (data.attachments) {
+			attachmentData = await this.filesService.generateAttachmentFiles(data.attachments);
+		}
 
-	async list(params?: {
-		skip?: number;
-		take?: number;
-		cursor?: Prisma.TaskWhereUniqueInput;
-		where?: Prisma.TaskWhereInput;
-		orderBy?: Prisma.TaskOrderByWithRelationInput;
-	}) {
-		const tasks = await this.prisma.task.findMany(params);
-		return tasks;
-	}
-
-	async create(data: Prisma.TaskCreateInput) {
-		const task = await this.prisma.task.create({
-			data: data,
-		});
-		return task;
-	}
-
-	async update(id: number, data: Prisma.TaskUpdateInput) {
-		const task = await this.prisma.task.update({
+		await this.prisma.taskCategory.findFirstOrThrow({
 			where: {
-				id: id,
+				id: data.categoryId,
 			},
-			data: data,
-		});
-		return task;
-	}
-
-	async delete(id: number) {
-		const task = await this.prisma.task.delete({
-			where: {
-				id: id,
+			select: {
+				id: true,
 			},
 		});
-		return task;
+		await this.prisma.taskPriority.findFirstOrThrow({
+			where: {
+				code: data.priorityCode,
+			},
+			select: {
+				id: true,
+			},
+		});
+		await this.prisma.taskSeverity.findFirstOrThrow({
+			where: {
+				code: data.severityCode,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		return this.prisma.task.create({
+			select: taskSelector.select,
+			data: {
+				title: data.title,
+				description: data.description,
+				project: {
+					connect: {
+						id: projectId,
+					},
+				},
+				createdBy: {
+					connect: {
+						id: creatorId,
+					},
+				},
+				severity: {
+					connect: {
+						code: data.severityCode,
+					},
+				},
+				priority: {
+					connect: {
+						code: data.priorityCode,
+					},
+				},
+				status: {
+					connect: {
+						id: 1,
+					},
+				},
+				category: {
+					connect: {
+						id: data.categoryId,
+					},
+				},
+				assignedTo: {
+					connect: {
+						id: data.assignedToId,
+					},
+				},
+				...(attachmentData
+					? {
+							attachments: {
+								createMany: {
+									data: attachmentData,
+								},
+							},
+					  }
+					: {}),
+			},
+		});
+	}
+
+	async createTaskCategory(projectId: number, data: CreateTaskCategoryDto) {
+		return this.prisma.taskCategory.create({
+			data: {
+				project: {
+					connect: {
+						id: projectId,
+					},
+				},
+				...data,
+			},
+		});
+	}
+
+	async createInitialData() {
+		//severity
+		await this.prisma.taskSeverity.upsert({
+			where: { code: 'low' },
+			create: {
+				code: 'low',
+				name: 'Low',
+				description: 'Minor issues with low impact',
+				color: '#86AAC1',
+			},
+			update: {},
+		});
+		await this.prisma.taskSeverity.upsert({
+			where: { code: 'medium' },
+			create: {
+				code: 'medium',
+				name: 'Medium',
+				description: 'Major issues with significant impact',
+				color: '#F5CC00',
+			},
+			update: {},
+		});
+		await this.prisma.taskSeverity.upsert({
+			where: { code: 'high' },
+			create: {
+				code: 'high',
+				name: 'High',
+				description: 'Critical issues with very high impact',
+				color: '#A62626',
+			},
+			update: {},
+		});
+		console.log('Task severity objects created.');
+
+		//priority
+		await this.prisma.taskPriority.upsert({
+			where: { code: 'low' },
+			create: {
+				code: 'low',
+				name: 'Low',
+				description: 'Low priority issues',
+				color: '#86AAC1',
+			},
+			update: {},
+		});
+		await this.prisma.taskPriority.upsert({
+			where: { code: 'medium' },
+			create: {
+				code: 'medium',
+				name: 'Medium',
+				description: 'Medium priority issues',
+				color: '#F5CC00',
+			},
+			update: {},
+		});
+		await this.prisma.taskPriority.upsert({
+			where: { code: 'high' },
+			create: {
+				code: 'high',
+				name: 'High',
+				description: 'High priority issues',
+				color: '#A62626',
+			},
+			update: {},
+		});
+		console.log('Task priority objects created.');
+
+		//status
+		await this.prisma.taskStatus.upsert({
+			where: { code: 'assigned' },
+			create: {
+				code: 'assigned',
+				name: 'Assigned',
+				description: 'Issues that are assigned to a user but not being worked on',
+				color: '#86AAC1',
+			},
+			update: {},
+		});
+		await this.prisma.taskStatus.upsert({
+			where: { code: 'in-progress' },
+			create: {
+				code: 'in-progress',
+				name: 'In progress',
+				description: 'Issues that are currently being worked on',
+				color: '#336699',
+			},
+			update: {},
+		});
+		await this.prisma.taskStatus.upsert({
+			where: { code: 'testing' },
+			create: {
+				code: 'testing',
+				name: 'Testing',
+				description: 'Issues that are having their solution test for QA',
+				color: '#FE6C0B',
+			},
+			update: {},
+		});
+		await this.prisma.taskStatus.upsert({
+			where: { code: 'fixed' },
+			create: {
+				code: 'fixed',
+				name: 'Fixed',
+				description: 'Issues that have been resolved',
+				color: '#395A20',
+			},
+			update: {},
+		});
+		await this.prisma.taskStatus.upsert({
+			where: { code: 'rejected' },
+			create: {
+				code: 'rejected',
+				name: 'Rejected',
+				description:
+					'Issues that have been rejected because they were not issues or were a duplicate',
+				color: '#A62626',
+			},
+			update: {},
+		});
+		console.log('Task status objects created.');
 	}
 }

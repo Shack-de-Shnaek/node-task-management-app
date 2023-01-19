@@ -2,7 +2,6 @@
 	import { navigateTo } from "svelte-router-spa";
 	import type { PostData } from "../../../../interfaces/PostData";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
-	import clickOutside from "../utilities/clickOutside";
 	import handleResponse from "../utilities/handleResponse";
 	import parseDate from "../utilities/parseDate";
 	import parseParagraphs from "../utilities/parseParagraphs";
@@ -36,8 +35,7 @@
     }
 </script>
 
-<div class="post-container bg-light {componentClass}" 
-use:clickOutside on:click_outside={() => {showComments = false}}>
+<div class="post-container bg-light {componentClass}">
     <header class="post-header w-100 p-3 pb-1 border-bottom border-2 border-dark">
         <div>
             <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -92,7 +90,7 @@ use:clickOutside on:click_outside={() => {showComments = false}}>
             <div class="attachments p-2 d-flex flex-column gap-1">
                 <h5 class="m-0">Attachments</h5>
                 {#each post.attachments as attachment}
-                    <a href={attachment.path} class="attachment text-primary">{attachment.path.split('/')[3]}</a>
+                    <a href={attachment.path} target="_blank" class="attachment text-primary">{attachment.path.split('/')[3]}</a>
                 {/each}
             </div>
         {/if}

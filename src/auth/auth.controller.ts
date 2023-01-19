@@ -18,7 +18,6 @@ import { CreateUserDto } from 'src/users/user-create.dto';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './localAuth.guard';
-import { SessionAuthGuard } from './sessionAuth.guard';
 
 @Controller('auth')
 export class AuthController {

@@ -90,9 +90,12 @@ model Task {
 	id Int @id @default(autoincrement()) @unique
 	title String @db.VarChar(100)
 	description String @db.Text
-	priority String @db.VarChar(15)
-	severity String @db.VarChar(15)
-	status String @db.VarChar(15)
+	priority TaskPriority @relation(fields: [priorityId], references: [id], onDelete: Restrict)
+	priorityId Int
+	severity TaskSeverity @relation(fields: [severityId], references: [id], onDelete: Restrict)
+	severityId Int
+	status TaskStatus @relation(fields: [statusId], references: [id], onDelete: Restrict)
+	statusId Int
 	createdAt DateTime @default(now())
 	dueAt DateTime?
 	completedAt DateTime?
@@ -112,9 +115,45 @@ model Task {
 model TaskCategory {
 	id Int @id @default(autoincrement()) @unique
 	name String @db.VarChar(15)
+	color String @db.VarChar(7)
 	project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 	projectId Int
 	tasks Task[]
+}
+
+model TaskSeverity {
+	id Int @id @default(autoincrement()) @unique
+	code String @unique
+	name String @db.VarChar(15)
+	description String @db.VarChar(150)
+	color String @db.VarChar(7)
+	tasks Task[]
+}
+
+model TaskStatus {
+	id Int @id @default(autoincrement()) @unique
+	code String @unique
+	name String @db.VarChar(15)
+	description String @db.VarChar(150)
+	color String @db.VarChar(7)
+	tasks Task[]
+}
+
+model TaskPriority {
+	id Int @id @default(autoincrement()) @unique
+	code String @unique
+	name String @db.VarChar(15)
+	description String @db.VarChar(150)
+	color String @db.VarChar(7)
+	tasks Task[]
+}
+
+model TaskAttachment {
+	id Int @id @default(autoincrement()) @unique
+	task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+	taskId Int
+	isImage Boolean @default(false)
+	path String @db.Text
 }
 
 model TaskComment {
@@ -125,12 +164,13 @@ model TaskComment {
 	authorId Int
 	task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
 	taskId Int
+	attachments TaskCommentAttachment[]
 }
 
-model TaskAttachment {
+model TaskCommentAttachment {
 	id Int @id @default(autoincrement()) @unique
-	task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
-	taskId Int
+	taskComment TaskComment @relation(fields: [taskCommentId], references: [id], onDelete: Cascade)
+	taskCommentId Int
 	isImage Boolean @default(false)
 	path String @db.Text
 }

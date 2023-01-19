@@ -15,8 +15,9 @@ export class AuthService {
 				email: email,
 			},
 			true,
+			false,
 		);
-		if (user === null) throw new NotFoundException();
+		if (user === null) throw new NotFoundException('User does not exist');
 		const passwordIsCorrect = await compare(password, user.password);
 		if (passwordIsCorrect) {
 			const { password, ...result } = user;

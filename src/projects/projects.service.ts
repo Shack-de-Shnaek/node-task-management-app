@@ -1,23 +1,33 @@
 import {
 	BadRequestException,
 	ForbiddenException,
+	forwardRef,
+	Inject,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import { Prisma, Project } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
 import { FilesService } from 'src/files/files.service';
 import { CreatePostDto } from 'src/posts/post-create.dto';
 import { PostsService } from 'src/posts/posts.service';
 import { PrismaService } from 'src/prisma.service';
+import { CreateTaskDto } from 'src/tasks/task-create.dto';
+import { CreateTaskCategoryDto } from 'src/tasks/taskCategory-create.dto';
+import { TasksService } from 'src/tasks/tasks.service';
 import { UpdateProjectDto } from './project-update.dto';
 
 @Injectable()
 export class ProjectsService implements ICrudService {
-	constructor(private prisma: PrismaService, private filesService: FilesService, private postsService: PostsService) {}
+	constructor(
+		private prisma: PrismaService,
+		private filesService: FilesService,
+		private postsService: PostsService,
+		@Inject(forwardRef(() => TasksService)) private tasksService: TasksService,
+	) {}
 
-	async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput, raiseException=true) {
+	async get(projectWhereUniqueImport: Prisma.ProjectWhereUniqueInput, raiseException = true) {
 		if (raiseException) {
 			return this.prisma.project.findUniqueOrThrow({
 				select: projectSelector.select,
@@ -96,11 +106,11 @@ export class ProjectsService implements ICrudService {
 
 		await this.prisma.project.findUniqueOrThrow({
 			where: {
-				id: projectId
+				id: projectId,
 			},
 			select: {
 				id: true,
-			}
+			},
 		});
 
 		return this.prisma.project.update({
@@ -253,39 +263,11 @@ export class ProjectsService implements ICrudService {
 			},
 			select: {
 				id: true,
-			}
-		});
-		// await this.postsService.create(data, project.id, authorId);
-		// return this.get({ id: projectId }, false);
-
-		let attachmentData = [];
-		if (data.attachments) {
-			attachmentData = await this.filesService.generateAttachmentFiles(data.attachments);
-		}
-		return this.prisma.project.update({
-			where: {
-				id: projectId
 			},
-			select: projectSelector.select,
-			data: {
-				posts: {
-					create: {
-						authorId: authorId,
-						title: data.title,
-						content: data.content,
-						...(attachmentData
-							? {
-									attachments: {
-										createMany: {
-											data: attachmentData,
-										},
-									},
-							  }
-							: {}),
-					}
-				}
-			}
-		})
+		});
+
+		await this.postsService.create(data, projectId, authorId);
+		return this.get({ id: projectId }, false);
 	}
 
 	async addPostComment(projectId: number, authorId: number, postId: number, content: string) {
@@ -302,7 +284,8 @@ export class ProjectsService implements ICrudService {
 				},
 			},
 		});
-		if (!project.posts.flatMap(post => post.id).includes(postId)) throw new NotFoundException('Post is not in this project');
+		if (!project.posts.flatMap((post) => post.id).includes(postId))
+			throw new NotFoundException('Post is not in this project');
 		await this.postsService.createComment(postId, content, authorId);
 		return this.prisma.project.findUnique({
 			where: {
@@ -310,6 +293,34 @@ export class ProjectsService implements ICrudService {
 			},
 			select: projectSelector.select,
 		});
+	}
+
+	async addTaskCategory(projectId: number, data: CreateTaskCategoryDto) {
+		await this.prisma.project.findUniqueOrThrow({
+			where: {
+				id: projectId,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		await this.tasksService.createTaskCategory(projectId, data);
+		return this.get({ id: projectId });
+	}
+
+	async addTask(projectId: number, creatorId: number, data: CreateTaskDto) {
+		await this.prisma.project.findUniqueOrThrow({
+			where: {
+				id: projectId,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		await this.tasksService.create(data, projectId, creatorId);
+		return this.get({ id: projectId });
 	}
 
 	async delete(id: number) {

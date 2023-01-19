@@ -77,11 +77,11 @@ export class PostsService {
 						content: content,
 						author: {
 							connect: {
-								id: authorId
-							}
+								id: authorId,
+							},
 						},
-					}
-				}
+					},
+				},
 			},
 		});
 	}
@@ -92,7 +92,7 @@ export class PostsService {
 				id: id,
 			},
 			data: data,
-			select: postSelector.select
+			select: postSelector.select,
 		});
 	}
 

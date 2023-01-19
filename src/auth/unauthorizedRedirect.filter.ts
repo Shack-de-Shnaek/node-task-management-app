@@ -10,7 +10,6 @@ import {
 export class UnauthorizedRedirectFilter implements ExceptionFilter {
 	catch(exception: HttpException, host: ArgumentsHost) {
 		const context = host.switchToHttp();
-		const request = context.getRequest();
 		const response = context.getResponse();
 		const status = exception.getStatus();
 

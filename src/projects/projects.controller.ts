@@ -16,6 +16,8 @@ import {
 import { SessionAuthGuard } from 'src/auth/sessionAuth.guard';
 import { CreatePostDto } from 'src/posts/post-create.dto';
 import { PostsService } from 'src/posts/posts.service';
+import { CreateTaskDto } from 'src/tasks/task-create.dto';
+import { CreateTaskCategoryDto } from 'src/tasks/taskCategory-create.dto';
 import { UserEmail } from 'src/users/user-email.dto';
 import { CreateProjectDto } from './project-create.dto';
 import { UpdateProjectDto } from './project-update.dto';
@@ -38,7 +40,7 @@ export class ProjectsController {
 	@Get(':projectId')
 	@HttpCode(200)
 	async get(@Param('projectId', ParseIntPipe) projectId: number) {
-		return this.projectsService.get({ id: projectId })
+		return this.projectsService.get({ id: projectId });
 	}
 
 	@Post()
@@ -69,7 +71,6 @@ export class ProjectsController {
 		@Body(new ValidationPipe()) email: UserEmail,
 		@Param('projectId', ParseIntPipe) projectId: number,
 	) {
-		console.log('add member route')
 		return this.projectsService.addMember(projectId, email.email);
 	}
 
@@ -124,5 +125,26 @@ export class ProjectsController {
 		@Req() request,
 	) {
 		return this.projectsService.addPostComment(projectId, request.user.id, postId, content);
+	}
+
+	@Post(':projectId/task-categories')
+	@HttpCode(201)
+	@UseGuards(ProjectMemberGuard)
+	async addTaskCategory(
+		@Body(new ValidationPipe()) data: CreateTaskCategoryDto,
+		@Param('projectId', ParseIntPipe) projectId: number,
+	) {
+		return this.projectsService.addTaskCategory(projectId, data);
+	}
+
+	@Post(':projectId/tasks')
+	@HttpCode(201)
+	@UseGuards(ProjectMemberGuard)
+	async addTask(
+		@Body(new ValidationPipe()) data: CreateTaskDto,
+		@Param('projectId', ParseIntPipe) projectId: number,
+		@Req() request,
+	) {
+		return this.projectsService.addTask(projectId, request.user.id, data);
 	}
 }
