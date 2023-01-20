@@ -7,25 +7,35 @@ export const taskSelector: { select: Prisma.TaskSelect, orderBy: Prisma.TaskOrde
         description: true,
         category: {
             select: {
+                id: true,
                 name: true,
                 color: true,
             }
         },
         severity: {
             select: {
+                id: true,
+                code: true,
                 name: true,
+                description: true,
                 color: true,
             }
         },
         priority: {
             select: {
+                id: true,
+                code: true,
                 name: true,
+                description: true,
                 color: true,
             }
         },
         status: {
             select: {
+                id: true,
+                code: true,
                 name: true,
+                description: true,
                 color: true,
             }
         },

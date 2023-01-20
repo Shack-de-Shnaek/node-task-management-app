@@ -1,4 +1,5 @@
 import { PostData } from "./PostData";
+import { TaskCategoryData, TaskData } from "./TaskData";
 import { LimitedUserData } from "./UserData";
 
 export type LimitedProjectData = {
@@ -20,6 +21,6 @@ export type ProjectData = {
     admins: LimitedUserData[];
     members: LimitedUserData[];
     posts: PostData[];
-    tasks: [];
-    taskCategories: [];
+    tasks: TaskData[];
+    taskCategories: TaskCategoryData[];
 }

@@ -106,6 +106,38 @@ export class TasksService {
 		});
 	}
 
+	async getTaskSeveritiesPrioritiesStatuses() {
+		const severities = await this.prisma.taskSeverity.findMany({
+			select: {
+				id: true,
+				code: true,
+				name: true,
+				description: true,
+				color: true,
+			},
+		});
+		const priorities = await this.prisma.taskPriority.findMany({
+			select: {
+				id: true,
+				code: true,
+				name: true,
+				description: true,
+				color: true,
+			},
+		});
+		const statuses = await this.prisma.taskStatus.findMany({
+			select: {
+				id: true,
+				code: true,
+				name: true,
+				description: true,
+				color: true,
+			},
+		});
+
+		return { severities: severities, priorities: priorities, statuses: statuses };
+	}
+
 	async createInitialData() {
 		//severity
 		await this.prisma.taskSeverity.upsert({
