@@ -6,6 +6,7 @@ import IndexPage from "./lib/pages/IndexPage.svelte"
 import LoginPage from "./lib/pages/LoginPage.svelte"
 import NewProjectPage from "./lib/pages/NewProjectPage.svelte"
 import ProjectAboutPage from "./lib/pages/projects/ProjectAboutPage.svelte"
+import ProjectNewTaskPage from "./lib/pages/projects/ProjectNewTaskPage.svelte"
 import ProjectPage from "./lib/pages/projects/ProjectPage.svelte"
 import ProjectPostsPage from "./lib/pages/projects/ProjectPostsPage.svelte"
 import ProjectTasksPage from "./lib/pages/projects/ProjectTasksPage.svelte"
@@ -20,12 +21,12 @@ export const routes: Route[] = [
     },
     {
         name: 'login',
-        component: LoginPage
+        component: LoginPage,
     },
     {
         name: 'new-project',
         layout: MainLayout,
-        component: NewProjectPage
+        component: NewProjectPage,
     },
     {
         name: 'projects/:id',
@@ -48,6 +49,10 @@ export const routes: Route[] = [
                 name: 'tasks',
                 component: ProjectTasksPage,
             },
+            {
+                name: 'new-task',
+                component: ProjectNewTaskPage,
+            }
         ]
     },
     {

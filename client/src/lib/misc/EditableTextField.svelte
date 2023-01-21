@@ -40,7 +40,7 @@
 {#if textType === 'span'}
     {#if editMode}
         <form on:submit|preventDefault={() => save()} use:clickOutside on:click_outside={() => { editMode = false }}>
-            <input type="text" class="w-100" bind:value={value}>
+            <input type="text" class="w-100 form-control" bind:value={value}>
             <button type="submit" class="btn btn-success p-1 mt-2">Save</button>
         </form>
     {:else}
@@ -52,7 +52,7 @@
 {:else}
     {#if editMode}
         <form on:submit|preventDefault={() => save()} use:clickOutside on:click_outside={() => { editMode = false }}>
-            <textarea rows="5" class="w-100" bind:value={value} />
+            <textarea rows="5" class="w-100 form-control" bind:value={value} />
             <button type="submit" class="btn btn-success p-1 mt-1">Save</button>
         </form>
     {:else}

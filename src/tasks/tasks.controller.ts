@@ -1,5 +1,7 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, ParseIntPipe, Post, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { SessionAuthGuard } from 'src/auth/sessionAuth.guard';
+import { ProjectMemberGuard } from 'src/projects/projectsMember.guard';
+import { CreateTaskDto } from './task-create.dto';
 import { TasksService } from './tasks.service';
 
 @Controller('api/tasks')

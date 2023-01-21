@@ -8,14 +8,13 @@
     const currentUserIsMember: Writable<boolean> = getContext('currentUserIsMember');
 </script>
 
-<h1 class="mt-3">Posts</h1>
-<div class="post-list w-100 mt- d-flex flex-column align-items-center gap-3">
+<div class="post-list w-100 mt-3 d-flex flex-column align-items-center gap-3">
     {#if $currentUserIsMember}
         <NewPostInput />
     {/if}
     {#key $project.posts}
         {#each $project.posts as post}
-            <Post post={post} />
+            <Post {post} />
         {/each}
     {/key}
 </div>

@@ -125,7 +125,7 @@
         border: none;
     }
 
-    @media only screen and (max-width: 576px) {
+    @media only screen and (max-width: 577px) {
         nav {
             top: unset;
             bottom: 0;

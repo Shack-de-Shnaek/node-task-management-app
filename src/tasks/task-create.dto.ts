@@ -37,6 +37,7 @@ export class CreateTaskDto {
 	dueAt: string;
 
 	@IsInt()
+	@IsOptional()
 	assignedToId: number;
 
 	@IsDataURI({ each: true })

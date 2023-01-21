@@ -137,6 +137,16 @@ export class ProjectsController {
 		return this.projectsService.addTaskCategory(projectId, data);
 	}
 
+	@Delete(':projectId/task-categories/:taskCategoryId')
+	@HttpCode(200)
+	@UseGuards(ProjectMemberGuard)
+	async removeTaskCategory(
+		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('taskCategoryId', ParseIntPipe) taskCategoryId: number,
+	) {
+		return this.projectsService.removeTaskCategory(projectId, taskCategoryId);
+	}
+
 	@Post(':projectId/tasks')
 	@HttpCode(201)
 	@UseGuards(ProjectMemberGuard)

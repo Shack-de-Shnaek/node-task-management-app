@@ -2,12 +2,13 @@
     import type { Writable } from "svelte/store";
 	import { writable } from "svelte/store";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
-    import { currentUserData, headerData } from "../../../store";
+    import { currentUserData, headerData, taskPriorities, taskSeverities, taskStatuses } from "../../../store";
     import { cachedProjects } from "../../../store";
     import { onDestroy, setContext } from "svelte";
     import { Route } from "svelte-router-spa";
     import { project } from "./projectStore";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
+	import getTaskSeveritiesPrioritiesStatuses from "../../utilities/getTaskSeveritiesPrioritiesStatuses";
 
     export let currentRoute;
     export let params;
@@ -68,7 +69,7 @@
                 //     color: '#3485FE'
                 // }
             ]
-        })
+        });
     }
 
     $: if(parseInt(currentRoute.namedParams.id) !== $project.id) {
@@ -95,6 +96,16 @@
         currentUserIsLeader.set($project.leader.id === $currentUserData.id);
         currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
         currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));
+        if($project.tasks) {
+            (async() => {
+                if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
+                    const data = await getTaskSeveritiesPrioritiesStatuses();
+                    taskSeverities.set(data.severities);
+                    taskPriorities.set(data.priorities);
+                    taskStatuses.set(data.statuses);
+                }
+            })();
+        }
     }
 
     onDestroy(() => {

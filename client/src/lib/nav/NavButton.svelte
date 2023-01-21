@@ -64,7 +64,7 @@
         font-size: 1.25rem;
     }
 
-    @media only screen and (max-width: 576px) {
+    @media only screen and (max-width: 577px) {
         .nav-button {
             justify-content: center;
             width: 4rem;

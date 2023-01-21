@@ -65,19 +65,28 @@ export class TasksService {
 						code: data.priorityCode,
 					},
 				},
-				status: {
-					connect: {
-						id: 1,
+				...(!!data.assignedToId ? {
+					assignedTo: {
+						connect: {
+							id: data.assignedToId
+						}
 					},
-				},
+					assignedAt: new Date(),
+					status: {
+						connect: {
+							code: 'assigned'
+						}
+					}
+				} : {
+					status: {
+						connect: {
+							code: 'submitted'
+						}
+					}
+				}),
 				category: {
 					connect: {
 						id: data.categoryId,
-					},
-				},
-				assignedTo: {
-					connect: {
-						id: data.assignedToId,
 					},
 				},
 				...(attachmentData
@@ -206,6 +215,16 @@ export class TasksService {
 		console.log('Task priority objects created.');
 
 		//status
+		await this.prisma.taskStatus.upsert({
+			where: { code: 'submitted' },
+			create: {
+				code: 'submitted',
+				name: 'Submitted',
+				description: 'Issues that are not assigned to any user',
+				color: '#86AAC1',
+			},
+			update: {},
+		});
 		await this.prisma.taskStatus.upsert({
 			where: { code: 'assigned' },
 			create: {

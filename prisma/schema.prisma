@@ -90,12 +90,6 @@ model Task {
 	id Int @id @default(autoincrement()) @unique
 	title String @db.VarChar(100)
 	description String @db.Text
-	priority TaskPriority @relation(fields: [priorityId], references: [id], onDelete: Restrict)
-	priorityId Int
-	severity TaskSeverity @relation(fields: [severityId], references: [id], onDelete: Restrict)
-	severityId Int
-	status TaskStatus @relation(fields: [statusId], references: [id], onDelete: Restrict)
-	statusId Int
 	createdAt DateTime @default(now())
 	dueAt DateTime?
 	completedAt DateTime?
@@ -105,8 +99,14 @@ model Task {
 	projectId Int
 	createdBy User @relation(fields: [createdById], references: [id], name: "createdTask")
 	createdById Int
-	assignedTo User @relation(fields: [assignedToId], references: [id], name: "assignedTask")
-	assignedToId Int
+	assignedTo User? @relation(fields: [assignedToId], references: [id], name: "assignedTask")
+	assignedToId Int?
+	priority TaskPriority @relation(fields: [priorityCode], references: [code], onDelete: Restrict)
+	priorityCode String
+	severity TaskSeverity @relation(fields: [severityCode], references: [code], onDelete: Restrict)
+	severityCode String
+	status TaskStatus @relation(fields: [statusCode], references: [code], onDelete: Restrict)
+	statusCode String @default("submitted")
 	category TaskCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 	categoryId Int
 	comments TaskComment[]

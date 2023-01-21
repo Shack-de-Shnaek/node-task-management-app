@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Task" ALTER COLUMN "priorityCode" DROP DEFAULT,
+ALTER COLUMN "severityCode" DROP DEFAULT;

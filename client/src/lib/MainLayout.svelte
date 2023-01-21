@@ -17,12 +17,14 @@
 
 <style>
 	.main-layout-container {
+		min-height: 100%;
+		height: fit-content;
 		margin-left: 4rem;
 		padding: 0.25rem 0.5rem;
 		padding-bottom: 6rem;
 	}
 
-	@media only screen and (max-width: 576px) {
+	@media only screen and (max-width: 577px) {
 		.main-layout-container {
 			margin-left: 0;
 			margin-bottom: 4rem;

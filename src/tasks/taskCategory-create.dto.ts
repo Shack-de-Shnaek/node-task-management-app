@@ -2,7 +2,7 @@ import { Contains, IsHexColor, IsString, MaxLength, MinLength } from 'class-vali
 
 export class CreateTaskCategoryDto {
 	@IsString()
-	@MinLength(5)
+	@MinLength(3)
 	@MaxLength(15)
 	name: string;
 

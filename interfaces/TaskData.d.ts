@@ -4,15 +4,15 @@ import { LimitedUserData } from "./UserData";
 export type TaskData = {
     id: number;
     title: string;
-    description: true;
+    description: string;
     category: TaskCategoryData,
     status: TaskStatusData,
     severity: TaskSeverityData,
     priority: TaskPriorityData,
     project: LimitedProjectData,
     createdBy: LimitedUserData,
-    attachments: TaskAttachmentData,
-    comments: TaskCommentData,
+    attachments: TaskAttachmentData[],
+    comments: TaskCommentData[],
     assignedTo: LimitedUserData,
     createdAt: string;
     assignedAt: string;
@@ -28,7 +28,7 @@ export type TaskStatusData = {
     id: number;
     code: string;
     name: string;
-    description: true;
+    description: string;
     color: string;
 }
 
@@ -36,7 +36,7 @@ export type TaskSeverityData = {
     id: number;
     code: string;
     name: string;
-    description: true;
+    description: string;
     color: string;
 }
 
@@ -44,12 +44,12 @@ export type TaskPriorityData = {
     id: number;
     code: string;
     name: string;
-    description: true;
+    description: string;
     color: string;
 }
 
 export type TaskCommentData = {
-    id: true,
+    id: number,
     author: LimitedUserData,
     attachments: TaskAttachment[],
     content: string;

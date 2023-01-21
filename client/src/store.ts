@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import type { UserData } from "../../interfaces/UserData";
 import type { ProjectData } from "../../interfaces/ProjectData";
+import type { TaskPriorityData, TaskSeverityData, TaskStatusData } from "../../interfaces/TaskData";
 
 export type headerWidgetType = {
     label: string;
@@ -37,3 +38,7 @@ export const headerData: Writable<headerDataType> = writable({
 })
 
 export const cachedProjects: Writable<{[id: number]: ProjectData}> = writable({})
+
+export const taskSeverities: Writable<TaskSeverityData[]> = writable([]);
+export const taskPriorities: Writable<TaskPriorityData[]> = writable([]);
+export const taskStatuses: Writable<TaskStatusData[]> = writable([]);

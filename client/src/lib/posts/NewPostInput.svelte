@@ -81,15 +81,13 @@
     {#if expanded}
         <form id="new-post-form" class="p-2 d-flex flex-column align-items-center gap-2 bg-light"
         on:submit|preventDefault={() => post()} use:clickOutside on:click_outside={() => { expanded = false }}>
-            <input type="text" required placeholder="Title" class="w-100"
+            <input type="text" required placeholder="Title" class="w-100 form-control"
             bind:value={newPostData.title}>
             
-            <textarea rows="5" class="w-100" 
+            <textarea rows="5" class="w-100 form-control" 
             bind:value={newPostData.content}></textarea>
 
-            <label style="cursor: pointer" for="post-attachment-input" class="jkk"
-            class:text-success={newPostData.attachments !== undefined && newPostData.attachments.length > 0}>Attach files</label>
-            <input type="file" id="post-attachment-input" class="d-none" 
+            <input type="file" id="post-attachment-input" class="form-control" 
             bind:files={newPostData.attachments} multiple={true}>
 
             {#if newPostData.attachments}

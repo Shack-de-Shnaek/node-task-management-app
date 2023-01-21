@@ -52,7 +52,7 @@
         border: none;
     }
 
-    @media only screen and (max-width: 576px) {
+    @media only screen and (max-width: 577px) {
         header {
             width: 100%;
             margin-left: 0rem;

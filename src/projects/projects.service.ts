@@ -309,6 +309,38 @@ export class ProjectsService implements ICrudService {
 		return this.get({ id: projectId });
 	}
 
+	async removeTaskCategory(projectId: number, taskCategoryId: number) {
+		const project = await this.prisma.project.findUniqueOrThrow({
+			where: {
+				id: projectId,
+			},
+			select: {
+				id: true,
+				taskCategories: {
+					select: {
+						id: true,
+					}
+				}
+			}
+		});
+
+		if (!project.taskCategories.flatMap(category => category.id).includes(taskCategoryId)) throw new NotFoundException('Category is not in this project or does not exist');
+
+		return this.prisma.project.update({
+			where: {
+				id: projectId
+			},
+			select: projectSelector.select,
+			data: {
+				taskCategories: {
+					delete: {
+						id: taskCategoryId
+					}
+				}
+			}
+		});
+	}
+
 	async addTask(projectId: number, creatorId: number, data: CreateTaskDto) {
 		await this.prisma.project.findUniqueOrThrow({
 			where: {
