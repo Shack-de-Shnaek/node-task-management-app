@@ -37,8 +37,8 @@ export const headerData: Writable<headerDataType> = writable({
     widgets: []
 })
 
-export const cachedProjects: Writable<{[id: number]: ProjectData}> = writable({})
+interface CachedProjects extends Object {
+    [id: number]: ProjectData,
+}
 
-export const taskSeverities: Writable<TaskSeverityData[]> = writable([]);
-export const taskPriorities: Writable<TaskPriorityData[]> = writable([]);
-export const taskStatuses: Writable<TaskStatusData[]> = writable([]);
+export const cachedProjects: Writable<CachedProjects> = writable({})

@@ -62,7 +62,7 @@ on:submit={(event) => {event.preventDefault(); createProject()}}>
         max-width: 95vw;
         height: 25rem;
         margin: 0 auto;
-        margin-top: 20%;
+        margin-top: 10%;
     }
     
     input {

@@ -10,9 +10,12 @@ import { PostsModule } from 'src/posts/posts.module';
 import { PostsService } from 'src/posts/posts.service';
 import { TasksModule } from 'src/tasks/tasks.module';
 import { TasksService } from 'src/tasks/tasks.service';
+import { ProjectMemberGuard } from './projectsMember.guard';
+import { ProjectAdminGuard } from './projectsAdmin.guard';
+import { ProjectLeaderGuard } from './projectsLeader.guard';
 
 @Module({
-	imports: [UsersModule, forwardRef(() => PostsModule), TasksModule],
+	imports: [UsersModule, forwardRef(() => PostsModule), forwardRef(() => TasksModule)],
 	providers: [
 		ProjectsService,
 		PrismaService,

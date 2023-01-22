@@ -1,6 +1,6 @@
 <script lang="ts">
 	import parseFileSize from "../../utilities/parseFileSize";
-	import { taskPriorities, taskSeverities } from "../../../store";
+	import { taskPriorities, taskSeverities } from "./projectStore";
     import { project } from "./projectStore";
 	import type { Writable } from "svelte/store";
 	import { getContext } from "svelte";

@@ -1,14 +1,15 @@
 <script lang="ts">
-	import getTaskSeveritiesPrioritiesStatuses from "../../utilities/getTaskSeveritiesPrioritiesStatuses";
-	import { taskPriorities, taskSeverities, taskStatuses } from "../../../store";
+	import { taskPriorities, taskSeverities, taskStatuses } from "./projectStore";
 	import { project } from "./projectStore";
 	import type { TaskData } from "../../../../../interfaces/TaskData";
     import Task from "../../tasks/Task.svelte";
+	import { navigateTo } from "svelte-router-spa";
 
-    const tasksByStatus: {
+    let tasksByStatus: {
         [key: string]: TaskData[];
     } = {}
-    $: if($taskStatuses) {
+    $: if($taskStatuses && $taskStatuses.length > 0) {
+        tasksByStatus = {};
         for(const status of $taskStatuses) tasksByStatus[status.code] = [];
         for(const task of $project.tasks) {
             tasksByStatus[task.status.code].push(task);
@@ -20,9 +21,11 @@
     {#each $taskStatuses as taskStatus}
         <div class="task-list" id="task-{taskStatus.code}-list">
             <h3 class="task-header w-100 p-1 text-center" title={taskStatus.description}>{taskStatus.name}</h3>
-            <ul class="list m-0 p-2 pb-5 d-flex flex-column align-items-stretch gap-2 bg-light list-unstyled">
+            <ul class="list m-0 p-0 pb-5 d-flex flex-column align-items-stretch gap-2 list-unstyled">
                 {#each tasksByStatus[taskStatus.code] as task}
-                    <li class="m-0">
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <li class="m-0" style="cursor: pointer;"
+                    on:click={() => { navigateTo(`/tasks/${task.id}`) }}>
                         <Task {task} />
                     </li>
                 {/each}
@@ -37,13 +40,13 @@
     }
 
     .task-list {
-        min-width: 22rem;
+        min-width: 20rem;
         max-width: 95vw;
         height: 100%;
     }
 
     .task-list > .list {
-        box-shadow: var(--container-shadow);
+        /* box-shadow: var(--container-shadow); */
     }
 
     @media only screen and (max-width: 577px) {

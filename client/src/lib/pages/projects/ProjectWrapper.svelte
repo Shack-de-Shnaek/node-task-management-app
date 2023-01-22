@@ -2,10 +2,11 @@
     import type { Writable } from "svelte/store";
 	import { writable } from "svelte/store";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
-    import { currentUserData, headerData, taskPriorities, taskSeverities, taskStatuses } from "../../../store";
+    import { currentUserData, headerData } from "../../../store";
+    import { taskPriorities, taskSeverities, taskStatuses } from "./projectStore"
     import { cachedProjects } from "../../../store";
     import { onDestroy, setContext } from "svelte";
-    import { Route } from "svelte-router-spa";
+    import { navigateTo, Route } from "svelte-router-spa";
     import { project } from "./projectStore";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import getTaskSeveritiesPrioritiesStatuses from "../../utilities/getTaskSeveritiesPrioritiesStatuses";
@@ -63,11 +64,6 @@
                     href: `/projects/${$project.id}/about`,
                     color: '#0dcaf0'
                 },
-                // {
-                //     label: 'Settings',
-                //     href: `/projects/${$project.id}/settings`,
-                //     color: '#3485FE'
-                // }
             ]
         });
     }

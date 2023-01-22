@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { taskSelector } from 'prisma/selectors/taskSelectors';
 import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma.service';
@@ -8,6 +9,23 @@ import { CreateTaskCategoryDto } from './taskCategory-create.dto';
 @Injectable()
 export class TasksService {
 	constructor(private prisma: PrismaService, private filesService: FilesService) {}
+
+	async get(taskWhereUniqueInput: Prisma.TaskWhereUniqueInput, raiseException = true) {
+		if (raiseException) {
+			return this.prisma.task.findUniqueOrThrow({
+				where: {
+					id: taskWhereUniqueInput.id,
+				},
+				select: taskSelector.select,
+			});
+		}
+		return this.prisma.task.findUnique({
+			where: {
+				id: taskWhereUniqueInput.id,
+			},
+			select: taskSelector.select,
+		});
+	}
 
 	async create(data: CreateTaskDto, projectId: number, creatorId: number) {
 		let attachmentData = [];
@@ -65,25 +83,27 @@ export class TasksService {
 						code: data.priorityCode,
 					},
 				},
-				...(!!data.assignedToId ? {
-					assignedTo: {
-						connect: {
-							id: data.assignedToId
-						}
-					},
-					assignedAt: new Date(),
-					status: {
-						connect: {
-							code: 'assigned'
-						}
-					}
-				} : {
-					status: {
-						connect: {
-							code: 'submitted'
-						}
-					}
-				}),
+				...(!!data.assignedToId
+					? {
+							assignedTo: {
+								connect: {
+									id: data.assignedToId,
+								},
+							},
+							assignedAt: new Date(),
+							status: {
+								connect: {
+									code: 'assigned',
+								},
+							},
+					  }
+					: {
+							status: {
+								connect: {
+									code: 'submitted',
+								},
+							},
+					  }),
 				category: {
 					connect: {
 						id: data.categoryId,

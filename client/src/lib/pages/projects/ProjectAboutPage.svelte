@@ -199,23 +199,6 @@
         font-size: 0.75rem !important;
     }
 
-    /* .leader-admins, .member-list {
-        width: fit-content;
-    } */
-
-    #new-member-email-input {
-        background: inherit;
-        border: none;
-        border-bottom: 2px solid var(--dark-gray);
-        outline: none;
-        transition: 0.2s all;
-    }
-
-    #new-member-email-input:focus {
-        border: none;
-        border-bottom: 2px solid var(--bs-primary);
-    }
-
     #change-img-form > * {
         outline: none;
         border: none;
