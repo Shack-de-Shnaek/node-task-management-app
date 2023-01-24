@@ -17,21 +17,29 @@
     }
 </script>
 
-<div class="all-tasks-container w-100 mt-3 pb-5 d-flex gap-3">
-    {#each $taskStatuses as taskStatus}
-        <div class="task-list" id="task-{taskStatus.code}-list">
-            <h3 class="task-header w-100 p-1 text-center" title={taskStatus.description}>{taskStatus.name}</h3>
-            <ul class="list m-0 p-0 pb-5 d-flex flex-column align-items-stretch gap-2 list-unstyled">
-                {#each tasksByStatus[taskStatus.code] as task}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <li class="m-0" style="cursor: pointer;"
-                    on:click={() => { navigateTo(`/tasks/${task.id}`) }}>
-                        <Task {task} />
-                    </li>
-                {/each}
-            </ul>
-        </div>
-    {/each}
+<div class="w-100 h-100 position-relative">
+    <div class="add-button-wrapper text-center position-absolute">
+        <button class="btn btn-success rounded-circle d-flex align-items-center justify-content-center" title="Add a new project"
+        on:click={() => navigateTo(`/projects/${$project.id}/new-task`)}>
+            <img src="/icons/add.png" alt="Add" style="height: 1.25rem; filter: invert(1);">
+        </button>
+    </div>
+    <div class="all-tasks-container w-100 pb-5 d-flex gap-3">
+        {#each $taskStatuses as taskStatus}
+            <div class="task-list" id="task-{taskStatus.code}-list">
+                <h3 class="task-header w-100 p-1 text-center" title={taskStatus.description}>{taskStatus.name}</h3>
+                <ul class="list m-0 p-0 pb-5 d-flex flex-column align-items-stretch gap-2 list-unstyled">
+                    {#each tasksByStatus[taskStatus.code] as task}
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <li class="m-0" style="cursor: pointer;"
+                        on:click={() => { navigateTo(`/tasks/${task.id}`) }}>
+                            <Task {task} />
+                        </li>
+                    {/each}
+                </ul>
+            </div>
+        {/each}
+    </div>
 </div>
 
 <style>
@@ -44,9 +52,15 @@
         max-width: 95vw;
         height: 100%;
     }
+    
+    .add-button-wrapper {
+        left: 0.5rem;
+        top: 0.4rem;
+    }
 
-    .task-list > .list {
-        /* box-shadow: var(--container-shadow); */
+    .add-button-wrapper button {
+        height: 2rem;
+        width: 2rem;
     }
 
     @media only screen and (max-width: 577px) {

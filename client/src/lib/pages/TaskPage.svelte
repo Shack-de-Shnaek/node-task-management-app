@@ -59,7 +59,6 @@
     let images: TaskAttachmentData[] = [];
 
     $: if($task.id !== parseInt(currentRoute.namedParams.id)) {
-        console.log('b')
         getTask();   
         if($task.id !== 0) {
             headerData.set({

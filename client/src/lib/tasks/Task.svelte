@@ -21,7 +21,7 @@
     </header>
     <div class="px-2 py-1">
         {#each parseParagraphs(task.description) as paragraph}
-            <p>{paragraph}</p>
+            <p class="small">{paragraph}</p>
         {/each}
     </div>
     {#if images.length > 0}
