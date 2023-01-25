@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { taskSelector } from 'prisma/selectors/taskSelectors';
 import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma.service';
 import { CreateTaskDto } from './task-create.dto';
+import { UpdateTaskDto } from './task-update.dto';
 import { CreateTaskCategoryDto } from './taskCategory-create.dto';
 
 @Injectable()
@@ -13,16 +14,12 @@ export class TasksService {
 	async get(taskWhereUniqueInput: Prisma.TaskWhereUniqueInput, raiseException = true) {
 		if (raiseException) {
 			return this.prisma.task.findUniqueOrThrow({
-				where: {
-					id: taskWhereUniqueInput.id,
-				},
+				where: { id: taskWhereUniqueInput.id },
 				select: taskSelector.select,
 			});
 		}
 		return this.prisma.task.findUnique({
-			where: {
-				id: taskWhereUniqueInput.id,
-			},
+			where: { id: taskWhereUniqueInput.id },
 			select: taskSelector.select,
 		});
 	}
@@ -34,55 +31,27 @@ export class TasksService {
 		}
 
 		await this.prisma.taskCategory.findFirstOrThrow({
-			where: {
-				id: data.categoryId,
-			},
-			select: {
-				id: true,
-			},
+			where: { id: data.categoryId },
+			select: { id: true },
 		});
 		await this.prisma.taskPriority.findFirstOrThrow({
-			where: {
-				code: data.priorityCode,
-			},
-			select: {
-				id: true,
-			},
+			where: { code: data.priorityCode },
+			select: { id: true },
 		});
 		await this.prisma.taskSeverity.findFirstOrThrow({
-			where: {
-				code: data.severityCode,
-			},
-			select: {
-				id: true,
-			},
+			where: { code: data.severityCode },
+			select: { id: true },
 		});
 
 		return this.prisma.task.create({
 			select: taskSelector.select,
-			data: {
+			data: { 
 				title: data.title,
 				description: data.description,
-				project: {
-					connect: {
-						id: projectId,
-					},
-				},
-				createdBy: {
-					connect: {
-						id: creatorId,
-					},
-				},
-				severity: {
-					connect: {
-						code: data.severityCode,
-					},
-				},
-				priority: {
-					connect: {
-						code: data.priorityCode,
-					},
-				},
+				project: { connect: { id: projectId } },
+				createdBy: { connect: { id: creatorId } },
+				severity: { connect: { code: data.severityCode } },
+				priority: { connect: { code: data.priorityCode } },
 				...(!!data.assignedToId
 					? {
 							assignedTo: {
@@ -104,11 +73,7 @@ export class TasksService {
 								},
 							},
 					  }),
-				category: {
-					connect: {
-						id: data.categoryId,
-					},
-				},
+				category: { connect: { id: data.categoryId } },
 				...(attachmentData
 					? {
 							attachments: {
@@ -125,11 +90,7 @@ export class TasksService {
 	async createTaskCategory(projectId: number, data: CreateTaskCategoryDto) {
 		return this.prisma.taskCategory.create({
 			data: {
-				project: {
-					connect: {
-						id: projectId,
-					},
-				},
+				project: { connect: { id: projectId } },
 				...data,
 			},
 		});
@@ -167,135 +128,196 @@ export class TasksService {
 		return { severities: severities, priorities: priorities, statuses: statuses };
 	}
 
+	async update(taskId: number, data: UpdateTaskDto) {
+		const task = await this.prisma.task.findUnique({
+			where: { id: taskId },
+			select: { id: true, project: { select: { id: true } } },
+		});
+
+		let attachmentData = [];
+		if (data.attachments) {
+			attachmentData = await this.filesService.generateAttachmentFiles(data.attachments);
+			data.attachments = undefined;
+		}
+
+		const severity = await this.prisma.taskSeverity.findUnique({
+			where: { code: data.severityCode, },
+			select: { id: true, },
+		});
+		if (severity === null) throw new NotFoundException('Task severity does not exist');
+
+		const priority = await this.prisma.taskPriority.findUnique({
+			where: { code: data.priorityCode, },
+			select: { id: true, },
+		});
+		if (priority === null) throw new NotFoundException('Task severity does not exist');
+
+		const status = await this.prisma.taskStatus.findUnique({
+			where: { code: data.statusCode, },
+			select: { id: true, },
+		});
+		if (status === null) throw new NotFoundException('Task severity does not exist');
+
+		const category = await this.prisma.taskCategory.findUnique({
+			where: { id: data.categoryId, },
+			select: { id: true, },
+		});
+		if (category === null) throw new NotFoundException('Task severity does not exist');
+
+		return this.prisma.task.update({
+			where: { id: taskId },
+			select: taskSelector.select,
+			data: {
+				title: data.title,
+				description: data.description,
+				...(data.severityCode ? { severity: { connect: { code: data.severityCode } } } : {}),
+				...(data.priorityCode ? { priority: { connect: { code: data.priorityCode } } } : {}),
+				...(data.statusCode ? { status: { connect: { code: data.statusCode } } } : {}),
+				...(data.categoryId ? { category: { connect: { id: data.categoryId } } } : {}),
+				dueAt: data.dueAt,
+				...(attachmentData
+					? {
+							attachments: {
+								createMany: {
+									data: attachmentData,
+								},
+							},
+					  }
+					: {}),
+			},
+		});
+	}
+
 	async createInitialData() {
-		//severity
-		await this.prisma.taskSeverity.upsert({
-			where: { code: 'low' },
-			create: {
-				code: 'low',
-				name: 'Low',
-				description: 'Minor issues with low impact',
-				color: '#86AAC1',
-			},
-			update: {},
-		});
-		await this.prisma.taskSeverity.upsert({
-			where: { code: 'medium' },
-			create: {
-				code: 'medium',
-				name: 'Medium',
-				description: 'Major issues with significant impact',
-				color: '#F5CC00',
-			},
-			update: {},
-		});
-		await this.prisma.taskSeverity.upsert({
-			where: { code: 'high' },
-			create: {
-				code: 'high',
-				name: 'High',
-				description: 'Critical issues with very high impact',
-				color: '#A62626',
-			},
-			update: {},
-		});
-		console.log('Task severity objects created.');
+		await this.prisma.$transaction([
+			//severity
+			this.prisma.taskSeverity.upsert({
+				where: { code: 'low' },
+				create: {
+					code: 'low',
+					name: 'Low',
+					description: 'Minor issues with low impact',
+					color: '#86AAC1',
+				},
+				update: {},
+			}),
+			this.prisma.taskSeverity.upsert({
+				where: { code: 'medium' },
+				create: {
+					code: 'medium',
+					name: 'Medium',
+					description: 'Major issues with significant impact',
+					color: '#F5CC00',
+				},
+				update: {},
+			}),
+			this.prisma.taskSeverity.upsert({
+				where: { code: 'high' },
+				create: {
+					code: 'high',
+					name: 'High',
+					description: 'Critical issues with very high impact',
+					color: '#A62626',
+				},
+				update: {},
+			}),
 
-		//priority
-		await this.prisma.taskPriority.upsert({
-			where: { code: 'low' },
-			create: {
-				code: 'low',
-				name: 'Low',
-				description: 'Low priority issues',
-				color: '#86AAC1',
-			},
-			update: {},
-		});
-		await this.prisma.taskPriority.upsert({
-			where: { code: 'medium' },
-			create: {
-				code: 'medium',
-				name: 'Medium',
-				description: 'Medium priority issues',
-				color: '#F5CC00',
-			},
-			update: {},
-		});
-		await this.prisma.taskPriority.upsert({
-			where: { code: 'high' },
-			create: {
-				code: 'high',
-				name: 'High',
-				description: 'High priority issues',
-				color: '#A62626',
-			},
-			update: {},
-		});
-		console.log('Task priority objects created.');
+			//priority
+			this.prisma.taskPriority.upsert({
+				where: { code: 'low' },
+				create: {
+					code: 'low',
+					name: 'Low',
+					description: 'Low priority issues',
+					color: '#86AAC1',
+				},
+				update: {},
+			}),
+			this.prisma.taskPriority.upsert({
+				where: { code: 'medium' },
+				create: {
+					code: 'medium',
+					name: 'Medium',
+					description: 'Medium priority issues',
+					color: '#F5CC00',
+				},
+				update: {},
+			}),
+			this.prisma.taskPriority.upsert({
+				where: { code: 'high' },
+				create: {
+					code: 'high',
+					name: 'High',
+					description: 'High priority issues',
+					color: '#A62626',
+				},
+				update: {},
+			}),
 
-		//status
-		await this.prisma.taskStatus.upsert({
-			where: { code: 'submitted' },
-			create: {
-				code: 'submitted',
-				name: 'Submitted',
-				description: 'Issues that are not assigned to any user',
-				color: '#86AAC1',
-			},
-			update: {},
-		});
-		await this.prisma.taskStatus.upsert({
-			where: { code: 'assigned' },
-			create: {
-				code: 'assigned',
-				name: 'Assigned',
-				description: 'Issues that are assigned to a user but not being worked on',
-				color: '#86AAC1',
-			},
-			update: {},
-		});
-		await this.prisma.taskStatus.upsert({
-			where: { code: 'in-progress' },
-			create: {
-				code: 'in-progress',
-				name: 'In progress',
-				description: 'Issues that are currently being worked on',
-				color: '#336699',
-			},
-			update: {},
-		});
-		await this.prisma.taskStatus.upsert({
-			where: { code: 'testing' },
-			create: {
-				code: 'testing',
-				name: 'Testing',
-				description: 'Issues that are having their solution test for QA',
-				color: '#FE6C0B',
-			},
-			update: {},
-		});
-		await this.prisma.taskStatus.upsert({
-			where: { code: 'fixed' },
-			create: {
-				code: 'fixed',
-				name: 'Fixed',
-				description: 'Issues that have been resolved',
-				color: '#395A20',
-			},
-			update: {},
-		});
-		await this.prisma.taskStatus.upsert({
-			where: { code: 'rejected' },
-			create: {
-				code: 'rejected',
-				name: 'Rejected',
-				description:
-					'Issues that have been rejected because they were not issues or were a duplicate',
-				color: '#A62626',
-			},
-			update: {},
-		});
-		console.log('Task status objects created.');
+			//status
+			this.prisma.taskStatus.upsert({
+				where: { code: 'submitted' },
+				create: {
+					code: 'submitted',
+					name: 'Submitted',
+					description: 'Issues that are not assigned to any user',
+					color: '#86AAC1',
+				},
+				update: {},
+			}),
+			this.prisma.taskStatus.upsert({
+				where: { code: 'assigned' },
+				create: {
+					code: 'assigned',
+					name: 'Assigned',
+					description: 'Issues that are assigned to a user but not being worked on',
+					color: '#86AAC1',
+				},
+				update: {},
+			}),
+			this.prisma.taskStatus.upsert({
+				where: { code: 'in-progress' },
+				create: {
+					code: 'in-progress',
+					name: 'In progress',
+					description: 'Issues that are currently being worked on',
+					color: '#336699',
+				},
+				update: {},
+			}),
+			this.prisma.taskStatus.upsert({
+				where: { code: 'testing' },
+				create: {
+					code: 'testing',
+					name: 'Testing',
+					description: 'Issues that are having their solution test for QA',
+					color: '#FE6C0B',
+				},
+				update: {},
+			}),
+			this.prisma.taskStatus.upsert({
+				where: { code: 'fixed' },
+				create: {
+					code: 'fixed',
+					name: 'Fixed',
+					description: 'Issues that have been resolved',
+					color: '#395A20',
+				},
+				update: {},
+			}),
+			this.prisma.taskStatus.upsert({
+				where: { code: 'rejected' },
+				create: {
+					code: 'rejected',
+					name: 'Rejected',
+					description:
+						'Issues that have been rejected because they were not issues or were a duplicate',
+					color: '#A62626',
+				},
+				update: {},
+			}),
+		]);
+
+		console.log('Task severity, priority and status objects created.');
 	}
 }

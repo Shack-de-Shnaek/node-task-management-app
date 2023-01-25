@@ -24,7 +24,7 @@
 
     const getProject = async(id: number): Promise<ProjectData | null> => {
         try {
-            const res = await fetch(`/api/projects/${currentRoute.namedParams.id}`);
+            const res = await fetch(`/api/projects/${currentRoute.namedParams.projectId}`);
             if(res.ok) {
                 const projectData = await res.json();
                 return projectData;
@@ -68,13 +68,13 @@
         });
     }
 
-    $: if(parseInt(currentRoute.namedParams.id) !== $project.id) {
-        if($cachedProjects[currentRoute.namedParams.id] !== undefined) {
-            project.set($cachedProjects[currentRoute.namedParams.id]);
+    $: if(parseInt(currentRoute.namedParams.projectId) !== $project.id) {
+        if($cachedProjects[currentRoute.namedParams.projectId] !== undefined) {
+            project.set($cachedProjects[currentRoute.namedParams.projectId]);
             updateHeaderWithProjectData();
         }
         (async() => {
-            const res: ProjectData = await getProject(currentRoute.namedParams.id);
+            const res: ProjectData = await getProject(currentRoute.namedParams.projectId);
             if(res === null) {
                 headerData.set({
                     title: "This project doesn't exist",

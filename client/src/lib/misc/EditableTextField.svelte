@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { cachedProjects } from "../../store";
-	import type { NestError } from "../../../../interfaces/NestError";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
-	import { project } from "../pages/projects/projectStore";
 	import parseParagraphs from "../utilities/parseParagraphs";
 	import updateAllProjectCache from "../utilities/updateProjectCache";
 	import clickOutside from "../utilities/clickOutside";

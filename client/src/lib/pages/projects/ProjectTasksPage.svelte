@@ -32,7 +32,7 @@
                     {#each tasksByStatus[taskStatus.code] as task}
                         <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <li class="m-0" style="cursor: pointer;"
-                        on:click={() => { navigateTo(`/tasks/${task.id}`) }}>
+                        on:click={() => { navigateTo(`/projects/${$project.id}/tasks/${task.id}`) }}>
                             <Task {task} />
                         </li>
                     {/each}
