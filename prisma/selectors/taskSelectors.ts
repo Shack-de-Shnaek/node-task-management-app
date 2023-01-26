@@ -93,6 +93,7 @@ export const taskSelector: { select: Prisma.TaskSelect, orderBy: Prisma.TaskOrde
                 path: true
             }
         },
+        dueAt: true,
     },  
     orderBy: [
         {
@@ -108,5 +109,5 @@ export const taskSelector: { select: Prisma.TaskSelect, orderBy: Prisma.TaskOrde
         {
             createdAt: 'desc'
         }
-    ]
+    ],
 }

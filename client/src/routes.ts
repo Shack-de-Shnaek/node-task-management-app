@@ -13,6 +13,7 @@ import ProjectTasksPage from "./lib/pages/projects/ProjectTasksPage.svelte"
 import ProjectWrapper from "./lib/pages/projects/ProjectWrapper.svelte"
 import ProjectsPage from "./lib/pages/ProjectsPage.svelte"
 import TaskPage from "./lib/pages/projects/TaskPage.svelte"
+import PostsPage from "./lib/pages/PostsPage.svelte"
 
 export const routes: Route[] = [
     {
@@ -64,6 +65,11 @@ export const routes: Route[] = [
         name: 'tasks/:id',
         layout: MainLayout,
         component: TaskPage,
+    },
+    {
+        name: 'posts',
+        layout: MainLayout,
+        component: PostsPage
     },
     {
         name: 'test',

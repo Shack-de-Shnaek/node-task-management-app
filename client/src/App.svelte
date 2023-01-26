@@ -3,9 +3,7 @@
 	import { writable } from 'svelte/store';
 	import { onMount, setContext } from 'svelte';
 	import { routes } from './routes';
-	import { Route } from 'svelte-router-spa';
-	import type { UserData } from '../../interfaces/UserData';
-	import { currentUserData, currentUserHasBeenRequested } from './store';
+	import { currentUserHasBeenRequested } from './store';
 	import getCurrentUser from './lib/utilities/getCurrentUser';
 
 	let windowWidth = writable(0);

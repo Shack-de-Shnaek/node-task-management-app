@@ -2,6 +2,7 @@
 	import { navigateTo } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
 	import type { TaskData } from "../../../../interfaces/TaskData";
+	import calculateTextColor from "../utilities/calculateTextColor";
 	import handleResponse from "../utilities/handleResponse";
 	import parseDate from "../utilities/parseDate";
 	import parseParagraphs from "../utilities/parseParagraphs";
@@ -10,7 +11,7 @@
     export let task: TaskData;
     export let componentClass = '';
     
-    const images = task.attachments.filter(attachment => attachment.isImage);
+    // const images = task.attachments.filter(attachment => attachment.isImage);
 </script>
 
 <div class="task-container bg-light {componentClass}">
@@ -20,11 +21,29 @@
         <div class="small">{parseDate(task.createdAt)}</div>
     </header>
     <div class="px-2 py-1">
-        {#each parseParagraphs(task.description) as paragraph}
-            <p class="small">{paragraph}</p>
-        {/each}
+        <div class="d-flex gap-2">
+            <div class="small">
+                <span>Priority: </span>
+                <span class="rounded-3 p-1" style="background: {task.priority.color}; color: {calculateTextColor(task.priority.color)}">{task.priority.name}</span>
+            </div>
+            <div class="small">
+                <span>Severity: </span>
+                <span class="rounded-3 p-1" style="background: {task.severity.color}; color: {calculateTextColor(task.severity.color)}">{task.priority.name}</span>
+            </div>
+        </div>
+        {#if task.dueAt}
+            <div class="small">
+                <span>Due at: </span>
+                <span>{parseDate(task.dueAt)}</span>
+            </div>
+        {/if}
+        <div class="bug-description">
+            {#each parseParagraphs(task.description) as paragraph}
+                <p class="small">{paragraph}</p>
+            {/each}
+        </div>
     </div>
-    {#if images.length > 0}
+    <!-- {#if images.length > 0}
         <div class="carousel slide" id="task-{task.id}-carousel" data-bs-ride="carousel" data-bs-interval="false">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -47,7 +66,7 @@
                 </button>
             {/if}
         </div>
-    {/if}
+    {/if} -->
 </div>
 
 <style>    

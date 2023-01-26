@@ -11,11 +11,13 @@ export type TaskData = {
     priority: TaskPriorityData,
     project: LimitedProjectData,
     createdBy: LimitedUserData,
+    createdAt: string;
     attachments: TaskAttachmentData[],
     comments: TaskCommentData[],
     assignedTo: LimitedUserData,
     createdAt: string;
     assignedAt: string;
+    dueAt: string;
 }
 
 export type TaskCategoryData = {

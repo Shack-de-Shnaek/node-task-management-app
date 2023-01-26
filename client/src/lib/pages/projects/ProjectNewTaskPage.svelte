@@ -142,6 +142,7 @@
             <label for="task-assigned-to">Assign To</label>
             <select name="task-assigned-to" id="task-assigned-to" class="form-select"
             bind:value={newTaskData.assignedToId}>
+                <option value={null}>Nobody</option>
                 {#each $project.members as member}
                     <option value={member.id}>{member.firstName} {member.lastName}</option>
                 {/each}

@@ -43,6 +43,10 @@ export class UpdateTaskDto {
 	@IsOptional()
 	categoryId: number;
 
+	@IsInt()
+	@IsOptional()
+	assignedToId: number;
+
 	@IsDateString()
 	@IsOptional()
 	dueAt: string;

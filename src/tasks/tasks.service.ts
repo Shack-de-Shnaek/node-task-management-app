@@ -52,6 +52,7 @@ export class TasksService {
 				createdBy: { connect: { id: creatorId } },
 				severity: { connect: { code: data.severityCode } },
 				priority: { connect: { code: data.priorityCode } },
+				dueAt: new Date(data.dueAt),
 				...(!!data.assignedToId
 					? {
 							assignedTo: {
@@ -131,7 +132,7 @@ export class TasksService {
 	async update(taskId: number, data: UpdateTaskDto) {
 		const task = await this.prisma.task.findUnique({
 			where: { id: taskId },
-			select: { id: true, project: { select: { id: true } } },
+			select: { id: true, project: { select: { id: true } }, statusCode: true },
 		});
 
 		let attachmentData = [];
@@ -140,29 +141,45 @@ export class TasksService {
 			data.attachments = undefined;
 		}
 
-		const severity = await this.prisma.taskSeverity.findUnique({
-			where: { code: data.severityCode, },
-			select: { id: true, },
-		});
-		if (severity === null) throw new NotFoundException('Task severity does not exist');
-
-		const priority = await this.prisma.taskPriority.findUnique({
-			where: { code: data.priorityCode, },
-			select: { id: true, },
-		});
-		if (priority === null) throw new NotFoundException('Task severity does not exist');
-
-		const status = await this.prisma.taskStatus.findUnique({
-			where: { code: data.statusCode, },
-			select: { id: true, },
-		});
-		if (status === null) throw new NotFoundException('Task severity does not exist');
-
-		const category = await this.prisma.taskCategory.findUnique({
-			where: { id: data.categoryId, },
-			select: { id: true, },
-		});
-		if (category === null) throw new NotFoundException('Task severity does not exist');
+		if (data.severityCode) {
+			const severity = await this.prisma.taskSeverity.findUnique({
+				where: { code: data.severityCode, },
+				select: { id: true, },
+			});
+			if (severity === null) throw new NotFoundException('Task severity does not exist');
+		}
+		
+		if(data.priorityCode) {
+			const priority = await this.prisma.taskPriority.findUnique({
+				where: { code: data.priorityCode, },
+				select: { id: true, },
+			});
+			if (priority === null) throw new NotFoundException('Task severity does not exist');
+		}
+		
+		if(data.statusCode) {
+			const status = await this.prisma.taskStatus.findUnique({
+				where: { code: data.statusCode, },
+				select: { id: true, },
+			});
+			if (status === null) throw new NotFoundException('Task severity does not exist');
+		}
+		
+		if(data.categoryId) {
+			const category = await this.prisma.taskCategory.findUnique({
+				where: { id: data.categoryId, },
+				select: { id: true, },
+			});
+			if (category === null) throw new NotFoundException('Task severity does not exist');
+		}
+		
+		if(data.assignedToId) {
+			const user = await this.prisma.user.findUnique({
+				where: { id: data.assignedToId },
+				select: { id: true, },
+			});
+			if(user === null) throw new NotFoundException('User does not exist')
+		}
 
 		return this.prisma.task.update({
 			where: { id: taskId },
@@ -174,6 +191,11 @@ export class TasksService {
 				...(data.priorityCode ? { priority: { connect: { code: data.priorityCode } } } : {}),
 				...(data.statusCode ? { status: { connect: { code: data.statusCode } } } : {}),
 				...(data.categoryId ? { category: { connect: { id: data.categoryId } } } : {}),
+				...(data.assignedToId ? {
+					assignedTo: { connect: { id: data.assignedToId } },
+					assignedAt: new Date(),
+					...(task.statusCode === 'submitted' ? { status: { connect: { code: 'assigned' } } } : {})
+				} : {}),
 				dueAt: data.dueAt,
 				...(attachmentData
 					? {

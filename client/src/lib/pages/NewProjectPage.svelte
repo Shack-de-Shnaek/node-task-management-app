@@ -46,12 +46,12 @@
 <form id="new-project-form" class="px-3 py-3 d-flex flex-column align-items-center gap-4 bg-light rounded-1"
 on:submit={(event) => {event.preventDefault(); createProject()}}>
     <h2 class="w-100">Project information</h2>
-    <input type="text" name="project-name" id="name-input" minlength="5" maxlength="100" 
+    <input type="text" name="project-name" id="name-input" class="form-control" minlength="5" maxlength="100" 
     required placeholder="Project name"
     bind:value={newProjectData.name}>
-    <input type="text" name="project-description" id="description-input" minlength="5" 
+    <textarea name="project-description" id="description-input" class="form-control" rows="5" minlength="5" 
     required placeholder="Project description"
-    bind:value={newProjectData.description}>
+    bind:value={newProjectData.description}></textarea>
 
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
@@ -65,23 +65,14 @@ on:submit={(event) => {event.preventDefault(); createProject()}}>
         margin-top: 10%;
     }
     
-    input {
+    input, textarea {
         width: 24rem;
         max-width: 85vw;
-        background-color: inherit;
-        outline: none;
-        border: none;
-        border-bottom: 2px solid var(--dark-gray);
-        transition: 0.2s;
     }
 
     button {
         width: fit-content;
         outline: none !important;
         border: none !important;
-    }
-
-    input:focus, input:hover {
-        border-bottom-color: var(--bs-primary);
     }
 </style>

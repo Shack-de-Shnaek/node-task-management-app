@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { request } from "http";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
     import { project } from "../pages/projects/projectStore";
 	import clickOutside from "../utilities/clickOutside";

@@ -156,16 +156,18 @@ export class UsersService implements ICrudService {
 		});
 	}
 
-	async getPosts(id: number) {
-		return this.prisma.user.findUniqueOrThrow({
+	async getPosts(userId: number) {
+		return this.prisma.post.findMany({
 			where: {
-				id: id,
+				project: {
+					members: {
+						some: {
+							id: userId
+						}
+					}
+				}
 			},
-			select: {
-				posts: {
-					...postSelector,
-				},
-			},
+			...postSelector
 		});
 	}
 }

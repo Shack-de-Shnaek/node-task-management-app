@@ -34,6 +34,12 @@ export class UsersController {
 		return this.usersService.update(request.user.id, data);
 	}
 
+	@Get('posts')
+	@HttpCode(200)
+	async posts(@Req() request) {
+		return this.usersService.getPosts(request.user.id);
+	}
+
 	@Get(':id')
 	@HttpCode(200)
 	async get(
@@ -48,12 +54,5 @@ export class UsersController {
 	@UseGuards(UserExists)
 	async projects(@Param('id', ParseIntPipe, new ValidationPipe()) id: number) {
 		return this.usersService.getProjects(id);
-	}
-
-	@Get(':id/posts')
-	@HttpCode(200)
-	@UseGuards(UserExists)
-	async posts(@Param('id', ParseIntPipe, new ValidationPipe()) id: number) {
-		return this.usersService.getPosts(id);
 	}
 }
