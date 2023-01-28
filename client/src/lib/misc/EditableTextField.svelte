@@ -4,6 +4,8 @@
 	import updateAllProjectCache from "../utilities/updateProjectCache";
 	import clickOutside from "../utilities/clickOutside";
 	import handleResponse from "../utilities/handleResponse";
+	import type { TaskData } from "../../../../interfaces/TaskData";
+	import updateTaskInProjectCache from "../utilities/updateTaskInProjectCache";
 
     export let value: string;
     export let textType: 'span' | 'paragraph' = 'span'
@@ -24,9 +26,18 @@
                 },
                 body: `{"${field}": "${value.replaceAll('\n', '\\n')}"}`
             });
-            handleResponse<ProjectData>(res, (json) => {
-                updateAllProjectCache(json);
-            });
+            switch(module) {
+                case 'projects':
+                    handleResponse<ProjectData>(res, (json) => {
+                        updateAllProjectCache(json);
+                    });
+                    break;
+                case 'tasks':
+                    handleResponse<TaskData>(res, (json) => {
+                        updateTaskInProjectCache(json);
+                    });
+                    break;
+            }
         } catch (e) {
             console.log(e);
             alert('Could not save changes')
@@ -37,7 +48,8 @@
 {#if textType === 'span'}
     {#if editMode}
         <form on:submit|preventDefault={() => save()} use:clickOutside on:click_outside={() => { editMode = false }}>
-            <input type="text" class="w-100 form-control" bind:value={value}>
+            <input type="text" class="w-100 form-control" min="5"
+            bind:value={value}>
             <button type="submit" class="btn btn-success p-1 mt-2">Save</button>
         </form>
     {:else}
@@ -49,7 +61,8 @@
 {:else}
     {#if editMode}
         <form on:submit|preventDefault={() => save()} use:clickOutside on:click_outside={() => { editMode = false }}>
-            <textarea rows="5" class="w-100 form-control" bind:value={value} />
+            <textarea rows="5" class="w-100 form-control" minlength="5"
+            bind:value={value} />
             <button type="submit" class="btn btn-success p-1 mt-1">Save</button>
         </form>
     {:else}

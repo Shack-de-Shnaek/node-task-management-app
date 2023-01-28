@@ -10,6 +10,7 @@
     import { project } from "./projectStore";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import getTaskSeveritiesPrioritiesStatuses from "../../utilities/getTaskSeveritiesPrioritiesStatuses";
+	import updateHeaderWithProjectData from "../../utilities/updateHeaderWithProjectData";
 
     export let currentRoute;
     export let params;
@@ -37,35 +38,19 @@
             // return null;
         }
     }
-    
-    const updateHeaderWithProjectData = () => {
-        headerData.set({
-            title: $project.name,
-            widgets: [
-                {
-                    label: 'Dashboard',
-                    href: `/projects/${$project.id}`,
-                    color: '#3485FE'
-                },    
-                {
-                    label: 'Posts',
-                    value: $project.posts.length,
-                    href: `/projects/${$project.id}/posts`,
-                    color: '#20c997'
-                },
-                {
-                    label: 'Tasks',
-                    value: $project.tasks.length,
-                    href: `/projects/${$project.id}/tasks`,
-                    color: '#fd7e14'
-                },
-                {
-                    label: 'About',
-                    href: `/projects/${$project.id}/about`,
-                    color: '#0dcaf0'
-                },
-            ]
-        });
+
+    $: if($project.id !== 0) {
+        currentUserIsLeader.set($project.leader.id === $currentUserData.id);
+        currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
+        currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));
+        (async() => {
+            if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
+                const data = await getTaskSeveritiesPrioritiesStatuses();
+                taskSeverities.set(data.severities);
+                taskPriorities.set(data.priorities);
+                taskStatuses.set(data.statuses);
+            }
+        })();
     }
 
     $: if(parseInt(currentRoute.namedParams.projectId) !== $project.id) {
@@ -88,21 +73,7 @@
         })();
     }
 
-    $: if($project) {
-        currentUserIsLeader.set($project.leader.id === $currentUserData.id);
-        currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
-        currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));
-        if($project.tasks) {
-            (async() => {
-                if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
-                    const data = await getTaskSeveritiesPrioritiesStatuses();
-                    taskSeverities.set(data.severities);
-                    taskPriorities.set(data.priorities);
-                    taskStatuses.set(data.statuses);
-                }
-            })();
-        }
-    }
+    $: currentRoute.path, updateHeaderWithProjectData();
 
     onDestroy(() => {
         $project.id = 0;

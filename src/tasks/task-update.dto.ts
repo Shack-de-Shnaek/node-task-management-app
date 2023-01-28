@@ -50,7 +50,7 @@ export class UpdateTaskDto {
 	@IsDateString()
 	@IsOptional()
 	dueAt: string;
-	
+
 	@IsDataURI({ each: true })
 	@IsOptional()
 	attachments: string[];

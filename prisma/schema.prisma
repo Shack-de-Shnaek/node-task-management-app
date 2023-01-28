@@ -92,7 +92,7 @@ model Task {
 	description String @db.Text
 	createdAt DateTime @default(now())
 	dueAt DateTime?
-	completedAt DateTime?
+	updatedAt DateTime @updatedAt
 	assignedAt DateTime?
 	attachments TaskAttachment[]
 	project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)

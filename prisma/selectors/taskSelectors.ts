@@ -48,6 +48,7 @@ export const taskSelector: { select: Prisma.TaskSelect, orderBy: Prisma.TaskOrde
             }
         },
         createdAt: true,
+        updatedAt: true,
         assignedTo: {
             select: {
                 id: true,

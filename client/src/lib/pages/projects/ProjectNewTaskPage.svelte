@@ -8,6 +8,7 @@
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import { navigateTo } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
+	import uploadMultipleAttachments from "../../utilities/uploadMultipleAttachments";
 
     const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
 
@@ -32,8 +33,6 @@
     }
 
     const post = async() => {
-        let attachments = [];
-
         if(newTaskData.title.length < 5) {
             alert('Tasks must have a title 5 characters long or longer');
             return;
@@ -59,53 +58,18 @@
             return;
         }
 
-        const request = async() => {
-            try {
-                const res = await fetch(`/api/projects/${$project.id}/tasks`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        title: newTaskData.title,
-                        description: newTaskData.description,
-                        severityCode: newTaskData.severityCode,
-                        priorityCode: newTaskData.priorityCode,
-                        categoryId: newTaskData.categoryId,
-                        assignedToId: newTaskData.assignedToId,
-                        dueAt: newTaskData.dueAt,
-                        attachments: attachments
-                    })
-                });
-                handleResponse<ProjectData>(res, (json) => {
-                    updateAllProjectCache(json)
-                    navigateTo(`/projects/${json.id}/tasks`);
-                });
-            } catch (e) {
-                alert('Could not create task');
-                console.log(e);
-            }
-        }
-
-        const read = async(i=0) => {
-            if(!newTaskData.attachments || newTaskData.attachments.length === 0) {
-                await request();
-                return;
-            }
-            
-            if(i < newTaskData.attachments.length) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    attachments.push(reader.result);
-                    read(i+1);
-                }
-                reader.readAsDataURL(newTaskData.attachments[i]);
-            } else {
-                request();
-            }
-        }
-
-        read();
+        const otherData = {...newTaskData};
+        delete otherData.attachments;
+        await uploadMultipleAttachments<ProjectData>(
+            `/api/projects/${$project.id}/tasks`,
+            'POST',
+            newTaskData.attachments,
+            (data) => {
+                updateAllProjectCache(data);
+                navigateTo(`/projects/${data.id}/tasks`)
+            },
+            otherData
+        );
     }
 </script>
 

@@ -9,7 +9,7 @@
 	export let currentRoute;
 	
 	const getBottomPadding = () => {
-		if(currentRoute.path.startsWith('/projects') && currentRoute.path.includes('tasks')) return 0;
+		if(currentRoute.path.startsWith('/projects') && (currentRoute.path.endsWith('tasks') || currentRoute.path.endsWith('tasks/'))) return 0;
 		return 6;
 	}
 

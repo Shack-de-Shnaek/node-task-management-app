@@ -3,10 +3,8 @@
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
 	import type { TaskData } from "../../../../interfaces/TaskData";
 	import calculateTextColor from "../utilities/calculateTextColor";
-	import handleResponse from "../utilities/handleResponse";
 	import parseDate from "../utilities/parseDate";
 	import parseParagraphs from "../utilities/parseParagraphs";
-	import updateAllProjectCache from "../utilities/updateProjectCache";
 
     export let task: TaskData;
     export let componentClass = '';
@@ -14,7 +12,7 @@
     // const images = task.attachments.filter(attachment => attachment.isImage);
 </script>
 
-<div class="task-container bg-light {componentClass}">
+<div class="task-container w-100 bg-light {componentClass}">
     <div class="w-100 pt-3" style="background-color: {task.category.color}" title={task.category.name}></div>
     <header class="task-header w-100 p-2 pt-1">
         <h5 class="m-0">{task.title}</h5>
@@ -37,8 +35,8 @@
                 <span>{parseDate(task.dueAt)}</span>
             </div>
         {/if}
-        <div class="bug-description">
-            {#each parseParagraphs(task.description) as paragraph}
+        <div class="bug-description mt-1">
+            {#each parseParagraphs(task.description, 200) as paragraph}
                 <p class="small">{paragraph}</p>
             {/each}
         </div>
@@ -71,7 +69,6 @@
 
 <style>    
     .task-container {
-        width: 100%;
         box-shadow: var(--container-shadow);
     }
 

@@ -10,6 +10,13 @@
 	import { getContext } from "svelte";
 	import handleResponse from "../../utilities/handleResponse";
 	import updateTaskInProjectCache from "../../utilities/updateTaskInProjectCache";
+	import EditableTextField from "../../misc/EditableTextField.svelte";
+	import parseDate from "../../utilities/parseDate";
+	import parseFileSize from "../../utilities/parseFileSize";
+	import uploadMultipleAttachments from "../../utilities/uploadMultipleAttachments";
+	import type { ProjectData } from "../../../../../interfaces/ProjectData";
+	import updateAllProjectCache from "../../utilities/updateProjectCache";
+	import { navigateTo } from "svelte-router-spa";
 
     export let currentRoute: CurrentRoute;
     let task: Writable<TaskData> = writable({
@@ -23,6 +30,7 @@
         project: undefined,
         createdBy: undefined,
         createdAt: undefined,
+        updatedAt: undefined,
         assignedTo: undefined,
         assignedAt: undefined,
         attachments: undefined,
@@ -32,6 +40,33 @@
 
     setContext('task', task);
     const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
+    const currentUserIsMember: Writable<boolean> = getContext('currentUserIsMember');
+
+    let images: TaskAttachmentData[] = [];
+    $: if($task.id !== parseInt(currentRoute.namedParams.taskId)) {
+        (async() => {
+            await getTask();
+            images = $task.attachments.filter(attachment => attachment.isImage);
+            if($task.dueAt) newDueAtDate = $task.dueAt;
+            if($task.id !== 0) {
+                headerData.set({
+                    title: 'Task Information',
+                    widgets: [
+                        {
+                            label: 'Project',
+                            href: `/projects/${$task.project.id}`,
+                            color: '#3485FE'
+                        },
+                        {
+                            label: 'All Tasks',
+                            href: `/projects/${$task.project.id}/tasks`,
+                            color: '#fd7e14'
+                        }
+                    ]
+                });
+            }
+        })();
+    }
 
     const getTask = async() => {
         if(!currentRoute.namedParams.taskId || isNaN(parseInt(currentRoute.namedParams.taskId))) {
@@ -64,91 +99,199 @@
         }
     }
 
-    let taskAssignedToId: number;
-    const updateTaskAssignedTo = async() => {
+    let taskNewAttachments: FileList;
+    const uploadAttachments = async() => {
+        await uploadMultipleAttachments<TaskData>(
+            `/api/tasks/${$task.id}`,
+            'PUT',
+            taskNewAttachments,
+            (data) => {
+                updateTaskInProjectCache(data);
+                task.set(data);
+                images = $task.attachments.filter(attachment => attachment.isImage);
+            }
+        );
+    }
+
+    const deleteTask = async() => {
+        if(!confirm('Are you sure you want to delete this task?')) return;
+        
+        try {
+            const res = await fetch(`/api/projects/${$project.id}/tasks/${$task.id}`, {
+                method: 'DELETE',
+            });
+            await handleResponse<ProjectData>(res, (json) => {
+                updateAllProjectCache(json);
+                navigateTo(`/projects/${$project.id}/tasks`);
+            });
+        } catch (e) {
+            console.log(e);
+            alert('Could not delete task');
+        }
+    }
+
+    let newDueAtDate: string;
+    const updateDueAt = async() => {
         try {
             const res = await fetch(`/api/tasks/${$task.id}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ assignedToId: taskAssignedToId })
+                body: JSON.stringify({ dueAt: new Date(newDueAtDate) })
             });
             handleResponse<TaskData>(res, (json) => {
-                task.set(json);
                 updateTaskInProjectCache(json);
+                task.set(json);
             });
         } catch (e) {
             console.log(e);
-            alert('Could not update assigned to user');
+            alert('Could not update due at date');
         }
-    }
-
-    let images: TaskAttachmentData[] = [];
-    $: if($task.id !== parseInt(currentRoute.namedParams.taskId)) {
-        (async() => {
-            await getTask();
-            images = $task.attachments.filter(attachment => attachment.isImage);
-            if($task.id !== 0) {
-                headerData.set({
-                    title: $task.title,
-                    widgets: [
-                        {
-                            label: 'Project',
-                            href: `/projects/${$task.project.id}`,
-                            color: '#3485FE'
-                        },
-                        {
-                            label: 'All Tasks',
-                            href: `/projects/${$task.project.id}/tasks`,
-                            color: '#fd7e14'
-                        }
-                    ]
-                });
-            }
-        })();
     }
 </script>
 
-<div class="task-container w-100 mt-3 p-2 bg-light">
-    <div class="row flex-column flex-sm-row">
-        <div class="task-selector py-1 col-12 col-sm-6 col-lg-4 d-flex align-items-center gap-1">
+<div class="task-container w-100 mt-1 px-3 d-flex flex-column gap-2">
+    <section class="row p-2 bg-light">
+        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-center small">
+            <span>Created At:</span>
+            <span class="date-field p-1 rounded-3 text-light">{parseDate($task.createdAt)}</span>
+        </div>
+        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-center small">
+            <span>Updated At:</span>
+            <span class="date-field p-1 rounded-3 text-light">{parseDate($task.updatedAt)}</span>
+        </div>
+        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-center small">
+            <span>Assigned At:</span>
+            <span class="date-field p-1 rounded-3 text-light">
+                {#if $task.assignedAt}
+                    {parseDate($task.assignedAt)}
+                {:else}
+                    Not Assigned                
+                {/if}
+            </span>
+        </div>
+    </section>
+
+    <section class="row p-2 flex-column flex-sm-row bg-light">
+        <div class="task-selector py-1 col-12 col-sm-6 d-flex align-items-center gap-1">
             <span>Severity</span>
             {#if $taskSeverities.length > 0}
                 <TaskSelectField field='severityCode' options={$taskSeverities} />
             {/if}
         </div>
-        <div class="task-selector py-1 col-12 col-sm-6 col-lg-4 d-flex align-items-center gap-1">
+        <div class="task-selector py-1 col-12 col-sm-6 d-flex align-items-center gap-1">
             <span>Priority</span>
             {#if $taskPriorities.length > 0}
                 <TaskSelectField field='priorityCode' options={$taskPriorities} />
             {/if}
         </div>
-        <div class="task-selector py-1 col-12 col-sm-6 col-lg-4 d-flex align-items-center gap-1">
+        <div class="task-selector py-1 col-12 col-sm-6 d-flex align-items-center gap-1">
             <span>Status</span>
             {#if $project.id !== 0}
                 <TaskSelectField field='statusCode' options={$taskStatuses} />
             {/if}
+        </div>
+        <div class="task-due-date py-1 col-12 col-sm-6 d-flex align-items-center gap-1">
+            <span>Due At</span>
+            <input type="date" name="task-due-date" class="form-control p-1"
+            bind:value={newDueAtDate} on:change={() => {updateDueAt()}}>
         </div>        
-    </div>
-    <div class="row flex-column flex-sm-row">
-        <div class="task-selector py-1 col-12 col-sm-6 col-lg-4 d-flex align-items-center gap-1">
+    </section>
+
+    <section class="row p-2 flex-column flex-sm-row bg-light">
+        <div class="task-selector py-1 col-12 col-sm-6 d-flex align-items-center gap-1">
             <span>Category</span>
             {#if $project.id !== 0}
                 <TaskSelectField field='categoryId' options={$project.taskCategories} />
             {/if}
         </div>
-        <div class="task-selector py-1 col-12 col-sm-6 col-lg-4 d-flex align-items-center gap-1">
+        <div class="task-selector py-1 col-12 col-sm-6 d-flex align-items-center gap-1">
             <span>Assigned To</span>
             {#if $project.id !== 0}
                 <TaskSelectField field='assignedToId' options={$project.members} />
             {/if}
         </div>
-    </div>
+        
+    </section>
+
+    <section class="row p-2 py-3 bg-light">
+        <div class="col-12 col-md-6 col-xl-4">
+            <h3>Attachments</h3>
+            {#if images.length > 0}
+                <div class="carousel slide" id="task-carousel" data-bs-ride="carousel" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src={images[0].path} alt="" class="w-100">
+                        </div>
+                        {#each images.slice(1) as image}
+                            <div class="carousel-item">
+                                <img src={image.path} alt="" class="w-100">
+                            </div>
+                        {/each}
+                    </div>
+                    {#if images.length > 1}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#task-carousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#task-carousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    {/if}
+                </div>
+            {/if}
+            {#if $task.id !== 0 && $task.attachments.filter(attachment => !attachment.isImage).length > 0}
+                <div class="attachments p-2 d-flex flex-column gap-1">
+                    <h5 class="m-0">Attachments</h5>
+                    {#each $task.attachments as attachment}
+                        <a href={attachment.path} target="_blank" rel="noreferrer" class="attachment text-primary">{attachment.path.split('/')[3]}</a>
+                    {/each}
+                </div>
+            {/if}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <form class="mt-2"
+            on:submit|preventDefault={() => {uploadAttachments()}}>
+                <div class="d-flex align-items-center gap-1">
+                    <input type="file" name="task-attachments" id="task-attachments" multiple={true} class="form-control"
+                    bind:files={taskNewAttachments}>
+                    <button type="submit" class="btn btn-success p-1"><small>Submit</small></button>
+                </div>
+                {#if taskNewAttachments}
+                    <div class="d-flex flex-column gap-1">
+                        {#each taskNewAttachments as attachment}
+                            <p class="small m-0">{attachment.name} {parseFileSize(attachment.size)}</p>
+                        {/each}
+                    </div>
+                {/if}
+            </form>
+        </div>
+        <div class="col-12 col-md-6 col-xl-8 d-flex flex-column gap-2">
+            <div>
+                <h3>Name</h3>
+                <EditableTextField allowEditing={$currentUserIsMember} module="tasks" field="title" objectId={$task.id} value={$task.title} />
+            </div>
+            <div>
+                <h3>Description</h3>
+                <EditableTextField allowEditing={$currentUserIsMember} module="tasks" field="description" objectId={$task.id} value={$task.description} textType="paragraph" />
+            </div>
+            <div>
+                <h4>Created By</h4>
+                {#if $task.id !== 0}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <div style="cursor: pointer"
+                    on:click={() => {navigateTo(`/users/${$task.createdBy.id}`)}}>{$task.createdBy.firstName} {$task.createdBy.lastName}</div>
+                {/if}
+            </div>
+            <button class="delete-button btn btn-danger mt-auto ms-auto p-1"
+            on:click={() => deleteTask()}><small>Delete</small></button>
+        </div>
+    </section>
 </div>
 
 <style>
-    .task-container {
+    section {
         box-shadow: var(--container-shadow);
     }
 
@@ -156,7 +299,19 @@
         min-width: 12rem;
     }
 
-    .task-selector span {
+    .task-selector span, .task-due-date span {
         min-width: 27.5%;
+    }
+
+    .date-container {
+        min-width: fit-content;
+    }
+
+    .date-field {
+        background: var(--light-blue);
+    }
+
+    .delete-button {
+        width: fit-content;
     }
 </style>

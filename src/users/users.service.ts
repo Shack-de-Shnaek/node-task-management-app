@@ -162,12 +162,12 @@ export class UsersService implements ICrudService {
 				project: {
 					members: {
 						some: {
-							id: userId
-						}
-					}
-				}
+							id: userId,
+						},
+					},
+				},
 			},
-			...postSelector
+			...postSelector,
 		});
 	}
 }

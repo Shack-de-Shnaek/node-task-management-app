@@ -5,5 +5,8 @@
     "build": "vite build",
     "preview": "vite preview --host",
     "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "vite-plugin-minify": "^1.5.2"
   }
 }

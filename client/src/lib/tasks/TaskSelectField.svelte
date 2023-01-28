@@ -61,7 +61,7 @@
     // const backgroundColor: Writable<string> = writable(getBackgroundColor());
 </script>
 
-<select class="form-select" name={field} 
+<select class="form-select p-1" name={field} 
 disabled={!$currentUserIsAdmin && field === 'assignedToId'} bind:value={value} 
 on:change={() => updateTask()}>
     {#each options as option}

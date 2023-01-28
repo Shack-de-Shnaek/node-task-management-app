@@ -129,7 +129,7 @@ export class ProjectsController {
 
 	@Post(':projectId/task-categories')
 	@HttpCode(201)
-	@UseGuards(ProjectMemberGuard)
+	@UseGuards(ProjectAdminGuard)
 	async addTaskCategory(
 		@Body(new ValidationPipe()) data: CreateTaskCategoryDto,
 		@Param('projectId', ParseIntPipe) projectId: number,
@@ -139,7 +139,7 @@ export class ProjectsController {
 
 	@Delete(':projectId/task-categories/:taskCategoryId')
 	@HttpCode(200)
-	@UseGuards(ProjectMemberGuard)
+	@UseGuards(ProjectAdminGuard)
 	async removeTaskCategory(
 		@Param('projectId', ParseIntPipe) projectId: number,
 		@Param('taskCategoryId', ParseIntPipe) taskCategoryId: number,
@@ -156,5 +156,15 @@ export class ProjectsController {
 		@Req() request,
 	) {
 		return this.projectsService.addTask(projectId, request.user.id, data);
+	}
+
+	@Delete(':projectId/tasks/:taskId')
+	@HttpCode(200)
+	@UseGuards(ProjectMemberGuard)
+	async removeTask(
+		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('taskId', ParseIntPipe) taskId: number,
+	) {
+		return this.projectsService.removeTask(projectId, taskId);
 	}
 }

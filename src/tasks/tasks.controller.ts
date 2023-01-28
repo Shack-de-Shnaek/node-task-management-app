@@ -33,7 +33,10 @@ export class TasksController {
 
 	@Put(':taskId')
 	@UseGuards(ProjectMemberGuard)
-	async updateTask(@Param('taskId', ParseIntPipe) taskId: number, @Body(new ValidationPipe()) data: UpdateTaskDto) {
+	async updateTask(
+		@Param('taskId', ParseIntPipe) taskId: number,
+		@Body(new ValidationPipe()) data: UpdateTaskDto,
+	) {
 		return this.tasksService.update(taskId, data);
 	}
 }

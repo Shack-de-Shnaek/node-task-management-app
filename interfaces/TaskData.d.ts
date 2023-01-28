@@ -12,6 +12,7 @@ export type TaskData = {
     project: LimitedProjectData,
     createdBy: LimitedUserData,
     createdAt: string;
+    updatedAt: string;
     attachments: TaskAttachmentData[],
     comments: TaskCommentData[],
     assignedTo: LimitedUserData,

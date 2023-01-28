@@ -356,6 +356,20 @@ export class ProjectsService implements ICrudService {
 		return this.get({ id: projectId });
 	}
 
+	async removeTask(projectId: number, taskId: number) {
+		const project = await this.prisma.project.findUniqueOrThrow({
+			where: { id: projectId },
+			select: { id: true, tasks: { select: { id: true } } },
+		});
+
+		if (!project.tasks.flatMap((task) => task.id).includes(taskId))
+			throw new NotFoundException('Task does not exist');
+
+		await this.tasksService.deleteTask(taskId);
+
+		return this.get({ id: projectId });
+	}
+
 	async delete(id: number) {
 		return this.prisma.project.delete({
 			where: {
