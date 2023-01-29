@@ -51,7 +51,7 @@ export class ProjectsController {
 			...body,
 			leaderId: leaderId,
 		};
-		return this.projectsService.create(data);
+		return this.projectsService.create(request.user.id, data);
 	}
 
 	@Put(':projectId')

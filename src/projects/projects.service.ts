@@ -16,10 +16,11 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateTaskDto } from 'src/tasks/task-create.dto';
 import { CreateTaskCategoryDto } from 'src/tasks/taskCategory-create.dto';
 import { TasksService } from 'src/tasks/tasks.service';
+import { CreateProjectDto } from './project-create.dto';
 import { UpdateProjectDto } from './project-update.dto';
 
 @Injectable()
-export class ProjectsService implements ICrudService {
+export class ProjectsService {
 	constructor(
 		private prisma: PrismaService,
 		private filesService: FilesService,
@@ -53,24 +54,30 @@ export class ProjectsService implements ICrudService {
 		});
 	}
 
-	async create(data: { leaderId: number; name: string; description: string }) {
+	async create(leaderId: number, data: CreateProjectDto) {
+		let thumbnailPath: string;
+		if (data.thumbnail) {
+			thumbnailPath = await this.filesService.generateThumbnailFile(data.thumbnail);
+		}
+		
 		return this.prisma.project.create({
 			data: {
 				name: data.name,
 				description: data.description,
+				...(thumbnailPath !== undefined ? { thumbnailPath: thumbnailPath } : {}),
 				leader: {
 					connect: {
-						id: data.leaderId,
+						id: leaderId,
 					},
 				},
 				members: {
 					connect: {
-						id: data.leaderId,
+						id: leaderId,
 					},
 				},
 				admins: {
 					connect: {
-						id: data.leaderId,
+						id: leaderId,
 					},
 				},
 			},

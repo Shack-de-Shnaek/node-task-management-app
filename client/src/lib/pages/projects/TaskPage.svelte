@@ -47,7 +47,7 @@
         (async() => {
             await getTask();
             images = $task.attachments.filter(attachment => attachment.isImage);
-            if($task.dueAt) newDueAtDate = $task.dueAt;
+            if($task.dueAt) newDueAtDate = new Date($task.dueAt).toISOString().split('T')[0];
             if($task.id !== 0) {
                 headerData.set({
                     title: 'Task Information',
@@ -138,7 +138,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ dueAt: new Date(newDueAtDate) })
+                body: JSON.stringify({ dueAt: new Date(newDueAtDate).toISOString() })
             });
             handleResponse<TaskData>(res, (json) => {
                 updateTaskInProjectCache(json);
@@ -153,15 +153,15 @@
 
 <div class="task-container w-100 mt-1 px-3 d-flex flex-column gap-2">
     <section class="row p-2 bg-light">
-        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-center small">
+        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-start text-md-center small">
             <span>Created At:</span>
             <span class="date-field p-1 rounded-3 text-light">{parseDate($task.createdAt)}</span>
         </div>
-        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-center small">
+        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-start text-md-center small">
             <span>Updated At:</span>
             <span class="date-field p-1 rounded-3 text-light">{parseDate($task.updatedAt)}</span>
         </div>
-        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-center small">
+        <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-start text-md-center small">
             <span>Assigned At:</span>
             <span class="date-field p-1 rounded-3 text-light">
                 {#if $task.assignedAt}
@@ -216,7 +216,7 @@
     </section>
 
     <section class="row p-2 py-3 bg-light">
-        <div class="col-12 col-md-6 col-xl-4">
+        <div class="col-12 col-md-6 col-xl-4 pb-3">
             <h3>Attachments</h3>
             {#if images.length > 0}
                 <div class="carousel slide" id="task-carousel" data-bs-ride="carousel" data-bs-interval="false">
