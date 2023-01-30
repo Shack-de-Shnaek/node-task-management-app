@@ -54,7 +54,7 @@ export type TaskPriorityData = {
 export type TaskCommentData = {
     id: number,
     author: LimitedUserData,
-    attachments: TaskAttachment[],
+    attachments: TaskAttachmentData[],
     content: string;
     createdAt: string;
 }

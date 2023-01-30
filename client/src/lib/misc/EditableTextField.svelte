@@ -16,6 +16,15 @@
 
     let editMode = false;
 
+    let paragraphContainerHeight: number;
+    let textAreaHeight: number;
+    const editTextArea = (event: MouseEvent) => {
+        if(!allowEditing) return;
+        // console.log(paragraphContainerHeight)
+        // textAreaHeight = paragraphContainerHeight;
+        editMode = true;
+    }
+
     const save = async() => {
         editMode = false;
         try {
@@ -61,16 +70,14 @@
 {:else}
     {#if editMode}
         <form on:submit|preventDefault={() => save()} use:clickOutside on:click_outside={() => { editMode = false }}>
-            <textarea rows="5" class="w-100 form-control" minlength="5"
-            bind:value={value} />
+            <textarea rows={paragraphContainerHeight/16} class="w-100 form-control" minlength="5"
+            bind:value={value}  />
             <button type="submit" class="btn btn-success p-1 mt-1">Save</button>
         </form>
     {:else}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         {#if value}
-            <div on:click={() => {
-                if(allowEditing) editMode = true
-            }}>
+            <div on:click={editTextArea} bind:offsetHeight={paragraphContainerHeight}>
                 {#each parseParagraphs(value) as paragraph}
                     <p class="mb-1">{paragraph}</p>
                 {/each}

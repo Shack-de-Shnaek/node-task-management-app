@@ -41,30 +41,6 @@
             {/each}
         </div>
     </div>
-    <!-- {#if images.length > 0}
-        <div class="carousel slide" id="task-{task.id}-carousel" data-bs-ride="carousel" data-bs-interval="false">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src={images[0].path} alt="" class="w-100">
-                </div>
-                {#each images.slice(1) as image}
-                    <div class="carousel-item">
-                        <img src={image.path} alt="" class="w-100">
-                    </div>
-                {/each}
-            </div>
-            {#if images.length > 1}
-                <button class="carousel-control-prev" type="button" data-bs-target="#task-{task.id}-carousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#task-{task.id}-carousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            {/if}
-        </div>
-    {/if} -->
 </div>
 
 <style>    

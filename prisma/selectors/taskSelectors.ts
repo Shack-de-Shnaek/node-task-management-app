@@ -86,6 +86,9 @@ export const taskSelector: { select: Prisma.TaskSelect, orderBy: Prisma.TaskOrde
                 content: true,
                 createdAt: true
             },
+            orderBy: {
+                createdAt: 'desc'
+            }
         },
         attachments: {
             select: {

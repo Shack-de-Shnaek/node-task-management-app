@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateTaskDto } from './task-create.dto';
 import { UpdateTaskDto } from './task-update.dto';
 import { CreateTaskCategoryDto } from './taskCategory-create.dto';
+import { CreateTaskCommentDto } from './taskComment-create.dto';
 
 @Injectable()
 export class TasksService {
@@ -127,6 +128,47 @@ export class TasksService {
 		});
 
 		return { severities: severities, priorities: priorities, statuses: statuses };
+	}
+
+	async createComment(taskId: number, authorId: number, data: CreateTaskCommentDto) {
+		await this.prisma.task.findUniqueOrThrow({
+			where: { id: taskId },
+			select: { id: true },
+		});
+		
+		let attachments = [];
+		if (data.attachments) {
+
+			attachments = await this.filesService.generateAttachmentFiles(data.attachments);
+		}
+
+		await this.prisma.taskComment.create({
+			select: { id: true },
+			data: {
+				content: data.content,
+				author: {
+					connect: {
+						id: authorId,
+					}
+				},
+				task: {
+					connect: {
+						id: taskId,
+					}
+				},
+				...(attachments
+					? {
+						attachments: {
+							createMany: {
+								data: attachments,
+							},
+						},
+					}
+					: {}),
+			}
+		});
+
+		return this.get({ id: taskId });
 	}
 
 	async update(taskId: number, data: UpdateTaskDto) {

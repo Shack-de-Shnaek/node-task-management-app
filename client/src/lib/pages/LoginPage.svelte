@@ -43,7 +43,7 @@
             if(res.ok) {
                 const json = await res.json();
                 getCurrentUser();
-                navigateTo('/');
+                window.location.pathname = '/';
             } else if(res.status === 404) {
                 alert('That user does not exist');
             } else if(res.status === 401) {

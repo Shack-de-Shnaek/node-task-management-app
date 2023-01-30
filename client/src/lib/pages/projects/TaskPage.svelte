@@ -17,6 +17,7 @@
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import { navigateTo } from "svelte-router-spa";
+	import parseParagraphs from "../../utilities/parseParagraphs";
 
     export let currentRoute: CurrentRoute;
     let task: Writable<TaskData> = writable({
@@ -148,6 +149,27 @@
             console.log(e);
             alert('Could not update due at date');
         }
+    }
+
+    let newCommentData: { content: string, attachments: FileList } = {
+        content: '',
+        attachments: undefined,
+    }
+    const postComment = async() => {
+        uploadMultipleAttachments<TaskData>(
+            `/api/tasks/${$task.id}/comments`,
+            'POST',
+            newCommentData.attachments,
+            (data) => {
+                updateTaskInProjectCache(data);
+                task.set(data);
+                newCommentData = {
+                    content: '',
+                    attachments: undefined,
+                }
+            },
+            { content: newCommentData.content }
+        );
     }
 </script>
 
@@ -288,6 +310,53 @@
             on:click={() => deleteTask()}><small>Delete</small></button>
         </div>
     </section>
+
+    <section class="row p-2 py-3 bg-light">
+        <form class="w-100"
+        on:submit|preventDefault={() => { postComment() }}>
+            <textarea name="task-comment-content" rows="3" placeholder="New Comment" class="form-control"
+            bind:value={newCommentData.content}></textarea>
+            
+            <div class="d-flex mt-1 align-items-center gap-1">
+                <input type="file" name="task-comment-attachment" class="form-control"
+                bind:files={newCommentData.attachments}>
+            
+                <button type="submit" class="btn btn-success p-1">
+                    <small>Post</small>
+                </button>
+            </div>
+        </form>
+        <div class="comment-list mt-3 d-flex flex-column gap-2">
+            {#if $task.id !== 0}
+                {#each $task.comments as comment}
+                    <div class="comment w-100">
+                        <div class="d-flex justify-content-between gap-0 justify-content-md-start gap-md-5 ">
+                            <span class="">
+                                {#if comment.author.thumbnailPath}
+                                    <img src={comment.author.thumbnailPath} alt="" style="height: 1rem;" class="rounded-circle">
+                                {/if}
+                                <span>{comment.author.firstName} {comment.author.lastName}</span>
+                            </span>
+                            <span class="">{parseDate(comment.createdAt)}</span>
+                        </div>
+                        <div class="w-100 rounded-3 p-1 comment-content">
+                            {#each parseParagraphs(comment.content) as paragraph}
+                                <p class="m-0">{paragraph}</p>
+                            {/each}
+                        </div>
+                        {#if comment.attachments.length > 0}
+                            <div class="comment-attachments mt-1">
+                                <h6 class="m-0">Attachments: </h6>
+                                {#each comment.attachments as attachment}
+                                    <a href={attachment.path} target="_blank" rel="noreferrer" class="small">{attachment.path}</a>
+                                {/each}
+                            </div>
+                        {/if}
+                    </div>
+                {/each}
+            {/if}
+        </div>
+    </section>
 </div>
 
 <style>
@@ -313,5 +382,9 @@
 
     .delete-button {
         width: fit-content;
+    }
+
+    .comment-content {
+        background: var(--light-gray);
     }
 </style>

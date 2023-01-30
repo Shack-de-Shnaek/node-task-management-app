@@ -101,7 +101,7 @@
             {:else}
                 <form class="d-flex gap-1"
                 on:submit|preventDefault={() => { postComment() }}>
-                    <textarea cols="3" name="content" placeholder="New Comment" class="w-100"
+                    <textarea cols="3" name="content" placeholder="New Comment" class="w-100 form-control"
                     bind:value={newCommentContent}></textarea>
                     <button type="submit" class="btn btn-success p-1" style="font-size: 0.75rem;">Post</button>
                 </form>
