@@ -324,15 +324,21 @@ export class ProjectsService {
 			select: {
 				id: true,
 				taskCategories: {
-					select: {
-						id: true,
-					},
+					select: { id: true },
 				},
 			},
 		});
 
 		if (!project.taskCategories.flatMap((category) => category.id).includes(taskCategoryId))
 			throw new NotFoundException('Category is not in this project or does not exist');
+
+		const taskCount = await this.prisma.task.aggregate({
+			_count: true,
+			where: { projectId: projectId, categoryId: taskCategoryId }
+		});
+
+		if (taskCount._count > 0)
+			throw new BadRequestException(`You cannot delete that category because ${taskCount._count} task(s) are using it`);
 
 		return this.prisma.project.update({
 			where: {

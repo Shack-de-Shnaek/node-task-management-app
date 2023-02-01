@@ -238,7 +238,7 @@
     </section>
 
     <section class="row p-2 py-3 bg-light">
-        <div class="col-12 col-md-6 col-xl-4 pb-3">
+        <div class="col-12 col-md-5 col-xl-4 pb-3">
             <h3>Attachments</h3>
             {#if images.length > 0}
                 <div class="carousel slide" id="task-carousel" data-bs-ride="carousel" data-bs-interval="false">
@@ -289,7 +289,7 @@
                 {/if}
             </form>
         </div>
-        <div class="col-12 col-md-6 col-xl-8 d-flex flex-column gap-2">
+        <div class="col-12 col-md-7 col-xl-8 d-flex flex-column gap-2">
             <div>
                 <h3>Name</h3>
                 <EditableTextField allowEditing={$currentUserIsMember} module="tasks" field="title" objectId={$task.id} value={$task.title} />
@@ -341,12 +341,12 @@
                         </div>
                         <div class="w-100 rounded-3 p-1 comment-content">
                             {#each parseParagraphs(comment.content) as paragraph}
-                                <p class="m-0">{paragraph}</p>
+                                <p class="mb-1">{paragraph}</p>
                             {/each}
                         </div>
                         {#if comment.attachments.length > 0}
                             <div class="comment-attachments mt-1">
-                                <h6 class="m-0">Attachments: </h6>
+                                <h6 class="m-0">Attachments </h6>
                                 {#each comment.attachments as attachment}
                                     <a href={attachment.path} target="_blank" rel="noreferrer" class="small">{attachment.path}</a>
                                 {/each}

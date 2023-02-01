@@ -37,7 +37,7 @@
         {/if}
         <div class="bug-description mt-1">
             {#each parseParagraphs(task.description, 200) as paragraph}
-                <p class="small">{paragraph}</p>
+                <p class="small mb-1">{paragraph}</p>
             {/each}
         </div>
     </div>
