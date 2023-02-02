@@ -39,20 +39,6 @@
         }
     }
 
-    $: if($project.id !== 0) {
-        currentUserIsLeader.set($project.leader.id === $currentUserData.id);
-        currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
-        currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));
-        (async() => {
-            if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
-                const data = await getTaskSeveritiesPrioritiesStatuses();
-                taskSeverities.set(data.severities);
-                taskPriorities.set(data.priorities);
-                taskStatuses.set(data.statuses);
-            }
-        })();
-    }
-
     $: if(parseInt(currentRoute.namedParams.projectId) !== $project.id) {
         if($cachedProjects[currentRoute.namedParams.projectId] !== undefined) {
             project.set($cachedProjects[currentRoute.namedParams.projectId]);
@@ -70,8 +56,33 @@
             }
             updateAllProjectCache(res);
             updateHeaderWithProjectData();
+
+            currentUserIsLeader.set($project.leader.id === $currentUserData.id);
+            currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
+            currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));        
+
+            if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
+                const data = await getTaskSeveritiesPrioritiesStatuses();
+                taskSeverities.set(data.severities);
+                taskPriorities.set(data.priorities);
+                taskStatuses.set(data.statuses);
+            }
         })();
     }
+
+    // $: if($project.id !== 0) {
+    //     currentUserIsLeader.set($project.leader.id === $currentUserData.id);
+    //     currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
+    //     currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));
+    //     (async() => {
+    //         if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
+    //             const data = await getTaskSeveritiesPrioritiesStatuses();
+    //             taskSeverities.set(data.severities);
+    //             taskPriorities.set(data.priorities);
+    //             taskStatuses.set(data.statuses);
+    //         }
+    //     })();
+    // }
 
     $: currentRoute.path, updateHeaderWithProjectData();
 

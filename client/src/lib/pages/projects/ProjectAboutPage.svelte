@@ -104,7 +104,7 @@
 </script>
 
 <h2 class="mt-3">About Project</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light ">
+<section class="container-fluid row m-0 p-2 pt-3 bg-light">
     <div class="col-2 col-sm-1 project-img-container px-xl-4 px-m-2 px-0">
         <img src={$project.thumbnailPath?$project.thumbnailPath:'/icons/project.png'} alt="project" class="project-img w-100 rounded-3">
         {#if $currentUserIsAdmin}
