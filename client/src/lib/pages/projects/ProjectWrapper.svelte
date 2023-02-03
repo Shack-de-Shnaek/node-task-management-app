@@ -70,20 +70,6 @@
         })();
     }
 
-    // $: if($project.id !== 0) {
-    //     currentUserIsLeader.set($project.leader.id === $currentUserData.id);
-    //     currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
-    //     currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));
-    //     (async() => {
-    //         if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
-    //             const data = await getTaskSeveritiesPrioritiesStatuses();
-    //             taskSeverities.set(data.severities);
-    //             taskPriorities.set(data.priorities);
-    //             taskStatuses.set(data.statuses);
-    //         }
-    //     })();
-    // }
-
     $: currentRoute.path, updateHeaderWithProjectData();
 
     onDestroy(() => {

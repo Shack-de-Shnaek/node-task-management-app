@@ -56,10 +56,23 @@
                     datasets: [
                         {
                             label: 'Tasks',
-                            data: datasetValues
+                            data: datasetValues,
+                            backgroundColor: colors,
                         }
-                    ]
+                    ],
                 },
+                options: {
+                    responsive: true,
+                    // rotation: 180,
+                    maintainAspectRatio: true,
+                    aspectRatio: 3/2,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start'
+                        },
+                    }
+                }
             });
         } catch (error) {
             
@@ -78,6 +91,19 @@
     }
 </script>
 
-<div class="pie-chart-container w-100 m-0">
+<div class="pie-chart-container position-relative m-0">
     <canvas id="{categorizeBy}-pie-chart" bind:this={element}></canvas>
 </div>
+
+<style>
+    div {
+        min-width: min-content;
+        min-height: min-content;
+        width: 80%;
+    }
+
+    canvas {
+        min-width: 10rem;
+        min-height: 10rem;
+    }
+</style>

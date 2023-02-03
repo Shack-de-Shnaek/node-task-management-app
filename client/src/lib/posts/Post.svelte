@@ -45,7 +45,7 @@
                     <img src={post.author.thumbnailPath} alt="" class="rounded-circle" style="height: 2rem;">
                 {/if}
                 <div>{post.author.firstName} {post.author.lastName}</div>
-                <div class="small">{parseDate(post.createdAt)}</div>
+                <div class="small font-monospace">{parseDate(post.createdAt)}</div>
             </span>
             {#if !isInProjectPage}
                 {#if post.project.thumbnailPath}

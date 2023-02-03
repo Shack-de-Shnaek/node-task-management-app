@@ -130,7 +130,7 @@
         </div>
         <div>
             <h4>Created On: </h4>
-            <p>{parseDate($project.createdAt)}</p>
+            <p class="font-monospace">{parseDate($project.createdAt)}</p>
         </div>
     </div>
 </section>

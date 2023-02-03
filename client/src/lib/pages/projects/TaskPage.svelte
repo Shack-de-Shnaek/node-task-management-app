@@ -177,15 +177,15 @@
     <section class="row p-2 bg-light">
         <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-start text-md-center small">
             <span>Created At:</span>
-            <span class="date-field p-1 rounded-3 text-light">{parseDate($task.createdAt)}</span>
+            <span class="date-field font-monospace p-1 rounded-3 text-light">{parseDate($task.createdAt)}</span>
         </div>
         <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-start text-md-center small">
             <span>Updated At:</span>
-            <span class="date-field p-1 rounded-3 text-light">{parseDate($task.updatedAt)}</span>
+            <span class="date-field font-monospace p-1 rounded-3 text-light">{parseDate($task.updatedAt)}</span>
         </div>
         <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-start text-md-center small">
             <span>Assigned At:</span>
-            <span class="date-field p-1 rounded-3 text-light">
+            <span class="date-field font-monospace p-1 rounded-3 text-light">
                 {#if $task.assignedAt}
                     {parseDate($task.assignedAt)}
                 {:else}

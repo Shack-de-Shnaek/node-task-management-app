@@ -16,7 +16,7 @@
     <div class="w-100 pt-3" style="background-color: {task.category.color}" title={task.category.name}></div>
     <header class="task-header w-100 p-2 pt-1">
         <h5 class="m-0">{task.title}</h5>
-        <div class="small">{parseDate(task.createdAt)}</div>
+        <div class="small font-monospace">{parseDate(task.createdAt)}</div>
     </header>
     <div class="px-2 py-1">
         <div class="d-flex gap-2">
@@ -32,7 +32,7 @@
         {#if task.dueAt}
             <div class="small">
                 <span>Due at: </span>
-                <span>{parseDate(task.dueAt)}</span>
+                <span class="font-monospace">{parseDate(task.dueAt)}</span>
             </div>
         {/if}
         <div class="bug-description mt-1">
