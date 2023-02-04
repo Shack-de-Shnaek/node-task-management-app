@@ -1,21 +1,14 @@
 <script lang="ts">
+	import { onMount } from "svelte";
     import { currentUserData } from "../../store";
     import { headerData } from "../../store";
 
-    $: if($currentUserData.id !== 0) {
+    onMount(() => {
         headerData.set({
             title: 'Home',
-            widgets: [
-                {
-                    label: 'Test',
-                    color: '#3485FE'
-                },
-                {
-                    label: 'Projects',
-                    color: '#A4F793',
-                    value: $currentUserData.projects.length
-                },
-            ]
+            widgets: []
         });
-    }
+    });
 </script>
+
+<h2>oooo index</h2>

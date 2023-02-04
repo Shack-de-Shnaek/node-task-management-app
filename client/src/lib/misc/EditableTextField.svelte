@@ -70,7 +70,7 @@
 {:else}
     {#if editMode}
         <form on:submit|preventDefault={() => save()} use:clickOutside on:click_outside={() => { editMode = false }}>
-            <textarea rows={paragraphContainerHeight/16} class="w-100 form-control" minlength="5"
+            <textarea rows={paragraphContainerHeight/21} class="w-100 form-control" minlength="5"
             bind:value={value}  />
             <button type="submit" class="btn btn-success p-1 mt-1">Save</button>
         </form>

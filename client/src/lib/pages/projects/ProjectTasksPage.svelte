@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { taskPriorities, taskSeverities, taskStatuses } from "./projectStore";
+	import { taskStatuses } from "./projectStore";
 	import { project } from "./projectStore";
 	import type { TaskData } from "../../../../../interfaces/TaskData";
     import Task from "../../tasks/Task.svelte";
-	import { navigateTo } from "svelte-router-spa";
+	import { Navigate, navigateTo } from "svelte-router-spa";
 
     let tasksByStatus: {
         [key: string]: TaskData[];
     } = {}
-    $: if($taskStatuses && $taskStatuses.length > 0) {
+    $: if($taskStatuses && $project.id !== 0) {
         tasksByStatus = {};
         for(const status of $taskStatuses) tasksByStatus[status.code] = [];
         for(const task of $project.tasks) {
@@ -19,10 +19,11 @@
 
 <div class="w-100 h-100 position-relative">
     <div class="add-button-wrapper text-center position-absolute">
-        <button class="btn btn-success rounded-circle d-flex align-items-center justify-content-center" title="Add a new project"
-        on:click={() => navigateTo(`/projects/${$project.id}/new-task`)}>
-            <img src="/icons/add.png" alt="Add" style="height: 1.25rem; filter: invert(1);">
-        </button>
+        <Navigate to={`/projects/${$project.id}/new-task`} title="Add a new project" styles="add-button-wrapper">
+            <div class="p-2 bg-success rounded-circle d-flex align-items-center justify-content-center">
+                <img src="/icons/add.webp" alt="Add" style="height: 1.25rem; filter: invert(1);">
+            </div>
+        </Navigate>
     </div>
     <div class="all-tasks-container w-100 pb-5 d-flex gap-3">
         {#each $taskStatuses as taskStatus}
@@ -58,7 +59,7 @@
         top: 0.4rem;
     }
 
-    .add-button-wrapper button {
+    .add-button-wrapper div {
         height: 2rem;
         width: 2rem;
     }

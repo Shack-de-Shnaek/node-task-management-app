@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { navigateTo } from "svelte-router-spa";
+	import { Navigate } from "svelte-router-spa";
 	import type { PostData } from "../../../../interfaces/PostData";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
 	import handleResponse from "../utilities/handleResponse";
@@ -38,20 +38,22 @@
 <div class="post-container bg-light {componentClass}">
     <header class="post-header w-100 p-3 pb-1 border-bottom border-2 border-dark">
         <div>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span class="d-flex align-items-center gap-1"
-            on:click={() => navigateTo(`/users/${post.author.id}`)}>
-                {#if post.author.thumbnailPath}
-                    <img src={post.author.thumbnailPath} alt="" class="rounded-circle" style="height: 2rem;">
-                {/if}
-                <div>{post.author.firstName} {post.author.lastName}</div>
+            <div class="d-flex align-items-center gap-1">
+                <Navigate to={`/users/${post.author.id}`} styles="d-flex align-items-center gap-1">
+                    {#if post.author.thumbnailPath}
+                        <img src={post.author.thumbnailPath} alt="" class="rounded-circle" style="height: 1.5rem;">
+                    {/if}
+                    <div>{post.author.firstName} {post.author.lastName}</div>
+                </Navigate>
                 <div class="small font-monospace">{parseDate(post.createdAt)}</div>
-            </span>
+            </div>
             {#if !isInProjectPage}
-                {#if post.project.thumbnailPath}
-                    <img src={post.project.thumbnailPath} alt="" class="rounded-circle" style="height: 2rem;">
-                {/if}
-                <span>{post.project.name}</span>
+                <Navigate to={`/projects/${post.project.id}`} styles="d-flex align-items-center gap-1">
+                    {#if post.project.thumbnailPath}
+                        <img src={post.project.thumbnailPath} alt="" class="rounded-circle" style="height: 1.5rem;">
+                    {/if}
+                    <span>{post.project.name}</span>
+                </Navigate>
             {/if}
         </div>
         <h3 class="mb-0 mt-1">{post.title}</h3>

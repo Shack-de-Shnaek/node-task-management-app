@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { navigateTo } from "svelte-router-spa";
+	import { Navigate } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
     import type { LimitedUserData } from "../../../../interfaces/UserData";
-    import type { NestError } from "../../../../interfaces/NestError";
     import { project } from "../pages/projects/projectStore";
-    import { cachedProjects } from "../../store";
 	import { getContext } from "svelte";
 	import type { Writable } from "svelte/store";
 	import updateAllProjectCache from "../utilities/updateProjectCache";
@@ -57,10 +55,10 @@
 
 <div class="d-flex align-items-center flex-wrap gap-1 py-1 px-2">
     <!-- svelte-ignore a11y-img-redundant-alt -->
-    <img src={user.thumbnailPath?user.thumbnailPath:'/icons/user.png'} alt="profile picture" style="height: 1rem;" class="rounded-circle">
-    <button class="navigate p-0 m-0" on:click={() => navigateTo(`/users/${user.id}`)}>
+    <img src={user.thumbnailPath?user.thumbnailPath:'/icons/user.webp'} alt="profile picture" style="height: 1rem;" class="rounded-circle">
+    <Navigate to={`/users/${user.id}`} styles="navigate p-0 m-0 text-dark">
         <span>{user.firstName} {user.lastName}</span>
-    </button>
+    </Navigate>
     <!-- <a href="mailto: {user.email}">{user.email}</a> -->
     {#if (!isAdmin && ($currentUserIsAdmin || $currentUserIsLeader) || (isAdmin && $currentUserIsLeader)) && $project.leader.id !== user.id}
         <button class="delete btn btn-danger p-1 m-0" on:click={removeUser}>

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { setContext, getContext } from "svelte";
     import { writable } from "svelte/store";
-    import { navigateTo } from "svelte-router-spa";
+    import { Navigate } from "svelte-router-spa";
 	import type { Writable } from "svelte/store";
     import NavButton from "./NavButton.svelte";
 	import { currentUserData } from "../../store";
@@ -36,35 +36,36 @@
 <nav class="position-fixed bg-dark text-light d-flex flex-sm-row flex-column-reverse">
     <div class="main-menu sub-menu" class:expanded={$mainMenuExpanded}
     on:mouseenter={expandMainMenu} on:focusin={expandMainMenu} on:focusout={closeMainMenu} on:mouseleave={closeMainMenu}>
-        <NavButton label="Home" imagePath="/icons/home.png" href="/" />
-        <NavButton label="Projects" imagePath="/icons/project.png" click={toggleProjectMenu} />
+        <NavButton label="Home" imagePath="/icons/home.webp" href="/" />
+        <NavButton label="Projects" imagePath="/icons/project.webp" click={toggleProjectMenu} />
         {#if $windowWidth < 576}
-            <NavButton label="Menu" imagePath="/icons/menu.png" click={toggleMobileMenu} />
+            <NavButton label="Menu" imagePath="/icons/menu.webp" click={toggleMobileMenu} />
         {:else}
-            <NavButton label="Tasks" imagePath="/icons/bug.png" href="test" />
-            <NavButton label="Posts" imagePath="/icons/post.png" href="posts" />
-            <NavButton label="Calendar" imagePath="/icons/calendar.png" href="calendar" />
+            <NavButton label="Tasks" imagePath="/icons/bug.webp" href="test" />
+            <NavButton label="Posts" imagePath="/icons/post.webp" href="posts" />
+            <NavButton label="Calendar" imagePath="/icons/calendar.webp" href="calendar" />
             <div class="w-100 mt-0 mt-sm-auto p-0">
-                <NavButton label="My account" imagePath="/icons/user.png" href="my-account" />
+                <NavButton label="My account" imagePath="/icons/user.webp" href="my-account" />
             </div>
         {/if}
     </div>
     <div class="mobile-menu sub-menu" class:d-none={!mobileMenuExpanded || $windowWidth >= 576}  use:clickOutside on:click_outside={() => { mobileMenuExpanded = false }}>
-        <NavButton label="Tasks" imagePath="/icons/bug.png" href="test" />
-        <NavButton label="Posts" imagePath="/icons/post.png" href="posts" />
-        <NavButton label="Calendar" imagePath="/icons/calendar.png" href="calendar" />    
-        <NavButton label="My account" imagePath="/icons/user.png" href="my-account" />
+        <NavButton label="Tasks" imagePath="/icons/bug.webp" href="test" />
+        <NavButton label="Posts" imagePath="/icons/post.webp" href="posts" />
+        <NavButton label="Calendar" imagePath="/icons/calendar.webp" href="calendar" />    
+        <NavButton label="My account" imagePath="/icons/user.webp" href="my-account" />
     </div>
     <div class="project-menu sub-menu m-0" class:d-none={!projectMenuExpanded} use:clickOutside on:click_outside={() => { projectMenuExpanded = false }}>
-        <button on:click={() => navigateTo('/new-project')} class="new-project w-100 m-0 p-2 d-flex align-items-center gap-1 text-light">
-            <img src="/icons/add.png" alt="" style="width: 1rem; filter: invert(1)">
-            <span>New project</span>
-        </button>
+        <Navigate to="/new-project">
+            <span class="new-project w-100 m-0 p-2 d-flex align-items-center gap-1 text-light">
+                <img src="/icons/add.webp" alt="" style="width: 1rem; filter: invert(1)">
+                <span>New project</span>
+            </span>
+        </Navigate>
         {#each $currentUserData.projects as project}
-            <button class="project px-2 py-1 border-0 w-100 text-white text-start"
-            on:click={() => navigateTo(`/projects/${project.id}`)}>
-                {project.name}
-            </button>
+            <Navigate to={`/projects/${project.id}`}>
+                <div class="project px-2 py-1 border-0 w-100 text-white text-start">{project.name}</div>
+            </Navigate>
         {/each}
     </div>
 </nav>
@@ -87,6 +88,7 @@
     }
 
     .main-menu {
+        width: 4rem;
         transition: 0.2s;
     }
 
@@ -96,6 +98,7 @@
     }
 
     .project-menu {
+        min-width: 12rem;
         max-width: 16rem;
         background-color: var(--dark-gray);
     }
@@ -106,23 +109,20 @@
 
     .project {
         background: inherit;
-        outline: none;
+        transition: 0.2s;
     }
 
     .project:hover, .project:focus {
         background-color: var(--bs-gray);
     }
 
-    button.new-project {
+    .new-project {
         background-color: var(--dark-green);
-        outline: none;
-        border: none;
+        transition: 0.2s;
     }
 
-    button.new-project:hover, button.new-project:focus {
+    .new-project:hover, .new-project:focus {
         background-color: var(--green);
-        outline: none;
-        border: none;
     }
 
     @media only screen and (max-width: 577px) {
@@ -143,6 +143,7 @@
         
         .main-menu {
             padding: 0;
+            width: 100%;
         }
 
         .project-menu {

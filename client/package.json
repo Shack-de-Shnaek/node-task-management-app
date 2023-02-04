@@ -7,6 +7,7 @@
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
+    "vite-plugin-compression": "^0.5.1",
     "vite-plugin-minify": "^1.5.2"
   }
 }

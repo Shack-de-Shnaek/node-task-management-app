@@ -6,7 +6,7 @@
     import { taskPriorities, taskSeverities, taskStatuses } from "./projectStore"
     import { cachedProjects } from "../../../store";
     import { onDestroy, setContext } from "svelte";
-    import { navigateTo, Route } from "svelte-router-spa";
+    import { Route } from "svelte-router-spa";
     import { project } from "./projectStore";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import getTaskSeveritiesPrioritiesStatuses from "../../utilities/getTaskSeveritiesPrioritiesStatuses";
@@ -70,7 +70,9 @@
         })();
     }
 
-    $: currentRoute.path, updateHeaderWithProjectData();
+    $: currentRoute.path, () => {
+        if($project.id !== 0) updateHeaderWithProjectData();
+    };
 
     onDestroy(() => {
         $project.id = 0;

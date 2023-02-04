@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { navigateTo } from 'svelte-router-spa';
     import { fade } from 'svelte/transition';
 	import getCurrentUser from '../utilities/getCurrentUser';
 

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { navigateTo } from "svelte-router-spa";
-	import type { ProjectData } from "../../../../interfaces/ProjectData";
 	import type { TaskData } from "../../../../interfaces/TaskData";
 	import calculateTextColor from "../utilities/calculateTextColor";
 	import parseDate from "../utilities/parseDate";
@@ -29,9 +27,15 @@
                 <span class="rounded-3 p-1" style="background: {task.severity.color}; color: {calculateTextColor(task.severity.color)}">{task.priority.name}</span>
             </div>
         </div>
+        {#if task.assignedTo}
+            <div class="small">
+                <span>Assigned To: </span>
+                <a href={`/users/${task.assignedTo.id}`}>{task.assignedTo.firstName} {task.assignedTo.lastName}</a>
+            </div>
+        {/if}
         {#if task.dueAt}
             <div class="small">
-                <span>Due at: </span>
+                <span>Due At: </span>
                 <span class="font-monospace">{parseDate(task.dueAt)}</span>
             </div>
         {/if}

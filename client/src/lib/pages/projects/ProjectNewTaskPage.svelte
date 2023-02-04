@@ -4,7 +4,6 @@
     import { project } from "./projectStore";
 	import type { Writable } from "svelte/store";
 	import { getContext } from "svelte";
-	import handleResponse from "../../utilities/handleResponse";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import { navigateTo } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";

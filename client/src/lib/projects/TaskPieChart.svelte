@@ -48,8 +48,9 @@
                 break;
         }
         
+        let chart: Chart
         try {
-            const chart = new Chart(element, {
+            chart = new Chart(element, {
                 type: 'pie',
                 data: {
                     labels: labels,
@@ -63,7 +64,9 @@
                 },
                 options: {
                     responsive: true,
-                    // rotation: 180,
+                    animation: {
+                        animateRotate: false,
+                    },
                     maintainAspectRatio: true,
                     aspectRatio: 3/2,
                     plugins: {
@@ -74,9 +77,8 @@
                     }
                 }
             });
-        } catch (error) {
-            
-        }
+            return chart;
+        } catch (error) {}
     }
 
     $: if(

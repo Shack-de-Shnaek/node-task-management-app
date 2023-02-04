@@ -106,11 +106,11 @@
 <h2 class="mt-3">About Project</h2>
 <section class="container-fluid row m-0 p-2 pt-3 bg-light">
     <div class="col-2 col-sm-1 project-img-container px-xl-4 px-m-2 px-0">
-        <img src={$project.thumbnailPath?$project.thumbnailPath:'/icons/project.png'} alt="project" class="project-img w-100 rounded-3">
+        <img src={$project.thumbnailPath?$project.thumbnailPath:'/icons/project.webp'} alt="project" class="project-img w-100 rounded-3">
         {#if $currentUserIsAdmin}
             <form id="change-img-form" class="mt-2 d-flex flex-column align-items-center gap-1"
             on:submit|preventDefault={() => changeImage()}>
-                <input type="file" id="project-img" class="d-none" accept="image/jpg, image/jpeg, image/png, image/gif" bind:files={newImage}>
+                <input type="file" id="project-img" class="d-none" accept="image/jpg, image/jpeg, image/webp, image/gif" bind:files={newImage}>
                 <label for="project-img" class="text-center" style="cursor: pointer;"
                 class:text-success={newImage!==undefined && newImage[0]!==undefined}>Choose</label>
                 <button type="submit" class="p-1 btn btn-success">Save</button>

@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { navigateTo } from "svelte-router-spa";
+    import { Navigate } from "svelte-router-spa";
     import type { Writable } from "svelte/store";
-    import { getContext, onMount } from "svelte";
+    import { getContext } from "svelte";
 
     const expanded: Writable<boolean> = getContext('mainMenuExpanded');
 
@@ -20,18 +20,27 @@
         return $expanded;
     }
 
-    const buttonAction = (event?: MouseEvent) => {
-        if (href !== undefined && click === undefined) navigateTo(href);
-        else if (click !== undefined && href === undefined) click(event);
-    }
 </script>
 
-<button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand} style="{componentStyle}" on:click={buttonAction}>
-    {#if imagePath !== ''}
-        <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
-    {/if}
-    <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
-</button>
+{#if href === undefined && click !== undefined}
+    <button class="d-flex gap-2 align-items-center nav-button {componentClass}" class:expanded={expand} style="{componentStyle}" on:click={click}>
+        {#if imagePath !== ''}
+            <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
+        {/if}
+        <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
+    </button>
+{:else}
+    <div class="nav-button" class:expanded={expand}>
+        <Navigate to={href} styles="w-100 text-light">
+            <div class="d-flex gap-2 align-items-center">
+                {#if imagePath !== ''}
+                    <img src={imagePath} alt={label} style="width: 2.5rem; filter: invert(1)">
+                {/if}
+                <div class="nav-button-label" class:d-none={!expand()}>{label}</div>
+            </div>
+        </Navigate>
+    </div>
+{/if}
 
 <style>
     button {
@@ -62,6 +71,8 @@
 
     .nav-button-label {
         font-size: 1.25rem;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     @media only screen and (max-width: 577px) {

@@ -16,7 +16,7 @@
 	import uploadMultipleAttachments from "../../utilities/uploadMultipleAttachments";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
-	import { navigateTo } from "svelte-router-spa";
+	import { Navigate, navigateTo } from "svelte-router-spa";
 	import parseParagraphs from "../../utilities/parseParagraphs";
 
     export let currentRoute: CurrentRoute;
@@ -301,9 +301,7 @@
             <div>
                 <h4>Created By</h4>
                 {#if $task.id !== 0}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <div style="cursor: pointer"
-                    on:click={() => {navigateTo(`/users/${$task.createdBy.id}`)}}>{$task.createdBy.firstName} {$task.createdBy.lastName}</div>
+                    <Navigate to={`/users/${$task.createdBy.id}`}>{$task.createdBy.firstName} {$task.createdBy.lastName}</Navigate>
                 {/if}
             </div>
             <button class="delete-button btn btn-danger mt-auto ms-auto p-1"

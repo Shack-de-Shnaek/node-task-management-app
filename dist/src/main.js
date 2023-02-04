@@ -9,10 +9,15 @@ const express_1 = require("express");
 const app_module_1 = require("./app.module");
 const unauthorizedRedirect_filter_1 = require("./auth/unauthorizedRedirect.filter");
 const prisma_exceptions_interceptor_1 = require("./prisma-exceptions.interceptor");
+const compression = require("compression");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.useGlobalInterceptors(new prisma_exceptions_interceptor_1.PrismaExceptionsInterceptor());
     app.useGlobalFilters(new unauthorizedRedirect_filter_1.UnauthorizedRedirectFilter());
+    app.use(compression({
+        filter: () => true,
+        threshold: 0,
+    }));
     app.use((0, express_1.json)({ limit: '50mb' }));
     app.use(session({
         secret: 'dmVyeWVwaWNzZWNyZXRrZXl2ZXJ5c2VjcmV0',

@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { Route } from "svelte-router-spa";
-	import type { CurrentRoute } from "svelte-router-spa/types/components/route";
 	import { writable } from "svelte/store";
 	import Header from "./nav/Header.svelte";
 	import Navbar from "./nav/Navbar.svelte";
-	import NavButton from "./nav/NavButton.svelte";
     
 	export let currentRoute;
 	
@@ -14,7 +12,7 @@
 	}
 
 	const bottomPadding = writable(6);
-	$: if(currentRoute) {
+	$: currentRoute, () => {
 		bottomPadding.set(getBottomPadding());
 	}
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { navigateTo } from "svelte-router-spa";
+	import { Navigate } from "svelte-router-spa";
     import { headerData } from "../../store";
 	import calculateTextColor from "../utilities/calculateTextColor";
 </script>
@@ -9,13 +9,14 @@
     <ul class="header-widget-list list-unstyled m-0 ms-sm-auto ms-0 d-flex align-items-center justify-content-center justify-content-sm-end gap-1">
         {#each $headerData.widgets as widget}
             <li class="widget px-2 py-1" style="background-color: {widget.color}">
-                <button class="p-0 d-flex" type="button" style="color: {calculateTextColor(widget.color)}"
-                on:click={() => {if(widget.href) navigateTo(widget.href)}}>
-                    <span>{widget.label}</span>
-                    {#if widget.value !== undefined}
-                        <span>: {widget.value}</span>
-                    {/if}
-                </button> 
+                <Navigate to={widget.href}>
+                    <span style="color: {calculateTextColor(widget.color)}" class="d-flex">
+                        <span>{widget.label}</span>
+                        {#if widget.value !== undefined}
+                            <span>: {widget.value}</span>
+                        {/if}
+                    </span>
+                </Navigate>
             </li>
         {/each}
     </ul>
