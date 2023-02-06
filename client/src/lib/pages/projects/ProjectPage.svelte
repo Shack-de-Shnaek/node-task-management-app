@@ -20,6 +20,7 @@
     const getCurrentUserTasks = () => {
         return $project.tasks.filter(task => {
             if(!task.assignedTo) return false;
+            if(task.status.code === 'fixed' || task.status.code === 'rejected') return false;
             return task.assignedTo.id === $currentUserData.id;
         });
     }
@@ -46,7 +47,6 @@
         </section>
     {/if}
 {/key}
-
 
 <h2 class="mt-3">Tasks that are due soon</h2>
 <section class="container-fluid row m-0 p-2 pt-3 bg-light d-flex flex-column-row flex-md-row">

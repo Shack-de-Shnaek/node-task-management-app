@@ -101,11 +101,14 @@
     div {
         min-width: min-content;
         min-height: min-content;
+        max-height: 16rem;
         width: 80%;
     }
 
     canvas {
         min-width: 10rem;
+        max-width: 100%;
         min-height: 10rem;
+        max-height: 100%;
     }
 </style>
