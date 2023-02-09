@@ -1,9 +1,12 @@
 import { project } from "../pages/projects/projectStore";
 import { cachedProjects, currentUserData } from "../../store";
 import type { LimitedProjectData, ProjectData } from "../../../../interfaces/ProjectData";
+import type { UserData } from "$interfaces/UserData";
 
 const updateAllProjectCache = (newProjectData: ProjectData) => {
     project.set(newProjectData);
+    let currentUser: UserData;
+    currentUserData.subscribe(data => currentUser = data);
     cachedProjects.update(data => {
         data[newProjectData.id] = newProjectData;
         return data;

@@ -3,6 +3,7 @@ import { Prisma, User } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { postSelector } from 'prisma/selectors/postSelectors';
 import { projectLimitedSelector } from 'prisma/selectors/projectSelectors';
+import { taskSelector } from 'prisma/selectors/taskSelectors';
 import { userLimitedSelector, userSelector } from 'prisma/selectors/userSelectors';
 import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma.service';
@@ -169,5 +170,19 @@ export class UsersService implements ICrudService {
 			},
 			...postSelector,
 		});
+	}
+
+	async getTasks(userId: number) {
+		const user = await this.prisma.user.findUniqueOrThrow({
+			where: { id: userId },
+			select: {
+				projects: {
+					select: {
+						tasks: taskSelector
+					}
+				}
+			}
+		});
+		return user.projects.flatMap(project => project.tasks);
 	}
 }

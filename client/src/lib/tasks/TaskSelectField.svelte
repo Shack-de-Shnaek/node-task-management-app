@@ -2,13 +2,13 @@
 	import { getContext } from "svelte";
 	import type { Writable } from "svelte/store";
 	import type { TaskData } from "../../../../interfaces/TaskData";
+	import { currentUserIsAdmin } from "../pages/projects/projectStore";
 	import handleResponse from "../utilities/handleResponse";
 	import updateTaskInProjectCache from "../utilities/updateTaskInProjectCache";
 
     const task: Writable<TaskData> = getContext('task');
     export let options: any[];
     export let field: 'severityCode' | 'priorityCode' | 'statusCode' | 'categoryId' | 'assignedToId';
-    const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
 
     let value: number | string;
     $: if(options && $task.id !== 0) {

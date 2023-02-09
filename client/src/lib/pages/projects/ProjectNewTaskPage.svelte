@@ -1,15 +1,11 @@
 <script lang="ts">
 	import parseFileSize from "../../utilities/parseFileSize";
 	import { taskPriorities, taskSeverities } from "./projectStore";
-    import { project } from "./projectStore";
-	import type { Writable } from "svelte/store";
-	import { getContext } from "svelte";
+    import { project, currentUserIsAdmin } from "./projectStore";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import { navigateTo } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
 	import uploadMultipleAttachments from "../../utilities/uploadMultipleAttachments";
-
-    const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
 
     const newTaskData: {
         title: string;

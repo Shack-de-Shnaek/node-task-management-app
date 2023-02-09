@@ -1,19 +1,12 @@
 <script lang="ts">
     import UserEntry from "../../projects/UserEntry.svelte";
-    import { project } from "./projectStore";
-    import { cachedProjects, currentUserData } from "../../../store";
+    import { currentUserIsAdmin, project } from "./projectStore";
 	import parseDate from "../../utilities/parseDate";
 	import EditableTextField from "../../misc/EditableTextField.svelte";
-	import { getContext } from "svelte";
-	import type { Writable } from "svelte/store";
-	import type { NestError } from "../../../../../interfaces/NestError";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import handleResponse from "../../utilities/handleResponse";
-	import type { TaskCategoryData } from "../../../../../interfaces/TaskData";
 	import calculateTextColor from "../../utilities/calculateTextColor";
-
-    const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
 
     let newMemberEmail = '';
     const addMember = async() => {

@@ -397,6 +397,6 @@ export class TasksService {
 			}),
 		]);
 
-		console.log('Task severity, priority and status objects created.');
+		console.info('Task severity, priority and status objects created.');
 	}
 }

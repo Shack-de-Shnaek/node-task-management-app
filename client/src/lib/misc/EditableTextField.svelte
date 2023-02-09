@@ -20,8 +20,6 @@
     let textAreaHeight: number;
     const editTextArea = (event: MouseEvent) => {
         if(!allowEditing) return;
-        // console.log(paragraphContainerHeight)
-        // textAreaHeight = paragraphContainerHeight;
         editMode = true;
     }
 

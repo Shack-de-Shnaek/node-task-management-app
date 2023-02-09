@@ -6,6 +6,8 @@
 
     export let task: TaskData;
     export let componentClass = '';
+
+    console.log(task);
     
     // const images = task.attachments.filter(attachment => attachment.isImage);
 </script>
@@ -19,12 +21,12 @@
     <div class="px-2 py-1">
         <div class="d-flex gap-2">
             <div class="small">
-                <span>Priority: </span>
-                <span class="rounded-3 p-1" style="background: {task.priority.color}; color: {calculateTextColor(task.priority.color)}">{task.priority.name}</span>
+                <span>Severity: </span>
+                <span class="rounded-3 p-1" style="background: {task.severity.color}; color: {calculateTextColor(task.severity.color)}">{task.severity.name}</span>
             </div>
             <div class="small">
-                <span>Severity: </span>
-                <span class="rounded-3 p-1" style="background: {task.severity.color}; color: {calculateTextColor(task.severity.color)}">{task.priority.name}</span>
+                <span>Priority: </span>
+                <span class="rounded-3 p-1" style="background: {task.priority.color}; color: {calculateTextColor(task.priority.color)}">{task.priority.name}</span>
             </div>
         </div>
         {#if task.assignedTo}

@@ -1,8 +1,6 @@
 <script lang="ts">
-    import type { Writable } from "svelte/store";
-	import { writable } from "svelte/store";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
-    import { currentUserData, headerData } from "../../../store";
+    import { headerData } from "../../../store";
     import { taskPriorities, taskSeverities, taskStatuses } from "./projectStore"
     import { cachedProjects } from "../../../store";
     import { onDestroy, setContext } from "svelte";
@@ -14,14 +12,6 @@
 
     export let currentRoute;
     export let params;
-
-    const currentUserIsLeader: Writable<boolean> = writable();
-    const currentUserIsAdmin: Writable<boolean> = writable();
-    const currentUserIsMember: Writable<boolean> = writable();
-
-    setContext('currentUserIsLeader', currentUserIsLeader);
-    setContext('currentUserIsAdmin', currentUserIsAdmin);
-    setContext('currentUserIsMember', currentUserIsMember);
 
     const getProject = async(id: number): Promise<ProjectData | null> => {
         try {
@@ -57,10 +47,6 @@
             updateAllProjectCache(res);
             updateHeaderWithProjectData();
 
-            currentUserIsLeader.set($project.leader.id === $currentUserData.id);
-            currentUserIsAdmin.set($project.admins.flatMap(admin => admin.id).includes($currentUserData.id));
-            currentUserIsMember.set($project.members.flatMap(member => member.id).includes($currentUserData.id));        
-
             if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
                 const data = await getTaskSeveritiesPrioritiesStatuses();
                 taskSeverities.set(data.severities);
@@ -70,9 +56,11 @@
         })();
     }
 
-    $: currentRoute.path, () => {
+    $: (currentRoute.path), () => {
         if($project.id !== 0) updateHeaderWithProjectData();
-    };
+    }
+
+    $: 
 
     onDestroy(() => {
         $project.id = 0;

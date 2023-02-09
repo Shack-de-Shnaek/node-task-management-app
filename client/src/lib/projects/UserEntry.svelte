@@ -2,14 +2,9 @@
 	import { Navigate } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
     import type { LimitedUserData } from "../../../../interfaces/UserData";
-    import { project } from "../pages/projects/projectStore";
-	import { getContext } from "svelte";
-	import type { Writable } from "svelte/store";
+    import { currentUserIsAdmin, project } from "../pages/projects/projectStore";
 	import updateAllProjectCache from "../utilities/updateProjectCache";
 	import handleResponse from "../utilities/handleResponse";
-    
-    const currentUserIsLeader: Writable<boolean> = getContext('currentUserIsLeader');
-    const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
 
     export let user: LimitedUserData;
     // export let allowRemove = false;
@@ -60,12 +55,12 @@
         <span>{user.firstName} {user.lastName}</span>
     </Navigate>
     <!-- <a href="mailto: {user.email}">{user.email}</a> -->
-    {#if (!isAdmin && ($currentUserIsAdmin || $currentUserIsLeader) || (isAdmin && $currentUserIsLeader)) && $project.leader.id !== user.id}
+    {#if (!isAdmin && ($currentUserIsAdmin || $currentUserIsAdmin) || (isAdmin && $currentUserIsAdmin)) && $project.leader.id !== user.id}
         <button class="delete btn btn-danger p-1 m-0" on:click={removeUser}>
             Remove
         </button>
     {/if}
-    {#if $currentUserIsLeader && $project.leader.id !== user.id && !isAdmin}
+    {#if $currentUserIsAdmin && $project.leader.id !== user.id && !isAdmin}
         <button class="add-admin btn btn-success p-1 m-0" on:click={addAdmin}>
             Add Admin
         </button>

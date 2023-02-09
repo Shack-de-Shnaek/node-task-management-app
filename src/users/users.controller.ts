@@ -40,6 +40,11 @@ export class UsersController {
 		return this.usersService.getPosts(request.user.id);
 	}
 
+	@Get('tasks')
+	async tasks(@Req() request) {
+		return this.usersService.getTasks(request.user.id);
+	}
+
 	@Get(':id')
 	@HttpCode(200)
 	async get(
@@ -49,10 +54,10 @@ export class UsersController {
 		return this.usersService.get({ id: id });
 	}
 
-	@Get(':id/projects')
-	@HttpCode(200)
-	@UseGuards(UserExists)
-	async projects(@Param('id', ParseIntPipe, new ValidationPipe()) id: number) {
-		return this.usersService.getProjects(id);
-	}
+	// @Get(':id/projects')
+	// @HttpCode(200)
+	// @UseGuards(UserExists)
+	// async projects(@Param('id', ParseIntPipe, new ValidationPipe()) id: number) {
+	// 	return this.usersService.getProjects(id);
+	// }
 }

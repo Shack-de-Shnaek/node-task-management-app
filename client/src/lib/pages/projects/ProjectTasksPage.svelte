@@ -8,7 +8,7 @@
     let tasksByStatus: {
         [key: string]: TaskData[];
     } = {}
-    $: if($taskStatuses && $project.id !== 0) {
+    $: if($taskStatuses.length > 0 && $project.id !== 0) {
         tasksByStatus = {};
         for(const status of $taskStatuses) tasksByStatus[status.code] = [];
         for(const task of $project.tasks) {

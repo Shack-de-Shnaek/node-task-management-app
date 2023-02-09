@@ -1,11 +1,7 @@
 <script lang="ts">
 	import NewPostInput from "../../posts/NewPostInput.svelte";
-    import { getContext } from "svelte";
-	import type { Writable } from "svelte/types/runtime/store";
     import Post from "../../posts/Post.svelte";
-    import { project } from "./projectStore";
-
-    const currentUserIsMember: Writable<boolean> = getContext('currentUserIsMember');
+    import { currentUserIsMember, project } from "./projectStore";
 </script>
 
 <div class="post-list w-100 mt-3 d-flex flex-column align-items-center gap-3">

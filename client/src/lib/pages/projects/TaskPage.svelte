@@ -2,12 +2,11 @@
 	import { cachedProjects, headerData } from "../../../store";
 	import type { CurrentRoute } from "svelte-router-spa/types/components/route";
 	import type { TaskAttachmentData, TaskData } from "../../../../../interfaces/TaskData";
-	import { project, taskPriorities, taskSeverities, taskStatuses } from "./projectStore";
+	import { currentUserIsMember, project, taskPriorities, taskSeverities, taskStatuses } from "./projectStore";
 	import type { NestError } from "../../../../../interfaces/NestError";
 	import { writable, type Writable } from "svelte/store";
 	import { setContext } from "svelte";
 	import TaskSelectField from "../../tasks/TaskSelectField.svelte";
-	import { getContext } from "svelte";
 	import handleResponse from "../../utilities/handleResponse";
 	import updateTaskInProjectCache from "../../utilities/updateTaskInProjectCache";
 	import EditableTextField from "../../misc/EditableTextField.svelte";
@@ -40,8 +39,6 @@
     });
 
     setContext('task', task);
-    const currentUserIsAdmin: Writable<boolean> = getContext('currentUserIsAdmin');
-    const currentUserIsMember: Writable<boolean> = getContext('currentUserIsMember');
 
     let images: TaskAttachmentData[] = [];
     $: if($task.id !== parseInt(currentRoute.namedParams.taskId)) {
