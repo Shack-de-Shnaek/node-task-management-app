@@ -38,9 +38,7 @@
         date.numberOfDaysInPreviousMonth = new Date(date.date.getFullYear(), date.date.getMonth(), 0).getDate();
         date.weekdayOfFirstDay = reorderWeekDays(date.date.getDay());
         dayNumberArray = getDayNumberArray();
-        console.log(dayNumberArray);
         tasks = await getTasks();
-        console.log(tasks);
     }
 
     const getDayNumberArray = () => {
