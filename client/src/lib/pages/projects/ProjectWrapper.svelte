@@ -56,11 +56,7 @@
         })();
     }
 
-    $: (currentRoute.path), () => {
-        if($project.id !== 0) updateHeaderWithProjectData();
-    }
-
-    $: 
+    $: if(currentRoute.path && $project.id !== 0) updateHeaderWithProjectData();
 
     onDestroy(() => {
         $project.id = 0;

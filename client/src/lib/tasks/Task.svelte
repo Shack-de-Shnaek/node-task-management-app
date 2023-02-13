@@ -6,8 +6,6 @@
 
     export let task: TaskData;
     export let componentClass = '';
-
-    console.log(task);
     
     // const images = task.attachments.filter(attachment => attachment.isImage);
 </script>
