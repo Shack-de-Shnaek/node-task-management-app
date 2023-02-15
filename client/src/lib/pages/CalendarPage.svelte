@@ -47,24 +47,25 @@
     }
 
     const getDayNumberArray = () => {
-        let days: { date: Date, tasks?: TaskData[] }[] = [];
-        for(let i=0; i<42; i++) {            
-            let dayDate: Date = new Date(date.date.getFullYear(), date.date.getMonth(), i+1-date.weekdayOfFirstDay);;
+        let days: { date: Date, tasks?: TaskData[] }[] = []; 
+        for(let i=0; i<42; i++) {         
+            let dayDate: Date = new Date(date.date.getFullYear(), date.date.getMonth(), i+1-date.weekdayOfFirstDay, 12);
 
             if(i < date.weekdayOfFirstDay) {
-                if(date.date.getMonth() === 0) dayDate = new Date(date.date.getFullYear()-1, 11, 31-(date.weekdayOfFirstDay-i-1));
-                else dayDate = new Date(date.date.getFullYear(), date.date.getMonth()-1, date.numberOfDaysInPreviousMonth-(date.weekdayOfFirstDay-i-1));
+                if(date.date.getMonth() === 0) dayDate = new Date(date.date.getFullYear()-1, 11, 31-(date.weekdayOfFirstDay-i-1), 12);
+                else dayDate = new Date(date.date.getFullYear(), date.date.getMonth()-1, date.numberOfDaysInPreviousMonth-(date.weekdayOfFirstDay-i-1), 12);
             }
             if(i+1-date.weekdayOfFirstDay > date.numberOfDaysInMonth) {
-                if(date.date.getMonth() === 11) dayDate = new Date(date.date.getFullYear()+1, date.date.getMonth(), i+1-date.numberOfDaysInMonth-date.weekdayOfFirstDay);
-                else dayDate = new Date(date.date.getFullYear(), date.date.getMonth(), i-date.numberOfDaysInMonth-(date.weekdayOfFirstDay-1));
+                if(date.date.getMonth() === 11) dayDate = new Date(date.date.getFullYear()+1, date.date.getMonth()+1, i+1-date.numberOfDaysInMonth-date.weekdayOfFirstDay, 12);
+                else dayDate = new Date(date.date.getFullYear(), date.date.getMonth()+1, i-date.numberOfDaysInMonth-(date.weekdayOfFirstDay-1), 12);
             }
-            
+
             days.push({
                 date: dayDate,
                 tasks: tasks.tasksCreatedAt[dayDate.toISOString().split('T')[0]]
             });
         }
+        console.log(days);
         return days;
     }
 
@@ -99,6 +100,13 @@
     const reorderWeekDays = (dayIndex: number) => {
         if(dayIndex === 0) return 6;
         return dayIndex - 1;
+    }
+
+    const datesAreEqual = (date1: Date, date2: Date) => {
+        if(date1.getDate() !== date2.getDate()) return false;
+        if(date1.getMonth() !== date2.getMonth()) return false;
+        if(date1.getFullYear() !== date2.getFullYear()) return false;
+        return true;
     }
 
     onMount(() => {
@@ -141,17 +149,19 @@
     <div class="calendar-days-container w-100 p-1 d-flex flex-column d-lg-grid">
         {#if tasks}
             {#each dayNumberArray as day}
-                <div class="calendar-day p-1 bg-white border border-1">
-                    <div class="calendar-day-banner">
+                <div class="calendar-day bg-white border border-1">
+                    <div class="calendar-day-banner"
+                    class:bg-primary={datesAreEqual(day.date, new Date())}
+                    class:text-light={datesAreEqual(day.date, new Date())}>
                         <span>{day.date.getDate()}</span>
-                        <span>{day.tasks ? day.tasks.length : 0} tasks</span>
+                        <small>{day.tasks ? day.tasks.length : 0} tasks</small>
                     </div>
-                    <div class="task-list w-100">
+                    <div class="task-list w-100 p-1 d-flex flex-column gap-1">
                         {#if day.tasks}
                             {#each day.tasks as task}
-                                <div class="task p-1">
-                                    <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={task.title} />
-                                </div>
+                            <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={task.title} styles="d-block text-dark task p-1 rounded-3 bg-light small">
+                                {task.title}
+                            </Navigate>
                             {/each}
                         {/if}
                     </div>
@@ -172,11 +182,33 @@
         grid-template-rows: repeat(6, 8rem);
     }
 
-    .calendar-day .task-list {
+    .calendar-day {
+        overflow: hidden;
+    }
+
+    
+    .weekday {
+        flex: 1;
+    }
+    
+    .task-list {
         overflow-y: scroll;
     }
 
-    .weekday {
-        flex: 1;
+    .task-list::-webkit-scrollbar {
+        background: red;
+        width: 4px;
+    }
+
+    .task-list::-webkit-scrollbar-thumb {
+        background: blue;
+    }
+
+    .task {
+        cursor: pointer;
+    }
+
+    .task:hover {
+        background-color: var(--light-gray) !important;
     }
 </style>
