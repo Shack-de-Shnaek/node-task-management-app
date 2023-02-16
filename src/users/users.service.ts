@@ -178,11 +178,11 @@ export class UsersService implements ICrudService {
 			select: {
 				projects: {
 					select: {
-						tasks: taskSelector
-					}
-				}
-			}
+						tasks: taskSelector,
+					},
+				},
+			},
 		});
-		return user.projects.flatMap(project => project.tasks);
+		return user.projects.flatMap((project) => project.tasks);
 	}
 }

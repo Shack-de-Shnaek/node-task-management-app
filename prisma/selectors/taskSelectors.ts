@@ -47,8 +47,8 @@ export const taskSelector: { select: Prisma.TaskSelect, orderBy: Prisma.TaskOrde
                 thumbnailPath: true,
             }
         },
-        createdAt: true,
         updatedAt: true,
+        createdAt: true,
         assignedTo: {
             select: {
                 id: true,

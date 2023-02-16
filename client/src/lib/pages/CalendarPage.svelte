@@ -4,6 +4,7 @@
 	import { onMount } from "svelte";
 	import handleResponse from "../utilities/handleResponse";
 	import { Navigate } from "svelte-router-spa";
+	import { headerData } from "../../store";
 
     export let currentRoute: CurrentRoute;
 
@@ -65,7 +66,6 @@
                 tasks: tasks.tasksCreatedAt[dayDate.toISOString().split('T')[0]]
             });
         }
-        console.log(days);
         return days;
     }
 
@@ -116,6 +116,10 @@
             dateString = `${now.getFullYear()}-${month}`;
             dateChange();
         }
+        headerData.set({
+            title: 'Task Calendar',
+            widgets: []
+        })
     });
 </script>
 
@@ -149,7 +153,7 @@
     <div class="calendar-days-container w-100 p-1 d-flex flex-column d-lg-grid">
         {#if tasks}
             {#each dayNumberArray as day}
-                <div class="calendar-day bg-white border border-1">
+                <div class="calendar-day bg-white border border-1 d-flex flex-column">
                     <div class="calendar-day-banner"
                     class:bg-primary={datesAreEqual(day.date, new Date())}
                     class:text-light={datesAreEqual(day.date, new Date())}>
@@ -159,8 +163,10 @@
                     <div class="task-list w-100 p-1 d-flex flex-column gap-1">
                         {#if day.tasks}
                             {#each day.tasks as task}
-                            <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={task.title} styles="d-block text-dark task p-1 rounded-3 bg-light small">
-                                {task.title}
+                            <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={task.title} styles="task-link d-block text-dark rounded-3 small">
+                                <div class="task p-1">
+                                    {task.title}
+                                </div>
                             </Navigate>
                             {/each}
                         {/if}
@@ -179,7 +185,7 @@
     .calendar-days-container {
         /* display: grid; */
         grid-template-columns: repeat(7, 1fr);
-        grid-template-rows: repeat(6, 8rem);
+        grid-template-rows: repeat(6, 9rem);
     }
 
     .calendar-day {
@@ -192,23 +198,37 @@
     }
     
     .task-list {
-        overflow-y: scroll;
+        overflow-y: auto;
+        /* height: 6.5rem; */
     }
 
     .task-list::-webkit-scrollbar {
-        background: red;
+        height: 4px;
         width: 4px;
     }
 
     .task-list::-webkit-scrollbar-thumb {
-        background: blue;
+        background-color: var(--bs-secondary);
+    }
+
+    .task-link {
+        height: fit-content;
     }
 
     .task {
+        height: fit-content;
+        background-color: var(--light-gray);
         cursor: pointer;
     }
 
     .task:hover {
-        background-color: var(--light-gray) !important;
+        background-color: #C3CCD5;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .task-list {
+            min-height: 2rem;
+            height: fit-content;
+        }
     }
 </style>

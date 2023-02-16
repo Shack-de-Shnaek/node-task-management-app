@@ -72,8 +72,6 @@
             if(res.ok) {
                 for(const key in registerUserData) registerUserData[key] = '';
                 mode = 'Login';
-            } else {
-                console.log('oops');
             }
         } catch(e) {
             console.log(e);

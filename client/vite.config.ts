@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+import * as dotenv from 'dotenv'
 
-// https://vitejs.dev/config/
+dotenv.config()
+
 export default defineConfig({
   plugins: [
     svelte({
@@ -10,9 +12,9 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api': 'http://192.168.100.13:3000',
-      '/auth': 'http://192.168.100.13:3000',
-      '/static': 'http://192.168.100.13:3000'
+      '/api': `http://${process.env.PROXY_IP}:3000`,
+      '/auth': `http://${process.env.PROXY_IP}:3000`,
+      '/static': `http://${process.env.PROXY_IP}:3000`
     }
   },
 });

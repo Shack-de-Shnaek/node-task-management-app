@@ -59,7 +59,7 @@ export class ProjectsService {
 		if (data.thumbnail) {
 			thumbnailPath = await this.filesService.generateThumbnailFile(data.thumbnail);
 		}
-		
+
 		return this.prisma.project.create({
 			data: {
 				name: data.name,
@@ -334,11 +334,13 @@ export class ProjectsService {
 
 		const taskCount = await this.prisma.task.aggregate({
 			_count: true,
-			where: { projectId: projectId, categoryId: taskCategoryId }
+			where: { projectId: projectId, categoryId: taskCategoryId },
 		});
 
 		if (taskCount._count > 0)
-			throw new BadRequestException(`You cannot delete that category because ${taskCount._count} task(s) are using it`);
+			throw new BadRequestException(
+				`You cannot delete that category because ${taskCount._count} task(s) are using it`,
+			);
 
 		return this.prisma.project.update({
 			where: {

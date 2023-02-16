@@ -14,10 +14,11 @@ export class TasksService {
 
 	async get(taskWhereUniqueInput: Prisma.TaskWhereUniqueInput, raiseException = true) {
 		if (raiseException) {
-			return this.prisma.task.findUniqueOrThrow({
+			const task = await this.prisma.task.findUniqueOrThrow({
 				where: { id: taskWhereUniqueInput.id },
 				select: taskSelector.select,
 			});
+			return task;
 		}
 		return this.prisma.task.findUnique({
 			where: { id: taskWhereUniqueInput.id },
@@ -135,10 +136,9 @@ export class TasksService {
 			where: { id: taskId },
 			select: { id: true },
 		});
-		
+
 		let attachments = [];
 		if (data.attachments) {
-
 			attachments = await this.filesService.generateAttachmentFiles(data.attachments);
 		}
 
@@ -149,23 +149,23 @@ export class TasksService {
 				author: {
 					connect: {
 						id: authorId,
-					}
+					},
 				},
 				task: {
 					connect: {
 						id: taskId,
-					}
+					},
 				},
 				...(attachments
 					? {
-						attachments: {
-							createMany: {
-								data: attachments,
+							attachments: {
+								createMany: {
+									data: attachments,
+								},
 							},
-						},
-					}
+					  }
 					: {}),
-			}
+			},
 		});
 
 		return this.get({ id: taskId });

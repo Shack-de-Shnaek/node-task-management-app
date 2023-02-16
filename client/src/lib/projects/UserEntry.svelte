@@ -68,20 +68,10 @@
 </div>
 
 <style>
-    /* div {
-        border: 2px solid var(--bs-primary);
-        border-bottom: none;
-        border-top: none;
-    } */
-    
     button {
         width: fit-content;
         outline: none;
         border: none;
-    }
-
-    .navigate {
-        background-color: inherit;
     }
 
     .delete, .add-admin {

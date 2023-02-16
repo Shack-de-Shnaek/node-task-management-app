@@ -11,5 +11,5 @@ export class CreateProjectDto {
 	description: string;
 
 	@IsDataURI()
-	thumbnail
+	thumbnail;
 }

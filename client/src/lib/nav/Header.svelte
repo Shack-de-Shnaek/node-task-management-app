@@ -47,12 +47,6 @@
         width: fit-content;
     }
 
-    button {
-        background: inherit;
-        outline: none;
-        border: none;
-    }
-
     @media only screen and (max-width: 577px) {
         header {
             width: 100%;

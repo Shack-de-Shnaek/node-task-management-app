@@ -31,39 +31,30 @@
         }
     }
 
-    const updateTask = async() => {
+    const updateTask = async(newValue) => {
+        if(!isNaN(parseInt(newValue))) newValue = parseInt(newValue);
         try {
             const res = await fetch(`/api/tasks/${$task.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ [field]: value })
+                body: JSON.stringify({ [field]: newValue })
             });
             await handleResponse<TaskData>(res, (json) => {
                 task.set(json);
                 updateTaskInProjectCache(json);
-                // backgroundColor.set(getBackgroundColor());
             });
         } catch (e) {
             alert('Could not update project');
             console.log(e);
         }
     }
-    
-    // const getBackgroundColor = () => {
-    //     if(options.length > 0 && Object.hasOwn(options[0], 'color')) {
-    //         const filteredOptions = options.filter(option => value === option.code);
-    //         if(filteredOptions.length > 0) return `background: ${filteredOptions[0].color}`;
-    //     }
-    //     return '';
-    // }
-    // const backgroundColor: Writable<string> = writable(getBackgroundColor());
 </script>
 
 <select class="form-select p-1" name={field} 
-disabled={!$currentUserIsAdmin && field === 'assignedToId'} bind:value={value} 
-on:change={() => updateTask()}>
+disabled={!$currentUserIsAdmin && field === 'assignedToId'} {value}
+on:change={(event) => updateTask(event.target.value)}>
     {#each options as option}
         <option value={!Object.hasOwn(option, 'code')?option.id:option.code}>
             {#if Object.hasOwn(option, 'name')}

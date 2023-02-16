@@ -7,16 +7,18 @@ import { json } from 'express';
 import { AppModule } from './app.module';
 import { UnauthorizedRedirectFilter } from './auth/unauthorizedRedirect.filter';
 import { PrismaExceptionsInterceptor } from './prisma-exceptions.interceptor';
-import * as compression from "compression";
+import * as compression from 'compression';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.useGlobalInterceptors(new PrismaExceptionsInterceptor());
 	app.useGlobalFilters(new UnauthorizedRedirectFilter());
-	app.use(compression({
-		filter: () => true,
-		threshold: 0,
-	}));
+	app.use(
+		compression({
+			filter: () => true,
+			threshold: 0,
+		}),
+	);
 	app.use(json({ limit: '50mb' }));
 	app.use(
 		session({
