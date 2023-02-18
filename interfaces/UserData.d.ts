@@ -1,5 +1,6 @@
 import { PostData } from "./PostData";
 import { LimitedProjectData } from "./ProjectData";
+import { LimitedTaskData } from "./TaskData";
 
 export type UserData = {
     id: number;
@@ -10,8 +11,9 @@ export type UserData = {
     description: string | null;
     projects: LimitedProjectData[];
     leaderOfProjects: LimitedProjectData[];
-    adminOfProjects: LimitedProjectData[],
+    adminOfProjects: LimitedProjectData[];
     posts: PostData[];
+    createdTasks: LimitedTaskData[];
     createdTasks: [];
 }
 

@@ -2,7 +2,7 @@ import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import type { UserData } from "../../interfaces/UserData";
 import type { ProjectData } from "../../interfaces/ProjectData";
-import type { TaskPriorityData, TaskSeverityData, TaskStatusData } from "../../interfaces/TaskData";
+import type { TaskData } from "../../interfaces/TaskData";
 
 export type headerWidgetType = {
     label: string;
@@ -35,10 +35,16 @@ export const currentUserHasBeenRequested: Writable<boolean> = writable(false);
 export const headerData: Writable<headerDataType> = writable({
     title: 'Task Manager',
     widgets: []
-})
+});
 
 interface CachedProjects extends Object {
     [id: number]: ProjectData,
 }
 
-export const cachedProjects: Writable<CachedProjects> = writable({})
+export const cachedProjects: Writable<CachedProjects> = writable({});
+
+interface CachedTasks extends Object {
+    [id: number]: TaskData,
+}
+
+export const cachedTasks: Writable<CachedTasks> = writable({});

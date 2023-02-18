@@ -105,7 +105,7 @@
                 on:submit|preventDefault={() => { postComment() }}>
                     <textarea cols="3" name="content" placeholder="New Comment" class="w-100 form-control"
                     bind:value={newCommentContent}></textarea>
-                    <button type="submit" class="btn btn-success p-1" style="font-size: 0.75rem;">Post</button>
+                    <button type="submit" class="btn btn-success p-1"><small>Post</small></button>
                 </form>
                 <div class="mt-2 d-flex flex-column gap-1">
                     {#each post.comments as comment}
@@ -148,5 +148,9 @@
 
     .comment-content {
         background: var(--light-gray)
+    }
+
+    button[type=submit] {
+        height: fit-content;
     }
 </style>

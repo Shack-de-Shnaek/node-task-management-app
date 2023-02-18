@@ -21,6 +21,12 @@ export type TaskData = {
     dueAt: string;
 }
 
+export type LimitedTaskData = {
+    id: number;
+    title: string;
+    description: string;
+}
+
 export type TaskCategoryData = {
     id: number;
     name: string;

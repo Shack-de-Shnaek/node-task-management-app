@@ -4,7 +4,8 @@
 	import { onMount } from "svelte";
 	import handleResponse from "../utilities/handleResponse";
 	import { Navigate } from "svelte-router-spa";
-	import { headerData } from "../../store";
+	import { cachedTasks, headerData } from "../../store";
+	import { derived, writable, type Readable, type Writable } from "svelte/store";
 
     export let currentRoute: CurrentRoute;
 
@@ -19,78 +20,88 @@
     }
 
     let dateString: string;
-    let date: {
+    type ExtendedDate = {
         date: Date;
         numberOfDaysInMonth: number;
         numberOfDaysInPreviousMonth: number;
         weekdayOfFirstDay: number;
-    } = { 
+    }
+
+    const selectedDate: Writable<ExtendedDate> = writable({
         date: undefined,
         numberOfDaysInMonth: undefined,
         numberOfDaysInPreviousMonth: undefined,
         weekdayOfFirstDay: undefined
-    }
+    });
+    const taskArray: Writable<TaskData[]> = writable([]);
+    const dayNumberWithTasksArray: Readable<{ date: Date, tasksCreatedAt?: TaskData[], tasksDueAt?: TaskData[] }[]> = derived([taskArray, selectedDate], ([$taskArray, $selectedDate]) => {
+        let days: { date: Date, tasksCreatedAt?: TaskData[], tasksDueAt?: TaskData[] }[] = [];
+        
+        if($selectedDate.date === undefined) return days;
 
-    let dayNumberArray: { date: Date, tasks?: TaskData[] }[] = [];
+        const tasksCreatedAt: { [key: string]: TaskData[] } = {};
+        const tasksDueAt: { [key: string]: TaskData[] } = {};
+        for(const task of $taskArray) {
+            const createdAt = task.createdAt.split('T')[0];
+            const dueAt = (!!task.dueAt) ? task.dueAt.split('T')[0]: undefined;
 
-    let tasks: {
-        tasksCreatedAt: { [key: string]: TaskData[] },
-        tasksDueAt: { [key: string]: TaskData[] },
-    }
-
-    const dateChange = async () => {
-        date.date = new Date(dateString);
-        date.numberOfDaysInMonth = new Date(date.date.getFullYear(), date.date.getMonth() + 1, 0).getDate();
-        date.numberOfDaysInPreviousMonth = new Date(date.date.getFullYear(), date.date.getMonth(), 0).getDate();
-        date.weekdayOfFirstDay = reorderWeekDays(date.date.getDay());
-        tasks = await getTasks();
-        dayNumberArray = getDayNumberArray();
-    }
-
-    const getDayNumberArray = () => {
-        let days: { date: Date, tasks?: TaskData[] }[] = []; 
-        for(let i=0; i<42; i++) {         
-            let dayDate: Date = new Date(date.date.getFullYear(), date.date.getMonth(), i+1-date.weekdayOfFirstDay, 12);
-
-            if(i < date.weekdayOfFirstDay) {
-                if(date.date.getMonth() === 0) dayDate = new Date(date.date.getFullYear()-1, 11, 31-(date.weekdayOfFirstDay-i-1), 12);
-                else dayDate = new Date(date.date.getFullYear(), date.date.getMonth()-1, date.numberOfDaysInPreviousMonth-(date.weekdayOfFirstDay-i-1), 12);
+            if(tasksCreatedAt[createdAt] === undefined) tasksCreatedAt[createdAt] = [];
+            tasksCreatedAt[createdAt].push(task);
+            
+            if(dueAt) {
+                if(tasksDueAt[dueAt] === undefined) tasksDueAt[dueAt] = [];
+                tasksDueAt[dueAt].push(task);
             }
-            if(i+1-date.weekdayOfFirstDay > date.numberOfDaysInMonth) {
-                if(date.date.getMonth() === 11) dayDate = new Date(date.date.getFullYear()+1, date.date.getMonth()+1, i+1-date.numberOfDaysInMonth-date.weekdayOfFirstDay, 12);
-                else dayDate = new Date(date.date.getFullYear(), date.date.getMonth()+1, i-date.numberOfDaysInMonth-(date.weekdayOfFirstDay-1), 12);
+        }
+
+        for(let i=0; i<42; i++) {         
+            let dayDate: Date = new Date($selectedDate.date.getFullYear(), $selectedDate.date.getMonth(), i+1-$selectedDate.weekdayOfFirstDay, 12);
+
+
+            if(i < $selectedDate.weekdayOfFirstDay) {
+                if($selectedDate.date.getMonth() === 0) dayDate = new Date($selectedDate.date.getFullYear()-1, 11, 31-($selectedDate.weekdayOfFirstDay-i-1), 12);
+                else dayDate = new Date($selectedDate.date.getFullYear(), $selectedDate.date.getMonth()-1, $selectedDate.numberOfDaysInPreviousMonth-($selectedDate.weekdayOfFirstDay-i-1), 12);
+            }
+            if(i+1-$selectedDate.weekdayOfFirstDay > $selectedDate.numberOfDaysInMonth) {
+                if($selectedDate.date.getMonth() === 11) dayDate = new Date($selectedDate.date.getFullYear()+1, $selectedDate.date.getMonth()+1, i+1-$selectedDate.numberOfDaysInMonth-$selectedDate.weekdayOfFirstDay, 12);
+                else dayDate = new Date($selectedDate.date.getFullYear(), $selectedDate.date.getMonth()+1, i-$selectedDate.numberOfDaysInMonth-($selectedDate.weekdayOfFirstDay-1), 12);
             }
 
             days.push({
                 date: dayDate,
-                tasks: tasks.tasksCreatedAt[dayDate.toISOString().split('T')[0]]
+                tasksCreatedAt: tasksCreatedAt[dayDate.toISOString().split('T')[0]],
+                tasksDueAt: tasksDueAt[dayDate.toISOString().split('T')[0]]
             });
         }
         return days;
+    });
+
+    const dateChange = async () => {
+        const date = new Date(dateString);
+        selectedDate.set({
+            date: date,
+            numberOfDaysInMonth: new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate(),
+            numberOfDaysInPreviousMonth: new Date(date.getFullYear(), date.getMonth(), 0).getDate(),
+            weekdayOfFirstDay: reorderWeekDays(date.getDay())
+        });
     }
 
     const getTasks = async () => {
+        let fetchedTasks: TaskData[] = [];
+        for(const key in $cachedTasks) fetchedTasks.push($cachedTasks[key]);
+        console.log(fetchedTasks)
+        taskArray.set(fetchedTasks);
         try {
             const res = await fetch('api/users/tasks');
-            let taskArr: TaskData[] = [];
             await handleResponse<TaskData[]>(res, (json) => {
-                taskArr = json;
+                taskArray.set(json);
+                cachedTasks.update(data => {
+                    for(const task of json) {
+                        data[task.id] = task;                            
+                    }
+                    return data;
+                });
             });
-            const tasksCreatedAt: { [key: string]: TaskData[] } = {};
-            const tasksDueAt: { [key: string]: TaskData[] } = {};
-            for(const task of taskArr) {
-                const createdAt = task.createdAt.split('T')[0];
-                const dueAt = (!!task.dueAt) ? task.dueAt.split('T')[0]: undefined;
-
-                if(tasksCreatedAt[createdAt] === undefined) tasksCreatedAt[createdAt] = [];
-                tasksCreatedAt[createdAt].push(task);
-                
-                if(dueAt) {
-                    if(tasksDueAt[dueAt] === undefined) tasksDueAt[dueAt] = [];
-                    tasksDueAt[dueAt].push(task);
-                }
-            }
-            return { tasksCreatedAt: tasksCreatedAt, tasksDueAt: tasksDueAt };
         } catch (e) {
             console.log(e);
             alert('Could not get tasks');
@@ -109,17 +120,18 @@
         return true;
     }
 
-    onMount(() => {
+    onMount(async () => {
         if(dateString === undefined) {
             const now = new Date();
             const month = (now.getMonth() < 10 ? `0${now.getMonth() + 1}` : now.getMonth() + 1);
             dateString = `${now.getFullYear()}-${month}`;
+            getTasks();
             dateChange();
         }
         headerData.set({
             title: 'Task Calendar',
             widgets: []
-        })
+        });
     });
 </script>
 
@@ -151,29 +163,27 @@
         </div>
     </div>
     <div class="calendar-days-container w-100 p-1 d-flex flex-column d-lg-grid">
-        {#if tasks}
-            {#each dayNumberArray as day}
-                <div class="calendar-day bg-white border border-1 d-flex flex-column">
-                    <div class="calendar-day-banner"
-                    class:bg-primary={datesAreEqual(day.date, new Date())}
-                    class:text-light={datesAreEqual(day.date, new Date())}>
-                        <span>{day.date.getDate()}</span>
-                        <small>{day.tasks ? day.tasks.length : 0} tasks</small>
-                    </div>
-                    <div class="task-list w-100 p-1 d-flex flex-column gap-1">
-                        {#if day.tasks}
-                            {#each day.tasks as task}
-                            <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={task.title} styles="task-link d-block text-dark rounded-3 small">
-                                <div class="task p-1">
-                                    {task.title}
-                                </div>
-                            </Navigate>
-                            {/each}
-                        {/if}
-                    </div>
+        {#each $dayNumberWithTasksArray as day}
+            <div class="calendar-day bg-white border border-1 d-flex flex-column">
+                <div class="calendar-day-banner"
+                class:bg-primary={datesAreEqual(day.date, new Date())}
+                class:text-light={datesAreEqual(day.date, new Date())}>
+                    <span>{day.date.getDate()}</span>
+                    <small>{day.tasksCreatedAt ? day.tasksCreatedAt.length : 0} tasks</small>
                 </div>
-            {/each}
-        {/if}
+                <div class="task-list w-100 p-1 d-flex flex-column gap-1">
+                    {#if day.tasksCreatedAt}
+                        {#each day.tasksCreatedAt as task}
+                        <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={task.title} styles="task-link d-block text-dark rounded-3 small">
+                            <div class="task p-1">
+                                {task.title}
+                            </div>
+                        </Navigate>
+                        {/each}
+                    {/if}
+                </div>
+            </div>
+        {/each}
     </div>
 </div>
 
@@ -185,7 +195,7 @@
     .calendar-days-container {
         /* display: grid; */
         grid-template-columns: repeat(7, 1fr);
-        grid-template-rows: repeat(6, 9rem);
+        grid-template-rows: repeat(6, 8rem);
     }
 
     .calendar-day {

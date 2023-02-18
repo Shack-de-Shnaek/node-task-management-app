@@ -81,7 +81,7 @@
             <label for="task-severity">Severity</label>
             <select name="task-severity" id="task-severity" class="form-select"
             required bind:value={newTaskData.severityCode}>
-                {#each $taskSeverities as severity}
+                {#each $taskSeverities as severity, i}
                     <option value={severity.code} title={severity.description}>{severity.name}</option>
                 {/each}
             </select>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cachedProjects, headerData } from "../../../store";
+	import { cachedProjects, cachedTasks, headerData } from "../../../store";
 	import type { CurrentRoute } from "svelte-router-spa/types/components/route";
 	import type { TaskAttachmentData, TaskData } from "../../../../../interfaces/TaskData";
 	import { currentUserIsMember, project, taskPriorities, taskSeverities, taskStatuses } from "./projectStore";
@@ -71,9 +71,12 @@
             alert('Invalid task ID');
         }
         
-        const fetchedTaskData: TaskData = $project.tasks.find(t => t.id === parseInt(currentRoute.namedParams.taskId));
+        let fetchedTaskData: TaskData = $project.tasks.find(t => t.id === parseInt(currentRoute.namedParams.taskId));
         if(fetchedTaskData !== undefined) task.set(fetchedTaskData);
         
+        fetchedTaskData = $cachedProjects[currentRoute.namedParams.taskId];
+        if(fetchedTaskData !== undefined) task.set(fetchedTaskData);
+
         for(const key in $cachedProjects) {
             const cachedTask = $cachedProjects[key].tasks.find(t => t.id === parseInt(currentRoute.namedParams.taskId));
             if(cachedTask !== undefined) {
@@ -84,13 +87,10 @@
         
         try {
             const res = await fetch(`/api/tasks/${currentRoute.namedParams.taskId}`);
-            if(res.ok) {
-                const json = await res.json();
+            await handleResponse<TaskData>(res, (json) => {
                 task.set(json);
-            } else {
-                const json: NestError = await res.json();
-                alert(json.message)
-            }
+                $cachedTasks[json.id] = json;
+            });
         } catch (e) {
             alert('Could not fetch task data');
             console.log(e);

@@ -30,7 +30,8 @@
     }
 
     $: if(parseInt(currentRoute.namedParams.projectId) !== $project.id) {
-        if($cachedProjects[currentRoute.namedParams.projectId] !== undefined) {
+        if($cachedProjects[parseInt(currentRoute.namedParams.projectId)] !== undefined) {
+            console.log('cached');
             project.set($cachedProjects[currentRoute.namedParams.projectId]);
             updateHeaderWithProjectData();
         }
