@@ -147,6 +147,14 @@ export class ProjectsController {
 		return this.projectsService.removeTaskCategory(projectId, taskCategoryId);
 	}
 
+	@Get(':projectId/tasks')
+	@UseGuards(ProjectMemberGuard)
+	async getTasks(
+		@Param('projectId', ParseIntPipe) projectId: number,
+	) {
+		return this.projectsService.getTasks(projectId);
+	}
+
 	@Post(':projectId/tasks')
 	@HttpCode(201)
 	@UseGuards(ProjectMemberGuard)

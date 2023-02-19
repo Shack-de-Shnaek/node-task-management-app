@@ -327,12 +327,10 @@
                     <div class="comment w-100">
                         <div class="d-flex justify-content-between gap-0 justify-content-md-start gap-md-5 ">
                             <span class="">
-                                {#if comment.author.thumbnailPath}
-                                    <img src={comment.author.thumbnailPath} alt="" style="height: 1rem;" class="rounded-circle">
-                                {/if}
+                                <img src={comment.author.thumbnailPath?comment.author.thumbnailPath:'/icons/user.webp'} alt="profile" style="height: 1rem;" class="rounded-circle">
                                 <span>{comment.author.firstName} {comment.author.lastName}</span>
                             </span>
-                            <span class="">{parseDate(comment.createdAt)}</span>
+                            <span class="font-monospace">{parseDate(comment.createdAt)}</span>
                         </div>
                         <div class="w-100 rounded-3 p-1 comment-content">
                             {#each parseParagraphs(comment.content) as paragraph}

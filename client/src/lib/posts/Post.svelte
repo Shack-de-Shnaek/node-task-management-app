@@ -40,18 +40,14 @@
         <div>
             <div class="d-flex align-items-center gap-1">
                 <Navigate to={`/users/${post.author.id}`} styles="d-flex align-items-center gap-1">
-                    {#if post.author.thumbnailPath}
-                        <img src={post.author.thumbnailPath} alt="" class="rounded-circle" style="height: 1.5rem;">
-                    {/if}
+                    <img src={post.author.thumbnailPath?post.author.thumbnailPath:'/icons/user.webp'} alt="" class="rounded-circle" style="height: 1.5rem;">
                     <div>{post.author.firstName} {post.author.lastName}</div>
                 </Navigate>
                 <div class="small font-monospace">{parseDate(post.createdAt)}</div>
             </div>
             {#if !isInProjectPage}
                 <Navigate to={`/projects/${post.project.id}`} styles="d-flex align-items-center gap-1">
-                    {#if post.project.thumbnailPath}
-                        <img src={post.project.thumbnailPath} alt="" class="rounded-circle" style="height: 1.5rem;">
-                    {/if}
+                    <img src={post.project.thumbnailPath?post.project.thumbnailPath:'/icons/project.webp'} alt="" class="rounded-circle" style="height: 1.5rem;">
                     <span>{post.project.name}</span>
                 </Navigate>
             {/if}

@@ -13,7 +13,7 @@
     export let currentRoute;
     export let params;
 
-    const getProject = async(id: number): Promise<ProjectData | null> => {
+    const getProject = async(): Promise<ProjectData | null> => {
         try {
             const res = await fetch(`/api/projects/${currentRoute.namedParams.projectId}`);
             if(res.ok) {
@@ -29,14 +29,14 @@
         }
     }
 
-    $: if(parseInt(currentRoute.namedParams.projectId) !== $project.id) {
+    $: if(currentRoute.namedParams.projectId !== undefined && parseInt(currentRoute.namedParams.projectId) !== $project.id) {
         if($cachedProjects[parseInt(currentRoute.namedParams.projectId)] !== undefined) {
-            console.log('cached');
             project.set($cachedProjects[currentRoute.namedParams.projectId]);
             updateHeaderWithProjectData();
         }
         (async() => {
-            const res: ProjectData = await getProject(currentRoute.namedParams.projectId);
+            let requestedOnRoute = currentRoute.path;
+            const res: ProjectData = await getProject();
             if(res === null) {
                 headerData.set({
                     title: "This project doesn't exist",
@@ -46,7 +46,7 @@
                 return;
             }
             updateAllProjectCache(res);
-            updateHeaderWithProjectData();
+            if(requestedOnRoute === currentRoute.path) updateHeaderWithProjectData();
 
             if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
                 const data = await getTaskSeveritiesPrioritiesStatuses();
@@ -57,11 +57,15 @@
         })();
     }
 
-    $: if(currentRoute.path && $project.id !== 0) updateHeaderWithProjectData();
+    $: if(parseInt(currentRoute.namedParams.taskId) === $project.id) updateHeaderWithProjectData();
 
-    onDestroy(() => {
-        $project.id = 0;
-    });
+    (async() => {
+        await getProject();
+    })();
+
+    // onDestroy(() => {
+    //     $project.id = 0;
+    // });
 </script>
 
 <Route {currentRoute} {params} />

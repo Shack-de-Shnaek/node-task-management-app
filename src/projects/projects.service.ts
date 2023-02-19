@@ -9,6 +9,7 @@ import {
 import { Prisma } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
+import { taskSelector } from 'prisma/selectors/taskSelectors';
 import { FilesService } from 'src/files/files.service';
 import { CreatePostDto } from 'src/posts/post-create.dto';
 import { PostsService } from 'src/posts/posts.service';
@@ -92,9 +93,7 @@ export class ProjectsService {
 			if (thumbnailPath !== null) delete data.image;
 		}
 		return this.prisma.project.update({
-			where: {
-				id: id,
-			},
+			where: { id: id },
 			data: {
 				...data,
 				...(thumbnailPath ? { thumbnailPath: thumbnailPath } : {}),
@@ -106,24 +105,16 @@ export class ProjectsService {
 	async addMember(projectId: number, email: string) {
 		await this.prisma.user.findUniqueOrThrow({
 			where: { email: email },
-			select: {
-				id: true,
-			},
+			select: { id: true },
 		});
 
 		await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
-			select: {
-				id: true,
-			},
+			where: { id: projectId },
+			select: { id: true },
 		});
 
 		return this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			data: {
 				members: {
 					connect: {
@@ -137,17 +128,11 @@ export class ProjectsService {
 
 	async removeMember(projectId: number, userId: number) {
 		const user = await this.prisma.user.findUniqueOrThrow({
-			where: {
-				id: userId,
-			},
-			select: {
-				id: true,
-			},
+			where: { id: userId },
+			select: { id: true },
 		});
 		const project = await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			select: {
 				leaderId: true,
 				members: {
@@ -164,9 +149,7 @@ export class ProjectsService {
 			throw new BadRequestException('Cannot remove the leader of the project');
 
 		return this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			data: {
 				members: {
 					disconnect: {
@@ -185,9 +168,7 @@ export class ProjectsService {
 
 	async addAdmin(projectId: number, userId: number) {
 		const project = await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			select: {
 				members: {
 					select: {
@@ -201,9 +182,7 @@ export class ProjectsService {
 			throw new BadRequestException('User is not a member of this project');
 
 		return this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			data: {
 				admins: {
 					connect: {
@@ -218,14 +197,10 @@ export class ProjectsService {
 	async removeAdmin(projectId: number, userId: number) {
 		await this.prisma.user.findUniqueOrThrow({
 			where: { id: userId },
-			select: {
-				id: true,
-			},
+			select: { id: true },
 		});
 		const project = await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			select: {
 				members: {
 					select: {
@@ -249,9 +224,7 @@ export class ProjectsService {
 			throw new ForbiddenException('Cannot remove the leader of the project');
 
 		return this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			data: {
 				admins: {
 					disconnect: {
@@ -265,12 +238,8 @@ export class ProjectsService {
 
 	async addPost(projectId: number, authorId: number, data: CreatePostDto) {
 		const project = await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
-			select: {
-				id: true,
-			},
+			where: { id: projectId },
+			select: { id: true },
 		});
 
 		await this.postsService.create(data, projectId, authorId);
@@ -279,9 +248,7 @@ export class ProjectsService {
 
 	async addPostComment(projectId: number, authorId: number, postId: number, content: string) {
 		const project = await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			select: {
 				id: true,
 				posts: {
@@ -295,9 +262,7 @@ export class ProjectsService {
 			throw new NotFoundException('Post is not in this project');
 		await this.postsService.createComment(postId, content, authorId);
 		return this.prisma.project.findUnique({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			select: projectSelector.select,
 		});
 	}
@@ -318,9 +283,7 @@ export class ProjectsService {
 
 	async removeTaskCategory(projectId: number, taskCategoryId: number) {
 		const project = await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			select: {
 				id: true,
 				taskCategories: {
@@ -343,9 +306,7 @@ export class ProjectsService {
 			);
 
 		return this.prisma.project.update({
-			where: {
-				id: projectId,
-			},
+			where: { id: projectId },
 			select: projectSelector.select,
 			data: {
 				taskCategories: {
@@ -357,14 +318,18 @@ export class ProjectsService {
 		});
 	}
 
+	async getTasks(projectId: number) {
+		return this.prisma.task.findMany({
+			where: { projectId: projectId },
+			select: taskSelector.select,
+			orderBy: taskSelector.orderBy
+		});
+	}
+
 	async addTask(projectId: number, creatorId: number, data: CreateTaskDto) {
 		await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
-			select: {
-				id: true,
-			},
+			where: { id: projectId },
+			select: { id: true },
 		});
 
 		await this.tasksService.create(data, projectId, creatorId);
@@ -387,12 +352,8 @@ export class ProjectsService {
 
 	async delete(id: number) {
 		return this.prisma.project.delete({
-			where: {
-				id: id,
-			},
-			select: {
-				id: true,
-			},
+			where: { id: id },
+			select: { id: true },
 		});
 	}
 }

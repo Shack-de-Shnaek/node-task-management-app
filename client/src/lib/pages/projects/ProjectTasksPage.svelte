@@ -6,6 +6,9 @@
 	import { Navigate, navigateTo } from "svelte-router-spa";
 	import { getContext } from "svelte";
 	import type { Writable } from "svelte/store";
+	import { onMount } from "svelte";
+
+    export let currentRoute;
 
     let tasksByStatus: {
         [key: string]: TaskData[];
@@ -19,15 +22,16 @@
     }
 
     const bottomPadding: Writable<number> = getContext('layoutBottomPadding');
-    bottomPadding.set(0.25);
+    $: if(currentRoute) bottomPadding.set(0.25);
 </script>
 
-<div class="w-100 h-100 position-relative">
-    <div class="add-button-wrapper text-center position-absolute">
-        <Navigate to={`/projects/${$project.id}/new-task`} title="Add a new project" styles="add-button-wrapper">
-            <div class="p-2 bg-success rounded-circle d-flex align-items-center justify-content-center">
-                <img src="/icons/add.webp" alt="Add" style="height: 1.25rem; filter: invert(1);">
-            </div>
+<div class="w-100 h-100">
+    <div class="task-toolbar p-1 d-flex algin-items-center gap-2">
+        <Navigate to={`/projects/${$project.id}/new-task`} title="Add a new project" styles="btn btn-success p-1">
+            <small>Add task</small>
+        </Navigate>
+        <Navigate to={`/calendar?project=${$project.id}`} title="Task calendar" styles="btn btn-primary p-1">
+            <small>Task calendar</small>
         </Navigate>
     </div>
     <div class="all-tasks-container h-100 w-100 pb-5 d-flex gap-3">
@@ -64,16 +68,6 @@
     .task-list .list {
         overflow-y: auto;
         max-height: calc(100% - 4rem);
-    }
-    
-    .add-button-wrapper {
-        left: 0.5rem;
-        top: 0.4rem;
-    }
-
-    .add-button-wrapper div {
-        height: 2rem;
-        width: 2rem;
     }
 
     @media only screen and (max-width: 577px) {

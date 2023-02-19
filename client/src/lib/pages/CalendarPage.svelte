@@ -4,10 +4,9 @@
 	import { onMount } from "svelte";
 	import handleResponse from "../utilities/handleResponse";
 	import { Navigate } from "svelte-router-spa";
-	import { cachedTasks, headerData } from "../../store";
+	import { cachedTasks, currentUserData, headerData } from "../../store";
 	import { derived, writable, type Readable, type Writable } from "svelte/store";
-
-    export let currentRoute: CurrentRoute;
+	import parseDate from "../utilities/parseDate";
 
     const numberToWeekdayMap = {
         0: 'Monday',
@@ -20,6 +19,7 @@
     }
 
     let dateString: string;
+    let selectedProjectId: number;
     type ExtendedDate = {
         date: Date;
         numberOfDaysInMonth: number;
@@ -33,8 +33,10 @@
         numberOfDaysInPreviousMonth: undefined,
         weekdayOfFirstDay: undefined
     });
+    
     const taskArray: Writable<TaskData[]> = writable([]);
     const dayNumberWithTasksArray: Readable<{ date: Date, tasksCreatedAt?: TaskData[], tasksDueAt?: TaskData[] }[]> = derived([taskArray, selectedDate], ([$taskArray, $selectedDate]) => {
+        
         let days: { date: Date, tasksCreatedAt?: TaskData[], tasksDueAt?: TaskData[] }[] = [];
         
         if($selectedDate.date === undefined) return days;
@@ -87,12 +89,25 @@
     }
 
     const getTasks = async () => {
+        console.log('fetch')
+        
         let fetchedTasks: TaskData[] = [];
-        for(const key in $cachedTasks) fetchedTasks.push($cachedTasks[key]);
-        console.log(fetchedTasks)
+
+        let projectId: number;
+        if(window.location.search.split('project=')[1] && !isNaN(parseInt(window.location.search.split('project=')[1]))) {
+            projectId = parseInt(window.location.search.split('project=')[1]);
+        }
+
+        for(const key in $cachedTasks) {
+            if((projectId && $cachedTasks[key].project.id === projectId) || !projectId) fetchedTasks.push($cachedTasks[key]);
+        }
+
+        console.log(fetchedTasks);
         taskArray.set(fetchedTasks);
         try {
-            const res = await fetch('api/users/tasks');
+            const url = !!projectId ? `projects/${projectId}` : 'users';
+            console.log(url)
+            const res = await fetch(`/api/${url}/tasks`);
             await handleResponse<TaskData[]>(res, (json) => {
                 taskArray.set(json);
                 cachedTasks.update(data => {
@@ -120,11 +135,36 @@
         return true;
     }
 
+    const taskTitleText = (task: TaskData, mode: 'created' | 'due') => {
+        let textItems = [`Title: ${task.title}`, `Project: ${task.project.name}`];
+        if(mode === 'created' && task.dueAt) textItems.push(`Due: ${parseDate(task.dueAt)}`);
+        else if(mode === 'due') textItems.push(`Created: ${parseDate(task.createdAt)}`);
+        textItems = textItems.concat([`Severity: ${task.severity.name}`], [`Priority: ${task.priority.name}`], [`Category: ${task.category.name}`]);
+        return textItems.join('; \n');
+    }
+
+    const updateSelectedProject = async () => {
+        console.log('update');
+
+        if(selectedProjectId === null) {
+            window.history.replaceState(null, null, '?');
+        } else {
+            window.history.replaceState(null, null, `?project=${selectedProjectId}`);
+        }
+
+        console.log('ooga')
+        await getTasks();
+    }
+
     onMount(async () => {
         if(dateString === undefined) {
             const now = new Date();
             const month = (now.getMonth() < 10 ? `0${now.getMonth() + 1}` : now.getMonth() + 1);
             dateString = `${now.getFullYear()}-${month}`;
+            // getTasks();
+            if(window.location.search.split('project=')[1] && !isNaN(parseInt(window.location.search.split('project=')[1]))) {
+                selectedProjectId = parseInt(window.location.search.split('project=')[1]);
+            }
             getTasks();
             dateChange();
         }
@@ -136,8 +176,25 @@
 </script>
 
 <div class="calendar-container mt-3 p-2 bg-light">
-    <div class="bg-primary w-100 p-2 text-center">
-        <input type="month" bind:value={dateString} on:change={() => dateChange()}>
+    <div class="calendar-header m-1 p-2 d-flex align-items-center gap-2 bg-primary">
+        <input type="month" class="month-selector form-control p-1" 
+        bind:value={dateString} on:change={() => dateChange()}>
+
+        <select name="project" class="project-selector form-select p-1" 
+        bind:value={selectedProjectId} on:change={() => updateSelectedProject()}>
+            <option value={null}>All</option>
+            {#each $currentUserData.projects as project}
+                <option value={project.id}>{project.name}</option>
+            {/each}
+        </select>
+
+        {#if selectedProjectId !== null}
+            <div class="go-to-project p-1 bg-primary text-center">
+                <Navigate to={`/projects/${selectedProjectId}`} styles="text-light">
+                    <small>Go to project</small>
+                </Navigate>
+            </div>
+        {/if}
     </div>
     <div class="weekdays-container d-none d-lg-flex justify-content-evenly">
         <div class="weekday text-center m-1 p-1">
@@ -169,13 +226,23 @@
                 class:bg-primary={datesAreEqual(day.date, new Date())}
                 class:text-light={datesAreEqual(day.date, new Date())}>
                     <span>{day.date.getDate()}</span>
-                    <small>{day.tasksCreatedAt ? day.tasksCreatedAt.length : 0} tasks</small>
                 </div>
                 <div class="task-list w-100 p-1 d-flex flex-column gap-1">
                     {#if day.tasksCreatedAt}
+                        <small class="text-bold">Submitted: </small>
                         {#each day.tasksCreatedAt as task}
-                        <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={task.title} styles="task-link d-block text-dark rounded-3 small">
-                            <div class="task p-1">
+                        <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={taskTitleText(task, 'created')} styles="task-link d-block text-dark small">
+                            <div class="task p-1 rounded-3">
+                                {task.title}
+                            </div>
+                        </Navigate>
+                        {/each}
+                    {/if}
+                    {#if day.tasksDueAt}
+                        <small class="text-bold">Due: </small>
+                        {#each day.tasksDueAt as task}
+                        <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={taskTitleText(task, 'due')} styles="task-link d-block text-dark small">
+                            <div class="task p-1 rounded-3">
                                 {task.title}
                             </div>
                         </Navigate>
@@ -198,11 +265,23 @@
         grid-template-rows: repeat(6, 8rem);
     }
 
+    .project-selector {
+        padding-right: 2rem !important;
+    }
+
+    .project-selector, .month-selector {
+        width: 50%;
+    }
+
+    .go-to-project {
+        width: fit-content;
+        white-space: nowrap;
+    }
+
     .calendar-day {
         overflow: hidden;
     }
 
-    
     .weekday {
         flex: 1;
     }
@@ -221,10 +300,6 @@
         background-color: var(--bs-secondary);
     }
 
-    .task-link {
-        height: fit-content;
-    }
-
     .task {
         height: fit-content;
         background-color: var(--light-gray);
@@ -235,10 +310,18 @@
         background-color: #C3CCD5;
     }
 
-    @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 992px) {
         .task-list {
             min-height: 2rem;
             height: fit-content;
+        }
+
+        .go-to-project, .project-selector, .month-selector {
+            width: 100%;
+        }
+
+        .calendar-header {
+            flex-wrap: wrap;
         }
     }
 </style>

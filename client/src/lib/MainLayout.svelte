@@ -25,6 +25,7 @@
 
 <style>
 	.main-layout-container {
+		min-height: fit-content;
 		margin-left: 4rem;
 		padding: 0.25rem 0.5rem;
 	}
