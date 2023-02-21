@@ -1,71 +1,57 @@
 <script lang="ts">
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
-    import { headerData } from "../../../store";
     import { taskPriorities, taskSeverities, taskStatuses } from "./projectStore"
     import { cachedProjects } from "../../../store";
-    import { onDestroy, setContext } from "svelte";
     import { Route } from "svelte-router-spa";
     import { project } from "./projectStore";
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import getTaskSeveritiesPrioritiesStatuses from "../../utilities/getTaskSeveritiesPrioritiesStatuses";
 	import updateHeaderWithProjectData from "../../utilities/updateHeaderWithProjectData";
+	import handleResponse from "../../utilities/handleResponse";
+	import { onMount } from "svelte";
 
     export let currentRoute;
     export let params;
 
-    const getProject = async(): Promise<ProjectData | null> => {
+    const getProject = async () => {
+        if($cachedProjects[parseInt(currentRoute.namedParams.projectId)] !== undefined) {
+            console.log('cached')
+            project.set($cachedProjects[currentRoute.namedParams.projectId]);
+            updateHeaderWithProjectData();
+        }
+        
         try {
             const res = await fetch(`/api/projects/${currentRoute.namedParams.projectId}`);
-            if(res.ok) {
-                const projectData = await res.json();
-                return projectData;
-            } else {
-                return null;
-            }
-        } catch (error) {
+            handleResponse<ProjectData>(res, async (json) => {
+                console.log('fetched');
+                project.set(json);
+                updateAllProjectCache(json);
+                updateHeaderWithProjectData();
+
+                if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
+                    const data = await getTaskSeveritiesPrioritiesStatuses();
+                    taskSeverities.set(data.severities);
+                    taskPriorities.set(data.priorities);
+                    taskStatuses.set(data.statuses);
+                }
+            });
+        } catch (e) {
             alert('Could not fetch project data');
-            console.log(error);
-            // return null;
+            console.log(e);
         }
     }
 
     $: if(currentRoute.namedParams.projectId !== undefined && parseInt(currentRoute.namedParams.projectId) !== $project.id) {
-        if($cachedProjects[parseInt(currentRoute.namedParams.projectId)] !== undefined) {
-            project.set($cachedProjects[currentRoute.namedParams.projectId]);
-            updateHeaderWithProjectData();
-        }
-        (async() => {
-            let requestedOnRoute = currentRoute.path;
-            const res: ProjectData = await getProject();
-            if(res === null) {
-                headerData.set({
-                    title: "This project doesn't exist",
-                    widgets: []
-                });
-                alert("This project doesn't exist");
-                return;
-            }
-            updateAllProjectCache(res);
-            if(requestedOnRoute === currentRoute.path) updateHeaderWithProjectData();
-
-            if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
-                const data = await getTaskSeveritiesPrioritiesStatuses();
-                taskSeverities.set(data.severities);
-                taskPriorities.set(data.priorities);
-                taskStatuses.set(data.statuses);
-            }
-        })();
+        getProject();
     }
 
-    $: if(parseInt(currentRoute.namedParams.taskId) === $project.id) updateHeaderWithProjectData();
+    $: if(currentRoute.namedParams.projectId !== undefined && currentRoute.namedParams.taskId === undefined) {
+        updateHeaderWithProjectData();
+    }
 
-    (async() => {
+    onMount(async () => {
         await getProject();
-    })();
-
-    // onDestroy(() => {
-    //     $project.id = 0;
-    // });
+    });
 </script>
 
 <Route {currentRoute} {params} />

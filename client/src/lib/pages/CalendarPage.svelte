@@ -89,8 +89,6 @@
     }
 
     const getTasks = async () => {
-        console.log('fetch')
-        
         let fetchedTasks: TaskData[] = [];
 
         let projectId: number;
@@ -102,11 +100,9 @@
             if((projectId && $cachedTasks[key].project.id === projectId) || !projectId) fetchedTasks.push($cachedTasks[key]);
         }
 
-        console.log(fetchedTasks);
         taskArray.set(fetchedTasks);
         try {
             const url = !!projectId ? `projects/${projectId}` : 'users';
-            console.log(url)
             const res = await fetch(`/api/${url}/tasks`);
             await handleResponse<TaskData[]>(res, (json) => {
                 taskArray.set(json);
@@ -144,15 +140,12 @@
     }
 
     const updateSelectedProject = async () => {
-        console.log('update');
-
         if(selectedProjectId === null) {
             window.history.replaceState(null, null, '?');
         } else {
             window.history.replaceState(null, null, `?project=${selectedProjectId}`);
         }
 
-        console.log('ooga')
         await getTasks();
     }
 

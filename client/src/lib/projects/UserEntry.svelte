@@ -2,23 +2,30 @@
 	import { Navigate } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../interfaces/ProjectData";
     import type { LimitedUserData } from "../../../../interfaces/UserData";
-    import { currentUserIsAdmin, project } from "../pages/projects/projectStore";
+    import { currentUserIsAdmin, currentUserIsLeader, project } from "../pages/projects/projectStore";
 	import updateAllProjectCache from "../utilities/updateProjectCache";
 	import handleResponse from "../utilities/handleResponse";
+	import { currentUserData } from "../../store";
 
     export let user: LimitedUserData;
     // export let allowRemove = false;
     // export let allowAddAdmin = false;
     export let isAdmin = false;
+    let isCurrentUser = $currentUserData.id === user.id;
+    let userIsProjectAdmin = $project.admins.flatMap(a => a.id).includes(user.id);
+
+    $: userIsProjectAdmin = $project.admins.flatMap(a => a.id).includes(user.id);
 
     const removeUser = async() => {
         try {
-            const res = await fetch(`/api/projects/${$project.id}/${isAdmin?'admins':'members'}`, {
+            let url = `/api/projects/${$project.id}/${isAdmin?'admins':'members'}`;
+            if(isCurrentUser) url += '/self';
+            const headers = isCurrentUser ? undefined : { 'Content-Type': 'application/json' }
+            const body = isCurrentUser && !isAdmin ? undefined : JSON.stringify({ userId: user.id });
+            const res = await fetch(url, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({userId: user.id})
+                headers: headers,
+                body: body
             });
             handleResponse<ProjectData>(res, (json) => {
                 updateAllProjectCache(json);
@@ -55,12 +62,12 @@
         <span>{user.firstName} {user.lastName}</span>
     </Navigate>
     <!-- <a href="mailto: {user.email}">{user.email}</a> -->
-    {#if (!isAdmin && ($currentUserIsAdmin || $currentUserIsAdmin) || (isAdmin && $currentUserIsAdmin)) && $project.leader.id !== user.id}
+    {#if $project.leader.id !== user.id && (isCurrentUser || ($currentUserIsAdmin && !isAdmin) || $currentUserIsLeader)}
         <button class="delete btn btn-danger p-1 m-0" on:click={removeUser}>
             Remove
         </button>
     {/if}
-    {#if $currentUserIsAdmin && $project.leader.id !== user.id && !isAdmin}
+    {#if $project.leader.id !== user.id && !isAdmin && $currentUserIsLeader && !userIsProjectAdmin}
         <button class="add-admin btn btn-success p-1 m-0" on:click={addAdmin}>
             Add Admin
         </button>

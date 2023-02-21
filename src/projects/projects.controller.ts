@@ -94,6 +94,16 @@ export class ProjectsController {
 		return this.projectsService.removeMember(projectId, userId);
 	}
 
+	@Delete(':projectId/members/self')
+	@HttpCode(200)
+	@UseGuards(ProjectMemberGuard)
+	async removeMemberSelf(
+		@Param('projectId', ParseIntPipe) projectId: number,
+		@Req() request,
+	) {
+		return this.projectsService.removeMember(projectId, request.user.id);
+	}
+
 	@Delete(':projectId/admins')
 	@HttpCode(200)
 	@UseGuards(ProjectLeaderGuard)

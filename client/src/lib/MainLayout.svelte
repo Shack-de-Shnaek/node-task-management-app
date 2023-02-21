@@ -11,7 +11,7 @@
 	setContext('layoutBottomPadding', bottomPadding);
 
 	$: if(currentRoute.path) {
-		bottomPadding.set(6);
+		bottomPadding.set(4);
 	}
 
 	const params = {}

@@ -25,24 +25,30 @@
 ::-webkit-scrollbar {
   height: 8px;
   width: 8px;
-  padding: 0;
   border-radius: 1rem;
   background: var(--light-gray);
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: var(--bs-secondary);
-  border-radius: 1rem;
+::-webkit-scrollbar-track {
+  padding: 4px;
 }
 
-html {
-  min-height: 100vh;
+::-webkit-scrollbar-thumb {
+  border-radius: 1rem;
+  background-color: var(--bs-secondary);
+}
+
+body, html {
   min-width: 100%;
   overflow-x: hidden;
 }
 
-body, #app {
-  height: 100vh;
+body, html, #app {
+  min-height: 100vh;
+  height: fit-content;
+}
+
+#app {
   width: 100%;
   margin: 0;
   background-color: var(--light);
