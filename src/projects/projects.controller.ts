@@ -97,10 +97,7 @@ export class ProjectsController {
 	@Delete(':projectId/members/self')
 	@HttpCode(200)
 	@UseGuards(ProjectMemberGuard)
-	async removeMemberSelf(
-		@Param('projectId', ParseIntPipe) projectId: number,
-		@Req() request,
-	) {
+	async removeMemberSelf(@Param('projectId', ParseIntPipe) projectId: number, @Req() request) {
 		return this.projectsService.removeMember(projectId, request.user.id);
 	}
 
@@ -159,9 +156,7 @@ export class ProjectsController {
 
 	@Get(':projectId/tasks')
 	@UseGuards(ProjectMemberGuard)
-	async getTasks(
-		@Param('projectId', ParseIntPipe) projectId: number,
-	) {
+	async getTasks(@Param('projectId', ParseIntPipe) projectId: number) {
 		return this.projectsService.getTasks(projectId);
 	}
 

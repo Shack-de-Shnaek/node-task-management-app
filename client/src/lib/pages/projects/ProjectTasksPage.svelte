@@ -34,7 +34,7 @@
             <small>Task calendar</small>
         </Navigate>
     </div>
-    <div class="all-tasks-container h-100 w-100 pb-5 d-flex gap-3">
+    <div class="all-tasks-container w-100 pb-5 d-flex gap-3">
         {#each $taskStatuses as taskStatus}
             <div class="task-list d-flex flex-column" id="task-{taskStatus.code}-list">
                 <h3 class="task-header w-100 p-1 text-center" title={taskStatus.description}>{taskStatus.name}</h3>
@@ -56,7 +56,7 @@
     .all-tasks-container {
         overflow-x: scroll;
         overflow-y: hidden;
-        max-height: calc(100vh - 4rem);
+        height: calc(100vh - 8rem);
     }
 
     .task-list {

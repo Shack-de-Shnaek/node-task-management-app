@@ -45,7 +45,7 @@
             <NavButton label="Posts" imagePath="/icons/post.webp" href="posts" />
             <NavButton label="Calendar" imagePath="/icons/calendar.webp" href="calendar" />
             <div class="w-100 mt-0 mt-sm-auto p-0">
-                <NavButton label="My account" imagePath="/icons/user.webp" href="my-account" />
+                <NavButton label="My account" imagePath="/icons/user.webp" href="users/{$currentUserData.id}" />
             </div>
         {/if}
     </div>
@@ -53,7 +53,7 @@
         <NavButton label="Tasks" imagePath="/icons/bug.webp" href="test" />
         <NavButton label="Posts" imagePath="/icons/post.webp" href="posts" />
         <NavButton label="Calendar" imagePath="/icons/calendar.webp" href="calendar" />    
-        <NavButton label="My account" imagePath="/icons/user.webp" href="my-account" />
+        <NavButton label="My account" imagePath="/icons/user.webp" href="users/{$currentUserData.id}" />
     </div>
     <div class="project-menu sub-menu m-0" class:d-none={!projectMenuExpanded} use:clickOutside on:click_outside={() => { projectMenuExpanded = false }}>
         <Navigate to="/new-project">

@@ -322,7 +322,7 @@ export class ProjectsService {
 		return this.prisma.task.findMany({
 			where: { projectId: projectId },
 			select: taskSelector.select,
-			orderBy: taskSelector.orderBy
+			orderBy: taskSelector.orderBy,
 		});
 	}
 

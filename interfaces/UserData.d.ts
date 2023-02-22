@@ -14,7 +14,7 @@ export type UserData = {
     adminOfProjects: LimitedProjectData[];
     posts: PostData[];
     createdTasks: LimitedTaskData[];
-    createdTasks: [];
+    assignedTasks: LimitedTaskData[];
 }
 
 export type LimitedUserData = {

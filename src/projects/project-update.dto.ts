@@ -8,6 +8,7 @@ export class UpdateProjectDto {
 	name: string;
 
 	@IsString()
+	@MinLength(5)
 	@IsOptional()
 	description: string;
 

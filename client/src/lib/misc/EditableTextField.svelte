@@ -6,6 +6,8 @@
 	import handleResponse from "../utilities/handleResponse";
 	import type { TaskData } from "../../../../interfaces/TaskData";
 	import updateTaskInProjectCache from "../utilities/updateTaskInProjectCache";
+	import type { UserData } from "../../../../interfaces/UserData";
+	import { currentUserData } from "../../store";
 
     export let value: string;
     export let textType: 'span' | 'paragraph' = 'span'
@@ -13,11 +15,11 @@
     export let objectId: number;
     export let field: string;
     export let allowEditing = false;
+    export let useId = true;
 
     let editMode = false;
 
     let paragraphContainerHeight: number;
-    let textAreaHeight: number;
     const editTextArea = (event: MouseEvent) => {
         if(!allowEditing) return;
         editMode = true;
@@ -26,7 +28,7 @@
     const save = async() => {
         editMode = false;
         try {
-            const res = await fetch(`/api/${module}/${objectId}`, {
+            const res = await fetch(`/api/${module}${useId ? '/' + objectId : ''}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,6 +46,13 @@
                         updateTaskInProjectCache(json);
                     });
                     break;
+                case 'users':
+                    handleResponse<UserData>(res, (json) => {
+                        currentUserData.set(json);
+                    });
+                    break;
+                default: 
+                    handleResponse(res, (json) => {});
             }
         } catch (e) {
             console.log(e);

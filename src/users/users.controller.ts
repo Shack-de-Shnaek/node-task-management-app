@@ -22,12 +22,6 @@ import { UsersService } from './users.service';
 export class UsersController {
 	constructor(private usersService: UsersService) {}
 
-	// @Get()
-	// @HttpCode(200)
-	// async list() {
-	// 	return this.usersService.list();
-	// }
-
 	@Put()
 	@HttpCode(200)
 	async updateCurrentUser(@Body(new ValidationPipe()) data: UpdateUserDto, @Req() request) {

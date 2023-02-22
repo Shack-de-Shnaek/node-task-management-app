@@ -2,6 +2,7 @@
 	import type { TaskData } from "$interfaces/TaskData";
 	import { Navigate } from "svelte-router-spa";
 	import parseDate from "../utilities/parseDate";
+	import taskTitleText from "../utilities/taskTitleText";
 
     export let task: TaskData;
     export let mode: 'showRemainingDays' | 'show';
@@ -18,7 +19,7 @@
     const remainingDays = getRemainingDays();
 </script>
 
-<Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} styles="inline-task px-2 py-1 d-flex align-items-center gap-1 text-dark">
+<Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} styles="inline-task px-2 py-1 d-flex align-items-center gap-1 text-dark"  title={taskTitleText(task)}>
     <span class="category-circle rounded-circle" title={task.category.name}
     style="background-color: {task.category.color}"></span>
 

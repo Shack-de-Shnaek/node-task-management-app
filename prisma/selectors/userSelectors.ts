@@ -38,7 +38,20 @@ export const userSelector: { select: Prisma.UserSelect, orderBy?: Prisma.UserOrd
                 id: true,
                 title: true,
                 description: true
-            }
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        },
+        assignedTasks: {
+            select: {
+                id: true,
+                title: true,
+                description: true
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
         },
     },
     orderBy: [

@@ -22,68 +22,16 @@ export class UsersService implements ICrudService {
 			return this.prisma.user.findUniqueOrThrow({
 				where: userWhereUniqueInput,
 				select: {
-					id: true,
-					firstName: true,
-					lastName: true,
-					email: true,
+					...userSelector.select,
 					password: getPassword,
-					description: true,
-					projects: {
-						...projectLimitedSelector,
-					},
-					leaderOfProjects: {
-						...projectLimitedSelector,
-					},
-					adminOfProjects: {
-						...projectLimitedSelector,
-					},
-					posts: {
-						...postSelector,
-					},
-					createdTasks: {
-						select: {
-							id: true,
-							title: true,
-							description: true,
-						},
-						orderBy: {
-							createdAt: 'desc',
-						},
-					},
 				},
 			});
 		}
 		return this.prisma.user.findUnique({
 			where: userWhereUniqueInput,
 			select: {
-				id: true,
-				firstName: true,
-				lastName: true,
-				email: true,
+				...userSelector.select,
 				password: getPassword,
-				description: true,
-				projects: {
-					...projectLimitedSelector,
-				},
-				leaderOfProjects: {
-					...projectLimitedSelector,
-				},
-				adminOfProjects: {
-					...projectLimitedSelector,
-				},
-				posts: {
-					...postSelector,
-				},
-				createdTasks: {
-					select: {
-						id: true,
-						title: true,
-						description: true,
-					},
-					orderBy: {
-						createdAt: 'desc',
-					},
-				},
 			},
 		});
 	}
@@ -138,10 +86,10 @@ export class UsersService implements ICrudService {
 		});
 	}
 
-	async getProjects(id: number) {
+	async getProjects(userId: number) {
 		return this.prisma.user.findUniqueOrThrow({
 			where: {
-				id: id,
+				id: userId,
 			},
 			select: {
 				projects: {

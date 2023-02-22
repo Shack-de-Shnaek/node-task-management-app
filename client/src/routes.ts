@@ -15,6 +15,7 @@ import ProjectsPage from "./lib/pages/ProjectsPage.svelte"
 import TaskPage from "./lib/pages/projects/TaskPage.svelte"
 import PostsPage from "./lib/pages/PostsPage.svelte"
 import CalendarPage from "./lib/pages/CalendarPage.svelte"
+import UserPage from "./lib/pages/UserPage.svelte"
 
 export const routes: Route[] = [
     {
@@ -81,6 +82,11 @@ export const routes: Route[] = [
         name: 'calendar/:projectId',
         layout: MainLayout,
         component: CalendarPage
+    },
+    {
+        name: 'users/:userId',
+        layout: MainLayout,
+        component: UserPage,
     },
     {
         name: 'test',

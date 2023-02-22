@@ -27,7 +27,8 @@ export const currentUserData: Writable<UserData> = writable({
     leaderOfProjects: [],
     adminOfProjects: [],
     posts: [],
-    createdTasks: []
+    createdTasks: [],
+    assignedTasks: []
 });
 
 export const currentUserHasBeenRequested: Writable<boolean> = writable(false);
@@ -48,3 +49,9 @@ interface CachedTasks extends Object {
 }
 
 export const cachedTasks: Writable<CachedTasks> = writable({});
+
+interface CachedUsers extends Object {
+    [id: number]: UserData,
+}
+
+export const cachedUsers: Writable<CachedUsers> = writable({});

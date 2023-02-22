@@ -3,6 +3,7 @@
 	import calculateTextColor from "../utilities/calculateTextColor";
 	import parseDate from "../utilities/parseDate";
 	import parseParagraphs from "../utilities/parseParagraphs";
+	import taskTitleText from "../utilities/taskTitleText";
 
     export let task: TaskData;
     export let componentClass = '';
@@ -10,7 +11,7 @@
     // const images = task.attachments.filter(attachment => attachment.isImage);
 </script>
 
-<div class="task-container w-100 bg-light {componentClass}">
+<div class="task-container w-100 bg-light {componentClass}" title={taskTitleText(task)}>
     <div class="w-100 pt-3" style="background-color: {task.category.color}" title={task.category.name}></div>
     <header class="task-header w-100 p-2 pt-1">
         <h5 class="m-0">{task.title}</h5>

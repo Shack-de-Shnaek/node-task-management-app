@@ -15,7 +15,6 @@
 
     const getProject = async () => {
         if($cachedProjects[parseInt(currentRoute.namedParams.projectId)] !== undefined) {
-            console.log('cached')
             project.set($cachedProjects[currentRoute.namedParams.projectId]);
             updateHeaderWithProjectData();
         }
@@ -23,7 +22,6 @@
         try {
             const res = await fetch(`/api/projects/${currentRoute.namedParams.projectId}`);
             handleResponse<ProjectData>(res, async (json) => {
-                console.log('fetched');
                 project.set(json);
                 updateAllProjectCache(json);
                 updateHeaderWithProjectData();

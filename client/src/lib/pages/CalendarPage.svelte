@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { TaskData } from "$interfaces/TaskData";
-	import type { CurrentRoute } from "svelte-router-spa/types/components/route";
 	import { onMount } from "svelte";
 	import handleResponse from "../utilities/handleResponse";
 	import { Navigate } from "svelte-router-spa";
 	import { cachedTasks, currentUserData, headerData } from "../../store";
 	import { derived, writable, type Readable, type Writable } from "svelte/store";
 	import parseDate from "../utilities/parseDate";
+	import taskTitleText from "../utilities/taskTitleText";
 
     const numberToWeekdayMap = {
         0: 'Monday',
@@ -131,14 +131,6 @@
         return true;
     }
 
-    const taskTitleText = (task: TaskData, mode: 'created' | 'due') => {
-        let textItems = [`Title: ${task.title}`, `Project: ${task.project.name}`];
-        if(mode === 'created' && task.dueAt) textItems.push(`Due: ${parseDate(task.dueAt)}`);
-        else if(mode === 'due') textItems.push(`Created: ${parseDate(task.createdAt)}`);
-        textItems = textItems.concat([`Severity: ${task.severity.name}`], [`Priority: ${task.priority.name}`], [`Category: ${task.category.name}`]);
-        return textItems.join('; \n');
-    }
-
     const updateSelectedProject = async () => {
         if(selectedProjectId === null) {
             window.history.replaceState(null, null, '?');
@@ -224,7 +216,7 @@
                     {#if day.tasksCreatedAt}
                         <small class="text-bold">Submitted: </small>
                         {#each day.tasksCreatedAt as task}
-                        <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={taskTitleText(task, 'created')} styles="task-link d-block text-dark small">
+                        <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={taskTitleText(task)} styles="task-link d-block text-dark small">
                             <div class="task p-1 rounded-3">
                                 {task.title}
                             </div>
@@ -234,7 +226,7 @@
                     {#if day.tasksDueAt}
                         <small class="text-bold">Due: </small>
                         {#each day.tasksDueAt as task}
-                        <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={taskTitleText(task, 'due')} styles="task-link d-block text-dark small">
+                        <Navigate to={`/projects/${task.project.id}/tasks/${task.id}`} title={taskTitleText(task)} styles="task-link d-block text-dark small">
                             <div class="task p-1 rounded-3">
                                 {task.title}
                             </div>
