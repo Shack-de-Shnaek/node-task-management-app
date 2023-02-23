@@ -5,9 +5,11 @@ const uploadMultipleAttachments = async<T>(
     method: string='POST',
     newAttachments: FileList,
     handleResponseCallback: (data: T) => void,
-    otherData: object={}  
+    otherData: object = {},
+    mode: 'thumbnail' | 'attachments' = 'attachments'
 ) => {
     let attachments = [];
+    let thumbnail: string | ArrayBuffer;
     
     const request = async() => {
         try {
@@ -17,7 +19,7 @@ const uploadMultipleAttachments = async<T>(
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    attachments: attachments,
+                    [mode]: mode === 'attachments' ? attachments : thumbnail,
                     ...otherData
                 })
             });
@@ -39,7 +41,11 @@ const uploadMultipleAttachments = async<T>(
         if(i < newAttachments.length) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                attachments.push(reader.result);
+                if (mode === 'attachments') attachments.push(reader.result);
+                else {
+                    if (thumbnail !== undefined) i = newAttachments.length;
+                    thumbnail = reader.result;
+                }
                 read(i+1);
             }
             reader.readAsDataURL(newAttachments[i]);

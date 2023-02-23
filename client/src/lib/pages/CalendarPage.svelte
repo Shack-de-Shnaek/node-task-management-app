@@ -161,20 +161,22 @@
 </script>
 
 <div class="calendar-container mt-3 p-2 bg-light">
-    <div class="calendar-header m-1 p-2 d-flex align-items-center gap-2 bg-primary">
-        <input type="month" class="month-selector form-control p-1" 
-        bind:value={dateString} on:change={() => dateChange()}>
+    <div class="calendar-header m-1 d-flex align-items-center gap-2">
+        <div class="bg-primary w-100 p-2 m-0 d-flex align-items-center gap-2">
+            <input type="month" class="month-selector form-control p-1" 
+            bind:value={dateString} on:change={() => dateChange()}>
 
-        <select name="project" class="project-selector form-select p-1" 
-        bind:value={selectedProjectId} on:change={() => updateSelectedProject()}>
-            <option value={null}>All</option>
-            {#each $currentUserData.projects as project}
-                <option value={project.id}>{project.name}</option>
-            {/each}
-        </select>
+            <select name="project" class="project-selector form-select p-1" 
+            bind:value={selectedProjectId} on:change={() => updateSelectedProject()}>
+                <option value={null}>All</option>
+                {#each $currentUserData.projects as project}
+                    <option value={project.id}>{project.name}</option>
+                {/each}
+            </select>
+        </div>
 
         {#if selectedProjectId !== null}
-            <div class="go-to-project p-1 bg-primary text-center">
+            <div class="go-to-project btn btn-primary p-1">
                 <Navigate to={`/projects/${selectedProjectId}`} styles="text-light">
                     <small>Go to project</small>
                 </Navigate>

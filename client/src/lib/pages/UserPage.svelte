@@ -1,12 +1,14 @@
 <script lang="ts">
-	import { cachedUsers, currentUserData } from "../../store";
+	import { cachedUsers, currentUserData, headerData } from "../../store";
 	import type { CurrentRoute } from "svelte-router-spa/types/components/route";
 	import { derived, writable, type Readable, type Writable } from "svelte/store";
 	import type { UserData } from "../../../../interfaces/UserData";
 	import EditableTextField from "../misc/EditableTextField.svelte";
 	import handleResponse from "../utilities/handleResponse";
-	import { project } from "./projects/projectStore";
 	import { onMount } from "svelte";
+	import { Navigate } from "svelte-router-spa";
+	import Post from "../posts/Post.svelte";
+	import Task from "../tasks/Task.svelte";
 
     export let currentRoute: CurrentRoute;
 
@@ -79,52 +81,124 @@
         reader.readAsDataURL(newImage[0]);
     }
 
-    $: if(currentRoute.namedParams.userId !== undefined && parseInt(currentRoute.namedParams.userId) !== $project.id) {
+    $: if(currentRoute.namedParams.userId !== undefined && !isNaN(parseInt(currentRoute.namedParams.userId))) {
         getUser();
     }
 
-    // onMount(async() => {
-    //     await getUser();
-    // });
+    onMount(() => {
+        headerData.set({
+            title: 'About User',
+            widgets: []
+        });
+    });
 </script>
 
-<h2 class="mt-3">About User</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light">
-    <div class="col-2 col-sm-1 user-img-container px-xl-4 px-m-2 px-0">
-        <img src={$user.thumbnailPath ? $user.thumbnailPath:'/icons/user.webp'} alt="user" class="user-img w-100 rounded-3">
-        {#if $isCurrentUser}
-            <form id="change-img-form" class="mt-2 d-flex flex-column align-items-center gap-1"
-            on:submit|preventDefault={() => changeImage()}>
-                <input type="file" id="user-img" class="d-none" accept="image/jpg, image/jpeg, image/webp, image/gif" bind:files={newImage}>
-                <label for="user-img" class="text-center" style="cursor: pointer;"
-                class:text-success={newImage!==undefined && newImage[0]!==undefined}>Choose</label>
-                <button type="submit" class="p-1 btn btn-success">Save</button>
-            </form>
+<div class="user-container mt-1 d-flex flex-column gap-2">
+    <section class="container-fluid row m-0 p-2 pt-3 bg-light">
+        <div class="col-2 col-sm-1 user-img-container px-xl-4 px-m-2 px-0">
+            <img src={$user.thumbnailPath ? $user.thumbnailPath:'/icons/user.webp'} alt="user" class="user-img w-100 rounded-3">
+            {#if $isCurrentUser}
+                <form id="change-img-form" class="mt-2 d-flex flex-column align-items-center gap-1"
+                on:submit|preventDefault={() => changeImage()}>
+                    <input type="file" id="user-img" class="d-none" accept="image/jpg, image/jpeg, image/webp, image/gif" bind:files={newImage}>
+                    <label for="user-img" class="text-center" style="cursor: pointer;"
+                    class:text-success={newImage!==undefined && newImage[0]!==undefined}>Choose</label>
+                    <button type="submit" class="p-1 btn btn-success">Save</button>
+                </form>
+            {/if}
+        </div>
+        <div class="col-sm-11 col-10">
+            <div class="d-flex flex-column gap-1">
+                <h3>Basic Information</h3>
+                <div>
+                    <h5 class="m-0">First Name</h5>
+                    <EditableTextField value={$user.firstName} 
+                    module='users' field='firstName' textType='span' objectId={$user.id} allowEditing={$isCurrentUser} useId={false} />
+                </div>
+                <div>
+                    <h5 class="m-0">Last Name</h5>
+                    <EditableTextField value={$user.lastName} 
+                    module='users' field='lastName' textType='span' objectId={$user.id} allowEditing={$isCurrentUser} useId={false} />
+                </div>
+                <div>
+                    <h5 class="m-0">Email</h5>
+                    <EditableTextField value={$user.email} 
+                    module='users' field='email' textType='span' objectId={$user.id} allowEditing={$isCurrentUser} useId={false} />
+                </div>
+            </div>
+            <div>
+                <h3>Description</h3>
+                <EditableTextField value={$user.description} 
+                module='users' field='description' textType='paragraph' objectId={$user.id} allowEditing={$isCurrentUser} useId={false} />
+            </div>
+        </div>
+    </section>
+
+    <section class="container-fluid row m-0 p-2 pt-3 bg-light">
+        {#if $user.projects}
+            <div>
+                <h3>Mutual servers:</h3>
+                <ul class="list-unstyled">
+                    {#each $user.projects as project}
+                        <li>
+                            <Navigate to="/projects/{project.id}" title={project.name}>{project.name}</Navigate>
+                        </li>
+                    {/each}
+                </ul>
+            </div>
         {/if}
-    </div>
-    <div class="col-sm-11 col-10">
-        <div class="d-flex flex-column gap-1">
-            <h3>Basic Information</h3>
-            <div>
-                <h5 class="m-0">First Name</h5>
-                <EditableTextField value={$user.firstName} 
-                module='users' field='firstName' textType='span' objectId={$user.id} allowEditing={$isCurrentUser} useId={false} />
+    </section>
+
+    <section class="post-task-container container-fluid row m-0 p-2 pt-3 bg-light">
+        {#if $user.posts}
+            <div class="col-12 col-sm post-column">
+                <h3>Posts:</h3>
+                <ul class="list-unstyled d-flex flex-column gap-4">
+                    {#each $user.posts as post}
+                        <li>
+                            <Post {post} isInProjectPage={false} showComments={false} componentClass="w-100" />
+                        </li>
+                    {/each}
+                </ul>
             </div>
-            <div>
-                <h5 class="m-0">Last Name</h5>
-                <EditableTextField value={$user.lastName} 
-                module='users' field='lastName' textType='span' objectId={$user.id} allowEditing={$isCurrentUser} useId={false} />
+        {/if}
+        {#if $user.assignedTasks && $user.createdTasks}
+            <div class="col-12 col-sm task-column">
+                <h3>Assigned Tasks:</h3>
+                <ul class="list-unstyled d-flex flex-column gap-4">
+                    {#each $user.assignedTasks as task}
+                        <li>
+                            <Task {task} />
+                        </li>
+                    {/each}
+                </ul>
+                <h3>Created Tasks:</h3>
+                <ul class="list-unstyled d-flex flex-column gap-4">
+                    {#each $user.createdTasks as task}
+                        <li>
+                            <Task {task} />
+                        </li>
+                    {/each}
+                </ul>
             </div>
-            <div>
-                <h5 class="m-0">Email</h5>
-                <EditableTextField value={$user.email} 
-                module='users' field='email' textType='span' objectId={$user.id} allowEditing={$isCurrentUser} useId={false} />
-            </div>
-        </div>
-        <div>
-            <h3>Description</h3>
-            <EditableTextField value={$user.description} 
-            module='users' field='description' textType='paragraph' objectId={$user.id} allowEditing={$isCurrentUser} useId={false} />
-        </div>
-    </div>
-</section>
+        {/if}
+    </section>
+</div>
+
+<style>
+    .user-container {
+        max-height: calc(100vh - 8rem);
+    }
+
+    section {
+        box-shadow: var(--container-shadow);
+    }
+
+    .post-task-container {
+        overflow-y: hidden;
+    }
+
+    .post-column, .task-column {
+        overflow-y: scroll;
+    }
+</style>

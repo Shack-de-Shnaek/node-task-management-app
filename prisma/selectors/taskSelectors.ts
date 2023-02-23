@@ -115,3 +115,26 @@ export const taskSelector: { select: Prisma.TaskSelect, orderBy: Prisma.TaskOrde
         }
     ],
 }
+
+export const taskLimitedSelector: { select: Prisma.TaskSelect, orderBy: Prisma.TaskOrderByWithRelationInput[] } = {
+    select: {
+        id: true,
+        title: true,
+        description: true
+    },
+    orderBy: [
+        {
+            severity: {
+                id: 'desc'
+            }
+        },
+        {
+            priority: {
+                id: 'desc'
+            }
+        },
+        {
+            createdAt: 'desc'
+        }
+    ],
+}

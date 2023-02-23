@@ -58,7 +58,7 @@ export class AuthController {
 	@Header('Content-Type', 'application/json')
 	async currentUser(@Req() request) {
 		if (request.user) {
-			const user = await this.usersService.get({ id: request.user.id });
+			const user = await this.usersService.get({ id: request.user.id }, false, true, null);
 			return user;
 		}
 		throw new NotFoundException('You are not logged in');

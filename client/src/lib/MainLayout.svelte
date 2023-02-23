@@ -2,8 +2,11 @@
 	import { setContext } from "svelte";
 	import { Route } from "svelte-router-spa";
 	import { writable } from "svelte/store";
+	import { onMount } from "svelte";
 	import Header from "./nav/Header.svelte";
 	import Navbar from "./nav/Navbar.svelte";
+	import getTaskSeveritiesPrioritiesStatuses from "./utilities/getTaskSeveritiesPrioritiesStatuses";
+	import { taskSeverities, taskPriorities, taskStatuses } from "./pages/projects/projectStore";
     
 	export let currentRoute;
 
@@ -13,6 +16,15 @@
 	$: if(currentRoute.path) {
 		bottomPadding.set(4);
 	}
+
+	onMount(async () => {
+		if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
+			const data = await getTaskSeveritiesPrioritiesStatuses();
+			taskSeverities.set(data.severities);
+			taskPriorities.set(data.priorities);
+			taskStatuses.set(data.statuses);
+		}
+	});
 
 	const params = {}
 </script>

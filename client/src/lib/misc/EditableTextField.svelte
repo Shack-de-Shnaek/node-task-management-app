@@ -72,7 +72,7 @@
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <span on:click={() => {
             if(allowEditing) editMode = true
-        }}>{value}</span>
+        }}>{value ? value : `No ${field}`}</span>
     {/if}
 {:else}
     {#if editMode}
@@ -89,6 +89,8 @@
                     <p class="mb-1">{paragraph}</p>
                 {/each}
             </div>
+        {:else}
+            <span on:click={editTextArea}>No {field}</span>
         {/if}
     {/if}
 {/if}

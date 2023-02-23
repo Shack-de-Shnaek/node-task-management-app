@@ -138,7 +138,7 @@ export class ProjectsController {
 	@HttpCode(201)
 	@UseGuards(ProjectAdminGuard)
 	async addTaskCategory(
-		@Body(new ValidationPipe()) data: CreateTaskCategoryDto,
+		@Body(new ValidationPipe() ) data: CreateTaskCategoryDto,
 		@Param('projectId', ParseIntPipe) projectId: number,
 	) {
 		return this.projectsService.addTaskCategory(projectId, data);

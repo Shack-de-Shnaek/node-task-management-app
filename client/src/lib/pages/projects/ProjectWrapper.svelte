@@ -26,12 +26,12 @@
                 updateAllProjectCache(json);
                 updateHeaderWithProjectData();
 
-                if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
-                    const data = await getTaskSeveritiesPrioritiesStatuses();
-                    taskSeverities.set(data.severities);
-                    taskPriorities.set(data.priorities);
-                    taskStatuses.set(data.statuses);
-                }
+                // if($taskSeverities.length === 0 || $taskPriorities.length === 0 || $taskStatuses.length === 0) {
+                //     const data = await getTaskSeveritiesPrioritiesStatuses();
+                //     taskSeverities.set(data.severities);
+                //     taskPriorities.set(data.priorities);
+                //     taskStatuses.set(data.statuses);
+                // }
             });
         } catch (e) {
             alert('Could not fetch project data');
