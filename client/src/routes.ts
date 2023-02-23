@@ -1,6 +1,4 @@
 import type { Route } from "svelte-router-spa/types/components/router"
-import userIsLoggedInGuard from "./lib/guards/userIsLoggedIn"
-import userIsProjectMember from "./lib/guards/userIsProjectMember"
 import MainLayout from "./lib/MainLayout.svelte"
 import IndexPage from "./lib/pages/IndexPage.svelte"
 import LoginPage from "./lib/pages/LoginPage.svelte"

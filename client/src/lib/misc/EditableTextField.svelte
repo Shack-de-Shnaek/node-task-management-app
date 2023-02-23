@@ -27,37 +27,29 @@
 
     const save = async() => {
         editMode = false;
-        try {
-            const res = await fetch(`/api/${module}${useId ? '/' + objectId : ''}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: `{"${field}": "${value.replaceAll('\n', '\\n')}"}`
-            });
-            switch(module) {
-                case 'projects':
-                    handleResponse<ProjectData>(res, (json) => {
-                        updateAllProjectCache(json);
-                    });
-                    break;
-                case 'tasks':
-                    handleResponse<TaskData>(res, (json) => {
-                        updateTaskInProjectCache(json);
-                    });
-                    break;
-                case 'users':
-                    handleResponse<UserData>(res, (json) => {
-                        currentUserData.set(json);
-                    });
-                    break;
-                default: 
-                    handleResponse(res, (json) => {});
-            }
-        } catch (e) {
-            console.log(e);
-            alert('Could not save changes')
+        let callback: <T>(json: T) => void = undefined;
+        switch(module) {
+            case 'projects':
+                callback = <ProjectData>(json) => updateAllProjectCache(json);
+                break;
+            case 'tasks':
+                callback = <TaskData>(json) => updateTaskInProjectCache(json);
+                break;
+            case 'users':
+                callback = <UserData>(json) => currentUserData.set(json);
+                break;
+            default: 
+                callback = (json) => {}
         }
+        handleResponse<ProjectData>(
+            `/api/${module}${useId ? '/' + objectId : ''}`,
+            {
+                method: 'PUT',
+                body: { [field]: value.replaceAll('\n', '\\n')},
+                errorMessage: 'Could not save changes'
+            },
+            callback,
+        );
     }
 </script>
 

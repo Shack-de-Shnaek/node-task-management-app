@@ -2,7 +2,7 @@ import handleResponse from "./handleResponse";
 
 const uploadMultipleAttachments = async<T>(
     endpoint: string,
-    method: string='POST',
+    method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE' = 'POST',
     newAttachments: FileList,
     handleResponseCallback: (data: T) => void,
     otherData: object = {},
@@ -12,24 +12,19 @@ const uploadMultipleAttachments = async<T>(
     let thumbnail: string | ArrayBuffer;
     
     const request = async() => {
-        try {
-            const res = await fetch(endpoint, {
+        await handleResponse<T>(
+            endpoint,
+            {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
+                headers: { 'Content-Type': 'application/json' },
+                body: {
                     [mode]: mode === 'attachments' ? attachments : thumbnail,
                     ...otherData
-                })
-            });
-            handleResponse<T>(res, (json) => {
-                handleResponseCallback(json);
-            });
-        } catch (e) {
-            alert('Could not attach files');
-            console.log(e);
-        }
+                },
+                errorMessage: 'Could not attach files'
+            },
+            (json) => { handleResponseCallback(json) },
+        );
     }
 
     const read = async(i=0) => {

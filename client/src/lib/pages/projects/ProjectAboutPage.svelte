@@ -10,22 +10,18 @@
 
     let newMemberEmail = '';
     const addMember = async() => {
-        try {
-            const res = await fetch(`/api/projects/${$project.id}/members`, {
+        await handleResponse<ProjectData>(
+            `/api/projects/${$project.id}/members`,
+            {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({email: newMemberEmail})
-            });
-            handleResponse<ProjectData>(res, (json) => {
+                body: { email: newMemberEmail },
+                errorMessage: 'Could not add member to project'
+            },
+            (json) => {
                 updateAllProjectCache(json);
                 newMemberEmail = '';
-            });
-        } catch (e) {
-            console.log(e);
-            alert('Could not add member to project');
-        }
+            },
+        );
     }
 
     let newImage: FileList;
@@ -36,21 +32,17 @@
         }
         const reader = new FileReader();
         reader.onloadend = async() => {
-            try {
-                const res = await fetch(`/api/projects/${$project.id}`, {
+            await handleResponse<ProjectData>(
+                `/api/projects/${$project.id}`,
+                {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ image: reader.result })
-                });
-                handleResponse<ProjectData>(res, (json) => {
+                    body: { image: reader.result },
+                    errorMessage: 'Could not change image'
+                },
+                (json) => {
                     updateAllProjectCache(json);
-                });
-            } catch (e) {
-                alert('Could not change image');
-                console.log(e)
-            }
+                },
+            );
         }
         reader.readAsDataURL(newImage[0]);
     }
@@ -64,35 +56,30 @@
             alert('You need to specify a name your category')   ;
             return;
         }
-        try {
-            const res = await fetch(`/api/projects/${$project.id}/task-categories`, {
+        await handleResponse<ProjectData>(
+            `/api/projects/${$project.id}/task-categories`,
+            {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newTaskCategory)
-            });
-            handleResponse<ProjectData>(res, (json) => {
+                body: newTaskCategory,
+                errorMessage: 'Could not add task category'
+            },
+            (json) => {
                 updateAllProjectCache(json);
-            });
-        } catch (e) {
-            alert('Could not add task category');
-            console.log(e)
-        }
+            },
+        );
     }
 
     const removeTaskCategory = async(taskCategoryId: number) => {
-        try {
-            const res = await fetch(`/api/projects/${$project.id}/task-categories/${taskCategoryId}`, {
+        await handleResponse<ProjectData>(
+            `/api/projects/${$project.id}/task-categories/${taskCategoryId}`,
+            {
                 method: 'DELETE',
-            });
-            handleResponse<ProjectData>(res, (json) => {
+                errorMessage: 'Could not remove task category'
+            },
+            (json) => {
                 updateAllProjectCache(json);
-            });
-        } catch (e) {
-            alert('Could not remove task category');
-            console.log(e)
-        }
+            },
+        );
     }
 </script>
 

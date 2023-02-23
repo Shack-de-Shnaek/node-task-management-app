@@ -101,10 +101,11 @@
         }
 
         taskArray.set(fetchedTasks);
-        try {
-            const url = !!projectId ? `projects/${projectId}` : 'users';
-            const res = await fetch(`/api/${url}/tasks`);
-            await handleResponse<TaskData[]>(res, (json) => {
+        const url = !!projectId ? `projects/${projectId}` : 'users';
+        await handleResponse<TaskData[]>(
+            `/api/${url}/tasks`,
+            { errorMessage: 'Could not get tasks' },
+            (json) => {
                 taskArray.set(json);
                 cachedTasks.update(data => {
                     for(const task of json) {
@@ -112,11 +113,8 @@
                     }
                     return data;
                 });
-            });
-        } catch (e) {
-            console.log(e);
-            alert('Could not get tasks');
-        }
+            },
+        );
     }
 
     const reorderWeekDays = (dayIndex: number) => {

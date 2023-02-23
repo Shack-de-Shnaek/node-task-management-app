@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { postSelector } from "./postSelectors"
 import { projectLimitedSelector } from "./projectSelectors"
+import { taskSelector } from "./taskSelectors"
 
 export const userLimitedSelector: { select: Prisma.UserSelect, orderBy?: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[]} = {
     select: {
@@ -33,26 +34,8 @@ export const userSelector: { select: Prisma.UserSelect, orderBy?: Prisma.UserOrd
         leaderOfProjects: projectLimitedSelector,
         adminOfProjects: projectLimitedSelector,
         posts: postSelector,
-        createdTasks: {
-            select: {
-                id: true,
-                title: true,
-                description: true
-            },
-            orderBy: {
-                createdAt: 'desc',
-            },
-        },
-        assignedTasks: {
-            select: {
-                id: true,
-                title: true,
-                description: true
-            },
-            orderBy: {
-                createdAt: 'desc',
-            },
-        },
+        createdTasks: taskSelector,
+        assignedTasks: taskSelector,
     },
     orderBy: [
         {

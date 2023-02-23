@@ -8,8 +8,6 @@
 	import { currentUserData } from "../../store";
 
     export let user: LimitedUserData;
-    // export let allowRemove = false;
-    // export let allowAddAdmin = false;
     export let isAdmin = false;
     let isCurrentUser = $currentUserData.id === user.id;
     let userIsProjectAdmin = $project.admins.flatMap(a => a.id).includes(user.id);
@@ -17,41 +15,36 @@
     $: userIsProjectAdmin = $project.admins.flatMap(a => a.id).includes(user.id);
 
     const removeUser = async() => {
-        try {
-            let url = `/api/projects/${$project.id}/${isAdmin?'admins':'members'}`;
-            if(isCurrentUser) url += '/self';
-            const headers = isCurrentUser ? undefined : { 'Content-Type': 'application/json' }
-            const body = isCurrentUser && !isAdmin ? undefined : JSON.stringify({ userId: user.id });
-            const res = await fetch(url, {
+        let url = `/api/projects/${$project.id}/${isAdmin?'admins':'members'}`;
+        if(isCurrentUser) url += '/self';
+        const headers = isCurrentUser ? undefined : { 'Content-Type': 'application/json' }
+        const body = isCurrentUser && !isAdmin ? undefined : { userId: user.id };
+        await handleResponse<ProjectData>(
+            `/api/projects/${$project.id}/${isAdmin?'admins':'members'}`,
+            {
                 method: 'DELETE',
                 headers: headers,
-                body: body
-            });
-            handleResponse<ProjectData>(res, (json) => {
+                body: body,
+                errorMessage: 'Could not remove the user'
+            },
+            (json) => {
                 updateAllProjectCache(json);
-            });
-        } catch(e) {
-            console.log(e);
-            alert('Could not remove the user');
-        }
+            },
+        );
     }
 
     const addAdmin = async() => {
-        try {
-            const res = await fetch(`/api/projects/${$project.id}/admins`, {
+        await handleResponse<ProjectData>(
+            `/api/projects/${$project.id}/admins`,
+            {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({userId: user.id})
-            });
-            handleResponse<ProjectData>(res, (json) => {
+                body: { userId: user.id },
+                errorMessage: 'Could not add admin'
+            },
+            (json) => {
                 updateAllProjectCache(json);
-            });
-        } catch (e) {
-            console.log(e);
-            alert('Could not add admin');
-        }
+            },
+        );
     }
 </script>
 

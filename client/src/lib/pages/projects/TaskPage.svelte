@@ -85,16 +85,14 @@
             }
         }
         
-        try {
-            const res = await fetch(`/api/tasks/${currentRoute.namedParams.taskId}`);
-            await handleResponse<TaskData>(res, (json) => {
+        await handleResponse<TaskData>(
+            `/api/tasks/${currentRoute.namedParams.taskId}`,
+            { errorMessage: 'Could not fetch task data' },
+            (json) => {
                 task.set(json);
                 $cachedTasks[json.id] = json;
-            });
-        } catch (e) {
-            alert('Could not fetch task data');
-            console.log(e);
-        }
+            },
+        );
     }
 
     let taskNewAttachments: FileList;
@@ -114,38 +112,33 @@
     const deleteTask = async() => {
         if(!confirm('Are you sure you want to delete this task?')) return;
         
-        try {
-            const res = await fetch(`/api/projects/${$project.id}/tasks/${$task.id}`, {
+        await handleResponse<ProjectData>(
+            `/api/projects/${$project.id}/tasks/${$task.id}`,
+            {
                 method: 'DELETE',
-            });
-            await handleResponse<ProjectData>(res, (json) => {
+                errorMessage: 'Could not delete task'
+            },
+            (json) => {
                 updateAllProjectCache(json);
                 navigateTo(`/projects/${$project.id}/tasks`);
-            });
-        } catch (e) {
-            console.log(e);
-            alert('Could not delete task');
-        }
+            },
+        );
     }
 
     let newDueAtDate: string;
     const updateDueAt = async() => {
-        try {
-            const res = await fetch(`/api/tasks/${$task.id}`, {
+        handleResponse<TaskData>(
+            `/api/tasks/${$task.id}`,
+            {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ dueAt: new Date(newDueAtDate).toISOString() })
-            });
-            handleResponse<TaskData>(res, (json) => {
+                body: { dueAt: new Date(newDueAtDate).toISOString() },
+                errorMessage: 'Could not update due at date'
+            },
+            (json) => {
                 updateTaskInProjectCache(json);
                 task.set(json);
-            });
-        } catch (e) {
-            console.log(e);
-            alert('Could not update due at date');
-        }
+            },
+        );
     }
 
     let newCommentData: { content: string, attachments: FileList } = {

@@ -25,6 +25,10 @@ export type LimitedTaskData = {
     id: number;
     title: string;
     description: string;
+    status: TaskStatusData,
+    severity: TaskSeverityData,
+    priority: TaskPriorityData,
+    project: LimitedProjectData,
 }
 
 export type TaskCategoryData = {

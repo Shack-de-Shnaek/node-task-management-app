@@ -27,19 +27,18 @@
         }
         
         const request = async() => {
-            try {
-                const res = await fetch(`/api/projects/${$project.id}/posts`, {
+            handleResponse<ProjectData>(
+                `/api/projects/${$project.id}/posts`,
+                {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
+                    body: {
                         title: newPostData.title,
                         content: newPostData.content,
                         attachments: attachments
-                    })
-                });
-                handleResponse<ProjectData>(res, (json) => {
+                    },
+                    errorMessage: 'Could not create post'
+                },
+                (json) => {
                     updateAllProjectCache(json);
                     newPostData = {
                         title: '',
@@ -47,11 +46,8 @@
                         attachments: undefined
                     }
                     expanded = false;
-                });
-            } catch (e) {
-                alert('Could not create post');
-                console.log(e);
-            }
+                },
+            );
         }
 
         const read = async(i=0) => {

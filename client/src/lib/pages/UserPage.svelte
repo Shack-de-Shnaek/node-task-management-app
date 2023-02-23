@@ -6,9 +6,10 @@
 	import EditableTextField from "../misc/EditableTextField.svelte";
 	import handleResponse from "../utilities/handleResponse";
 	import { onMount } from "svelte";
-	import { Navigate } from "svelte-router-spa";
+	import { Navigate, navigateTo } from "svelte-router-spa";
 	import Post from "../posts/Post.svelte";
 	import Task from "../tasks/Task.svelte";
+	import { project } from "./projects/projectStore";
 
     export let currentRoute: CurrentRoute;
 
@@ -32,26 +33,24 @@
     });
 
     const getUser = async () => {
-        try {
-            const userId = currentRoute.namedParams.userId;
+        const userId = currentRoute.namedParams.userId;
 
-            if(userId === undefined || isNaN(parseInt(userId))) {
-                alert('Invalid user id');
-                return;
-            }
+        if(userId === undefined || isNaN(parseInt(userId))) {
+            alert('Invalid user id');
+            return;
+        }
 
-            if(parseInt(userId) === $currentUserData.id) user.set($currentUserData);
-            else if($cachedUsers[parseInt(userId)] !== undefined) user.set($cachedUsers[parseInt(userId)]);
+        if(parseInt(userId) === $currentUserData.id) user.set($currentUserData);
+        else if($cachedUsers[parseInt(userId)] !== undefined) user.set($cachedUsers[parseInt(userId)]);
 
-            const res = await fetch(`/api/users/${userId}`);
-            await handleResponse<UserData>(res, (json) => {
+        await handleResponse<UserData>(
+            `/api/users/${userId}`,
+            { errorMessage: 'Could not get user' },
+            (json) => {
                 user.set(json);
                 $cachedUsers[json.id] = json;
-            });
-        } catch (e) {
-            console.log(e);
-            alert('Could not get user');
-        }
+            },
+        );
     }
 
     let newImage: FileList;
@@ -62,21 +61,17 @@
         }
         const reader = new FileReader();
         reader.onloadend = async() => {
-            try {
-                const res = await fetch('/api/users', {
+            await handleResponse<UserData>(
+                '/api/users', 
+                {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ image: reader.result })
-                });
-                handleResponse<UserData>(res, (json) => {
+                    body: { image: reader.result },
+                    errorMessage: 'Could not change image'
+                },
+                (json) => {
                     user.set(json);
-                });
-            } catch (e) {
-                alert('Could not change image');
-                console.log(e)
-            }
+                },
+            );
         }
         reader.readAsDataURL(newImage[0]);
     }
@@ -137,11 +132,14 @@
     <section class="container-fluid row m-0 p-2 pt-3 bg-light">
         {#if $user.projects}
             <div>
-                <h3>Mutual servers:</h3>
+                <h3>{$isCurrentUser ? 'Servers' : 'Mutual Servers'}:</h3>
                 <ul class="list-unstyled">
                     {#each $user.projects as project}
                         <li>
-                            <Navigate to="/projects/{project.id}" title={project.name}>{project.name}</Navigate>
+                            <Navigate to="/projects/{project.id}" title={project.name}>
+                                <img src={project.thumbnailPath?project.thumbnailPath:'/icons/user.webp'} alt="" class="rounded-circle" style="height: 1rem; width: 1rem;">
+                                <span>{project.name}</span>
+                            </Navigate>
                         </li>
                     {/each}
                 </ul>
@@ -151,7 +149,7 @@
 
     <section class="post-task-container container-fluid row m-0 p-2 pt-3 bg-light">
         {#if $user.posts}
-            <div class="col-12 col-sm post-column">
+            <div class="col-12 col-md-6 post-column">
                 <h3>Posts:</h3>
                 <ul class="list-unstyled d-flex flex-column gap-4">
                     {#each $user.posts as post}
@@ -163,20 +161,24 @@
             </div>
         {/if}
         {#if $user.assignedTasks && $user.createdTasks}
-            <div class="col-12 col-sm task-column">
+            <div class="col-12 col-md-6 task-column">
                 <h3>Assigned Tasks:</h3>
                 <ul class="list-unstyled d-flex flex-column gap-4">
                     {#each $user.assignedTasks as task}
-                        <li>
-                            <Task {task} />
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <li class="m-0" style="cursor: pointer;"
+                        on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
+                            <Task {task} isInProjectPage={false} />
                         </li>
                     {/each}
                 </ul>
                 <h3>Created Tasks:</h3>
                 <ul class="list-unstyled d-flex flex-column gap-4">
                     {#each $user.createdTasks as task}
-                        <li>
-                            <Task {task} />
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <li class="m-0" style="cursor: pointer;"
+                        on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
+                            <Task {task} isInProjectPage={false} />
                         </li>
                     {/each}
                 </ul>
@@ -186,19 +188,7 @@
 </div>
 
 <style>
-    .user-container {
-        max-height: calc(100vh - 8rem);
-    }
-
     section {
         box-shadow: var(--container-shadow);
-    }
-
-    .post-task-container {
-        overflow-y: hidden;
-    }
-
-    .post-column, .task-column {
-        overflow-y: scroll;
     }
 </style>

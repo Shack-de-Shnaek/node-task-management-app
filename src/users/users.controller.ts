@@ -41,13 +41,14 @@ export class UsersController {
 
 	@Get(':userId')
 	@HttpCode(200)
-	async get(
-		@Req() request,
-		@Param('userId', ParseIntPipe, new ValidationPipe()) userId: number,
-	) {
+	async get(@Req() request, @Param('userId', ParseIntPipe, new ValidationPipe()) userId: number) {
 		const isSameUser = userId === request.user.id;
-		console.log(isSameUser);
-		return this.usersService.get({ id: userId }, false, true, isSameUser ? null : request.user.id);
+		return this.usersService.get(
+			{ id: userId },
+			false,
+			true,
+			isSameUser ? null : request.user.id,
+		);
 	}
 
 	// @Get(':id/projects')

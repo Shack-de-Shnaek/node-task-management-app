@@ -33,22 +33,18 @@
 
     const updateTask = async(newValue) => {
         if(!isNaN(parseInt(newValue))) newValue = parseInt(newValue);
-        try {
-            const res = await fetch(`/api/tasks/${$task.id}`, {
+        await handleResponse<TaskData>(
+            `/api/tasks/${$task.id}`,
+            {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ [field]: newValue })
-            });
-            await handleResponse<TaskData>(res, (json) => {
+                body: { [field]: newValue },
+                errorMessage: 'Could not update project'
+            },
+            (json) => {
                 task.set(json);
                 updateTaskInProjectCache(json);
-            });
-        } catch (e) {
-            alert('Could not update project');
-            console.log(e);
-        }
+            },
+        )
     }
 </script>
 

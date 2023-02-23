@@ -1,6 +1,6 @@
 import { PostData } from "./PostData";
 import { LimitedProjectData } from "./ProjectData";
-import { LimitedTaskData, TaskData } from "./TaskData";
+import { TaskData } from "./TaskData";
 
 export type UserData = {
     id: number;

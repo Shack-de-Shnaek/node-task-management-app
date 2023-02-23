@@ -7,7 +7,8 @@
 
     export let task: TaskData;
     export let componentClass = '';
-    
+    export let isInProjectPage = true;
+
     // const images = task.attachments.filter(attachment => attachment.isImage);
 </script>
 
@@ -21,17 +22,31 @@
         <div class="d-flex gap-2">
             <div class="small">
                 <span>Severity: </span>
-                <span class="rounded-3 p-1" style="background: {task.severity.color}; color: {calculateTextColor(task.severity.color)}">{task.severity.name}</span>
+                <span class="rounded-3 p-1" style="background: {task.severity.color}; color: {calculateTextColor(task.severity.color)}" title={task.severity.description}>{task.severity.name}</span>
             </div>
             <div class="small">
                 <span>Priority: </span>
-                <span class="rounded-3 p-1" style="background: {task.priority.color}; color: {calculateTextColor(task.priority.color)}">{task.priority.name}</span>
+                <span class="rounded-3 p-1" style="background: {task.priority.color}; color: {calculateTextColor(task.priority.color)}" title={task.priority.description}>{task.priority.name}</span>
             </div>
         </div>
         {#if task.assignedTo}
-            <div class="small">
-                <span>Assigned To: </span>
-                <a href={`/users/${task.assignedTo.id}`}>{task.assignedTo.firstName} {task.assignedTo.lastName}</a>
+            <div class="small d-flex flex-column">
+                {#if !isInProjectPage}
+                    <div>
+                        <span>Project: </span>
+                        <a href={`/project/${task.project.id}`}>
+                            <img src={task.project.thumbnailPath?task.project.thumbnailPath:'/icons/project.webp'} alt="" class="rounded-circle" style="height: 1rem; width: 1rem;">
+                            <span>{task.project.name}</span>
+                        </a>
+                    </div>
+                {/if}
+                <div>
+                    <span>Assigned To: </span>
+                    <a href={`/users/${task.assignedTo.id}`}>
+                        <img src={task.assignedTo.thumbnailPath?task.assignedTo.thumbnailPath:'/icons/user.webp'} alt="" class="rounded-circle" style="height: 1rem; width: 1rem;">
+                        <span>{task.assignedTo.firstName} {task.assignedTo.lastName}</span>
+                    </a>
+                </div>
             </div>
         {/if}
         {#if task.dueAt}

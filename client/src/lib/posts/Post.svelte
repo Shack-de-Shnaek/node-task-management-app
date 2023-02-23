@@ -16,22 +16,18 @@
 
     let newCommentContent = '';
     const postComment = async() => {
-        try {
-            const res = await fetch(`/api/projects/${post.project.id}/posts/${post.id}/comments`, {
+        await handleResponse<ProjectData>(
+            `/api/projects/${post.project.id}/posts/${post.id}/comments`,
+            {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ content: newCommentContent })
-            });
-            handleResponse<ProjectData>(res, (json) => {
+                body: { content: newCommentContent },
+                errorMessage: 'Could not post comment'
+            },
+            (json) => {
                 updateAllProjectCache(json);
                 newCommentContent = '';
-            });
-        } catch (e) {
-            alert('Could not post comment');
-            console.log(e);
-        }
+            },
+        );
     }
 </script>
 
@@ -40,14 +36,14 @@
         <div>
             <div class="d-flex align-items-center gap-1">
                 <Navigate to={`/users/${post.author.id}`} styles="d-flex align-items-center gap-1">
-                    <img src={post.author.thumbnailPath?post.author.thumbnailPath:'/icons/user.webp'} alt="" class="rounded-circle" style="height: 1.5rem;">
+                    <img src={post.author.thumbnailPath?post.author.thumbnailPath:'/icons/user.webp'} alt="" class="rounded-circle" style="height: 1.5rem; width: 1.5rem;">
                     <div>{post.author.firstName} {post.author.lastName}</div>
                 </Navigate>
                 <div class="small font-monospace">{parseDate(post.createdAt)}</div>
             </div>
             {#if !isInProjectPage}
                 <Navigate to={`/projects/${post.project.id}`} styles="d-flex align-items-center gap-1">
-                    <img src={post.project.thumbnailPath?post.project.thumbnailPath:'/icons/project.webp'} alt="" class="rounded-circle" style="height: 1.5rem;">
+                    <img src={post.project.thumbnailPath?post.project.thumbnailPath:'/icons/project.webp'} alt="" class="rounded-circle" style="height: 1.5rem; width: 1.5rem;">
                     <span>{post.project.name}</span>
                 </Navigate>
             {/if}

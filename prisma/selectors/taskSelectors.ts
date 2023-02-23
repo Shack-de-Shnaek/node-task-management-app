@@ -120,7 +120,48 @@ export const taskLimitedSelector: { select: Prisma.TaskSelect, orderBy: Prisma.T
     select: {
         id: true,
         title: true,
-        description: true
+        description: true,
+        project: {
+            select: {
+                id: true,
+                name: true,
+                thumbnailPath: true,
+            }
+        },
+        category: {
+            select: {
+                id: true,
+                name: true,
+                color: true,
+            }
+        },
+        severity: {
+            select: {
+                id: true,
+                code: true,
+                name: true,
+                description: true,
+                color: true,
+            }
+        },
+        priority: {
+            select: {
+                id: true,
+                code: true,
+                name: true,
+                description: true,
+                color: true,
+            }
+        },
+        status: {
+            select: {
+                id: true,
+                code: true,
+                name: true,
+                description: true,
+                color: true,
+            }
+        },
     },
     orderBy: [
         {

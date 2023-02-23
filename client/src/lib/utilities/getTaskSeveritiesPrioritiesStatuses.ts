@@ -2,17 +2,13 @@ import type { TaskPriorityData, TaskSeverityData, TaskSeverityPriorityStatus, Ta
 import handleResponse from "./handleResponse";
 
 const getTaskSeveritiesPrioritiesStatuses = async () => {
-    try {
-        const res = await fetch('/api/tasks/severities-priorities-statuses');
-        let data: TaskSeverityPriorityStatus;
-        await handleResponse<TaskSeverityPriorityStatus>(res, (json) => {
-            data = json;
-        });
-        return data
-    } catch (e) {
-        console.log(e);
-        alert('Could not fetch necessary task data');
-    }
+    let data: TaskSeverityPriorityStatus;
+    await handleResponse<TaskSeverityPriorityStatus>(
+        '/api/tasks/severities-priorities-statuses',
+        { errorMessage: 'Could not fetch necessary task data' },
+        (json) => data = json,
+    );
+    return data;
 }
 
 export default getTaskSeveritiesPrioritiesStatuses;

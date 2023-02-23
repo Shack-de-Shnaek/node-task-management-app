@@ -18,40 +18,6 @@
     }
     
     const createProject = async () => {
-        // const reader = new FileReader();
-        // reader.readAsDataURL(newProjectData.thumbnail[0]);
-        // reader.onloadend = async () => {
-        //     try {
-        //         const res = await fetch('/api/projects', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 name: newProjectData.name,
-        //                 description: newProjectData.description.replaceAll('\n', '\\n'),
-        //                 thumbnail: reader.result
-        //             })
-        //         });
-        //         handleResponse<ProjectData>(res, (json) => {
-        //             cachedProjects.update(cache => {
-        //                 cache[json.id] = json;
-        //                 return cache;
-        //             });
-        //             currentUserData.update(user => {
-        //                 user.projects.push(json);
-        //                 user.leaderOfProjects.push(json);
-        //                 return user;
-        //             });
-        //             navigateTo(`/projects/${json.id}`);
-        //             return;
-        //         });
-        //     } catch (e) {
-        //         console.log(e);
-        //         alert('Could not create the project');
-        //     }
-        // }
-
         if(newProjectData.name.length < 5) {
             alert('Projects must have a name 5 characters long or longer');
             return;

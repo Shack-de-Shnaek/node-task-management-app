@@ -7,15 +7,13 @@
 	import { onMount } from "svelte";
 
     const getPosts = async () => {
-        try {
-            const res = await fetch('/api/users/posts');
-            handleResponse<PostData[]>(res, (json) => {
+        await handleResponse<PostData[]>(
+            '/api/users/posts',
+            {},
+            (json) => {
                 posts.set(json);
-            });
-        } catch (e) {
-            console.log(e);
-            alert('Could not fetch posts');
-        }
+            }
+        );
     }
     const posts: Writable<PostData[]> = writable([]);
 

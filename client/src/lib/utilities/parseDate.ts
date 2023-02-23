@@ -1,5 +1,6 @@
 const parseDate = (dateString) => {
     const date = new Date(dateString);
+    console.log(dateString, date);
     // return `${date.getDay()+1}.${date.getMonth()+1}.${date.getFullYear()}`
     return date.toLocaleDateString('en-GB', {
         dateStyle: 'long'

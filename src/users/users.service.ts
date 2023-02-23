@@ -3,7 +3,7 @@ import { Prisma, User } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { postSelector } from 'prisma/selectors/postSelectors';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
-import { taskSelector } from 'prisma/selectors/taskSelectors';
+import { taskLimitedSelector, taskSelector } from 'prisma/selectors/taskSelectors';
 import { userLimitedSelector, userSelector } from 'prisma/selectors/userSelectors';
 import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma.service';
@@ -20,45 +20,47 @@ export class UsersService implements ICrudService {
 		mutualUserId: number = null,
 	) {
 		let select = {
-			password: getPassword
-		}
-		if (mutualUserId === null) select = { ...select, ...userSelector.select }
+			password: getPassword,
+		};
+		if (mutualUserId === null) select = { ...select, ...userSelector.select };
 		else {
-			console.log('mutual')
 			let mutualSelect: Prisma.UserSelect = Object(userSelector.select);
-			
+
 			const mutualProjectMemberFilter = {
 				some: {
-					id: mutualUserId
-				}
-			}
-			
-			mutualSelect.projects = mutualSelect.adminOfProjects = mutualSelect.leaderOfProjects = {
-				where: {
-					members: mutualProjectMemberFilter
+					id: mutualUserId,
 				},
-				...projectSelector
-			}
+			};
+
+			mutualSelect.projects =
+				mutualSelect.adminOfProjects =
+				mutualSelect.leaderOfProjects =
+					{
+						where: {
+							members: mutualProjectMemberFilter,
+						},
+						...projectSelector,
+					};
 			mutualSelect.assignedTasks = mutualSelect.createdTasks = {
 				where: {
 					project: {
-						members: mutualProjectMemberFilter
-					}
+						members: mutualProjectMemberFilter,
+					},
 				},
-				...taskSelector
-			}
+				...taskSelector,
+			};
 			mutualSelect.posts = {
 				where: {
 					project: {
-						members: mutualProjectMemberFilter
-					}
+						members: mutualProjectMemberFilter,
+					},
 				},
-				...postSelector
-			}
-			
-			select = { ...select, ...mutualSelect }
+				...postSelector,
+			};
+
+			select = { ...select, ...mutualSelect };
 		}
-		
+
 		if (raiseException) {
 			return this.prisma.user.findUniqueOrThrow({
 				where: userWhereUniqueInput,
