@@ -47,6 +47,10 @@
         width: fit-content;
     }
 
+    .widget:hover {
+        filter: brightness(0.95);
+    }
+
     @media only screen and (max-width: 577px) {
         header {
             width: 100%;

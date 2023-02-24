@@ -11,7 +11,7 @@ type handleResponseOptions = {
 async function handleResponse<T>(
     url: string,
     options: handleResponseOptions,
-    callback: (json: T) => void,
+    callback: (json?: T) => void,
 ) {
     let res: Response;
     try {
@@ -29,8 +29,12 @@ async function handleResponse<T>(
     if (res === undefined) return;
 
     if (res.ok) {
-        const json: T = await res.json();
-        callback(json);
+        try {
+            const json: T = await res.json();
+            callback(json);
+        } catch (e) {
+            callback();
+        }
     } else {
         if (res.status === 401) {
             navigateTo('login');
