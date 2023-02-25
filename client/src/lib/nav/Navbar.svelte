@@ -41,7 +41,7 @@
         {#if $windowWidth < 576}
             <NavButton label="Menu" imagePath="/icons/menu.webp" click={toggleMobileMenu} />
         {:else}
-            <NavButton label="Tasks" imagePath="/icons/bug.webp" href="test" />
+            <!-- <NavButton label="Tasks" imagePath="/icons/bug.webp" href="test" /> -->
             <NavButton label="Posts" imagePath="/icons/post.webp" href="posts" />
             <NavButton label="Calendar" imagePath="/icons/calendar.webp" href="calendar" />
             <div class="w-100 mt-0 mt-sm-auto p-0">
@@ -50,7 +50,7 @@
         {/if}
     </div>
     <div class="mobile-menu sub-menu" class:d-none={!mobileMenuExpanded || $windowWidth >= 576}  use:clickOutside on:click_outside={() => { mobileMenuExpanded = false }}>
-        <NavButton label="Tasks" imagePath="/icons/bug.webp" href="test" />
+        <!-- <NavButton label="Tasks" imagePath="/icons/bug.webp" href="test" /> -->
         <NavButton label="Posts" imagePath="/icons/post.webp" href="posts" />
         <NavButton label="Calendar" imagePath="/icons/calendar.webp" href="calendar" />    
         <NavButton label="My account" imagePath="/icons/user.webp" href="users/{$currentUserData.id}" />

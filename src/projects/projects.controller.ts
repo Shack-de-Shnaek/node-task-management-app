@@ -15,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { SessionAuthGuard } from 'src/auth/sessionAuth.guard';
 import { CreatePostDto } from 'src/posts/post-create.dto';
-import { PostsService } from 'src/posts/posts.service';
 import { CreateTaskDto } from 'src/tasks/task-create.dto';
 import { CreateTaskCategoryDto } from 'src/tasks/taskCategory-create.dto';
 import { UserEmail } from 'src/users/user-email.dto';
@@ -25,20 +24,16 @@ import { ProjectsService } from './projects.service';
 import { ProjectAdminGuard } from './projectsAdmin.guard';
 import { ProjectLeaderGuard } from './projectsLeader.guard';
 import { ProjectMemberGuard } from './projectsMember.guard';
-
+import { ProjectExistsPipe } from './projectExists.pipe';
+import { UserExistsPipe } from 'src/users/userExists.pipe';
+import { TaskExistsPipe } from 'src/tasks/taskExists.pipe';
 @Controller('api/projects')
 @UseGuards(SessionAuthGuard)
 export class ProjectsController {
 	constructor(private projectsService: ProjectsService) {}
 
-	@Get()
-	@HttpCode(200)
-	async list() {
-		return this.projectsService.list();
-	}
-
 	@Get(':projectId')
-	@HttpCode(200)
+	@UseGuards(ProjectMemberGuard)
 	async get(@Param('projectId', ParseIntPipe) projectId: number) {
 		return this.projectsService.get({ id: projectId });
 	}
@@ -55,11 +50,10 @@ export class ProjectsController {
 	}
 
 	@Put(':projectId')
-	@HttpCode(200)
 	@UseGuards(ProjectAdminGuard)
 	async update(
 		@Body(new ValidationPipe()) data: UpdateProjectDto,
-		@Param('projectId', ParseIntPipe) id: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) id: number,
 	) {
 		return this.projectsService.update(id, data);
 	}
@@ -69,7 +63,7 @@ export class ProjectsController {
 	@UseGuards(ProjectAdminGuard)
 	async addMember(
 		@Body(new ValidationPipe()) email: UserEmail,
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 	) {
 		return this.projectsService.addMember(projectId, email.email);
 	}
@@ -78,8 +72,8 @@ export class ProjectsController {
 	@HttpCode(200)
 	@UseGuards(ProjectLeaderGuard)
 	async addAdmin(
-		@Body('userId', new ValidationPipe()) userId: number,
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Body('userId', new ValidationPipe(), UserExistsPipe) userId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 	) {
 		return this.projectsService.addAdmin(projectId, userId);
 	}
@@ -88,8 +82,8 @@ export class ProjectsController {
 	@HttpCode(200)
 	@UseGuards(ProjectAdminGuard)
 	async removeMember(
-		@Body('userId', new ValidationPipe()) userId: number,
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Body('userId', new ValidationPipe(), UserExistsPipe) userId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 	) {
 		return this.projectsService.removeMember(projectId, userId);
 	}
@@ -97,7 +91,7 @@ export class ProjectsController {
 	@Delete(':projectId/members/self')
 	@HttpCode(200)
 	@UseGuards(ProjectMemberGuard)
-	async removeMemberSelf(@Param('projectId', ParseIntPipe) projectId: number, @Req() request) {
+	async removeMemberSelf(@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number, @Req() request) {
 		return this.projectsService.removeMember(projectId, request.user.id);
 	}
 
@@ -105,18 +99,26 @@ export class ProjectsController {
 	@HttpCode(200)
 	@UseGuards(ProjectLeaderGuard)
 	async removeAdmin(
-		@Body('userId', new ValidationPipe()) userId: number,
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Body('userId', new ValidationPipe(), UserExistsPipe) userId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 	) {
 		return this.projectsService.removeAdmin(projectId, userId);
 	}
 
+	@Get(':projectId/posts')
+	@UseGuards(ProjectMemberGuard)
+	async getPosts(
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
+	) {
+		return this.projectsService.getPosts(projectId);
+	}
+		
 	@Post(':projectId/posts')
 	@HttpCode(201)
 	@UseGuards(ProjectMemberGuard)
 	async addPost(
 		@Body(new ValidationPipe()) data: CreatePostDto,
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 		@Req() request,
 	) {
 		return this.projectsService.addPost(projectId, request.user.id, data);
@@ -127,7 +129,7 @@ export class ProjectsController {
 	@UseGuards(ProjectMemberGuard)
 	async addComment(
 		@Body('content', new ValidationPipe()) content: string,
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 		@Param('postId', ParseIntPipe) postId: number,
 		@Req() request,
 	) {
@@ -139,7 +141,7 @@ export class ProjectsController {
 	@UseGuards(ProjectAdminGuard)
 	async addTaskCategory(
 		@Body(new ValidationPipe()) data: CreateTaskCategoryDto,
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 	) {
 		return this.projectsService.addTaskCategory(projectId, data);
 	}
@@ -148,7 +150,7 @@ export class ProjectsController {
 	@HttpCode(200)
 	@UseGuards(ProjectAdminGuard)
 	async removeTaskCategory(
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 		@Param('taskCategoryId', ParseIntPipe) taskCategoryId: number,
 	) {
 		return this.projectsService.removeTaskCategory(projectId, taskCategoryId);
@@ -156,7 +158,7 @@ export class ProjectsController {
 
 	@Get(':projectId/tasks')
 	@UseGuards(ProjectMemberGuard)
-	async getTasks(@Param('projectId', ParseIntPipe) projectId: number) {
+	async getTasks(@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number) {
 		return this.projectsService.getTasks(projectId);
 	}
 
@@ -165,7 +167,7 @@ export class ProjectsController {
 	@UseGuards(ProjectMemberGuard)
 	async addTask(
 		@Body(new ValidationPipe()) data: CreateTaskDto,
-		@Param('projectId', ParseIntPipe) projectId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
 		@Req() request,
 	) {
 		return this.projectsService.addTask(projectId, request.user.id, data);
@@ -175,8 +177,8 @@ export class ProjectsController {
 	@HttpCode(200)
 	@UseGuards(ProjectMemberGuard)
 	async removeTask(
-		@Param('projectId', ParseIntPipe) projectId: number,
-		@Param('taskId', ParseIntPipe) taskId: number,
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
+		@Param('taskId', ParseIntPipe, TaskExistsPipe) taskId: number,
 	) {
 		return this.projectsService.removeTask(projectId, taskId);
 	}

@@ -26,6 +26,7 @@
             (json) => {
                 updateAllProjectCache(json);
                 newCommentContent = '';
+                // showComments = true;
             },
         );
     }

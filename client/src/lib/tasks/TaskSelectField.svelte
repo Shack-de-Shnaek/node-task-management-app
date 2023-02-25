@@ -4,6 +4,7 @@
 	import type { TaskData } from "../../../../interfaces/TaskData";
 	import { currentUserIsAdmin } from "../pages/projects/projectStore";
 	import handleResponse from "../utilities/handleResponse";
+	import updateAllTaskstCache from "../utilities/updateTaskCache";
 	import updateTaskInProjectCache from "../utilities/updateTaskInProjectCache";
 
     const task: Writable<TaskData> = getContext('task');
@@ -43,6 +44,7 @@
             (json) => {
                 task.set(json);
                 updateTaskInProjectCache(json);
+                updateAllTaskstCache(json);
             },
         )
     }

@@ -9,7 +9,6 @@ import ProjectPage from "./lib/pages/projects/ProjectPage.svelte"
 import ProjectPostsPage from "./lib/pages/projects/ProjectPostsPage.svelte"
 import ProjectTasksPage from "./lib/pages/projects/ProjectTasksPage.svelte"
 import ProjectWrapper from "./lib/pages/projects/ProjectWrapper.svelte"
-import ProjectsPage from "./lib/pages/ProjectsPage.svelte"
 import TaskPage from "./lib/pages/projects/TaskPage.svelte"
 import PostsPage from "./lib/pages/PostsPage.svelte"
 import CalendarPage from "./lib/pages/CalendarPage.svelte"
@@ -86,9 +85,4 @@ export const routes: Route[] = [
         layout: MainLayout,
         component: UserPage,
     },
-    {
-        name: 'test',
-        component: ProjectsPage,
-        layout: MainLayout,
-    }
 ]

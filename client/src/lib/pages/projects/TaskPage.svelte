@@ -164,7 +164,7 @@
 </script>
 
 <div class="task-container w-100 mt-1 px-3 d-flex flex-column gap-2">
-    <section class="row p-2 bg-light">
+    <section class="row p-2 container-shadow bg-light">
         <div class="date-container col-12 px-1 py-1 py-md-0 col-md-4 text-start text-md-center small">
             <span>Created At:</span>
             <span class="date-field font-monospace p-1 rounded-3 text-light">{parseDate($task.createdAt)}</span>
@@ -185,7 +185,7 @@
         </div>
     </section>
 
-    <section class="row p-2 flex-column flex-sm-row bg-light">
+    <section class="row p-2 flex-column flex-sm-row container-shadow bg-light">
         <div class="task-selector py-1 col-12 col-sm-6 d-flex align-items-center gap-1">
             <span>Severity</span>
             {#if $taskSeverities.length > 0}
@@ -211,7 +211,7 @@
         </div>        
     </section>
 
-    <section class="row p-2 flex-column flex-sm-row bg-light">
+    <section class="row p-2 flex-column flex-sm-row container-shadow bg-light">
         <div class="task-selector py-1 col-12 col-sm-6 d-flex align-items-center gap-1">
             <span>Category</span>
             {#if $project.id !== 0}
@@ -227,7 +227,7 @@
         
     </section>
 
-    <section class="row p-2 py-3 bg-light">
+    <section class="row p-2 py-3 container-shadow bg-light">
         <div class="col-12 col-md-5 col-xl-4 pb-3">
             <h3>Attachments</h3>
             {#if images.length > 0}
@@ -299,7 +299,7 @@
         </div>
     </section>
 
-    <section class="row p-2 py-3 bg-light">
+    <section class="row p-2 py-3 container-shadow bg-light">
         <form class="w-100"
         on:submit|preventDefault={() => { postComment() }}>
             <textarea name="task-comment-content" rows="3" placeholder="New Comment" class="form-control"
@@ -346,10 +346,6 @@
 </div>
 
 <style>
-    section {
-        box-shadow: var(--container-shadow);
-    }
-
     .task-selector {
         min-width: 12rem;
     }

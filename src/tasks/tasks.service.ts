@@ -132,11 +132,6 @@ export class TasksService {
 	}
 
 	async createComment(taskId: number, authorId: number, data: CreateTaskCommentDto) {
-		await this.prisma.task.findUniqueOrThrow({
-			where: { id: taskId },
-			select: { id: true },
-		});
-
 		let attachments = [];
 		if (data.attachments) {
 			attachments = await this.filesService.generateAttachmentFiles(data.attachments);

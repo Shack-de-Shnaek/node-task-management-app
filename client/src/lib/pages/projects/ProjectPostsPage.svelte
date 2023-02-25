@@ -8,9 +8,7 @@
     {#if $currentUserIsMember}
         <NewPostInput />
     {/if}
-    {#key $project.posts}
-        {#each $project.posts as post}
-            <Post {post} />
-        {/each}
-    {/key}
+    {#each $project.posts as post}
+        <Post {post} />
+    {/each}
 </div>

@@ -10,6 +10,7 @@
 	import Post from "../posts/Post.svelte";
 	import Task from "../tasks/Task.svelte";
 	import { project } from "./projects/projectStore";
+	import InlineTask from "../projects/InlineTask.svelte";
 
     export let currentRoute: CurrentRoute;
 
@@ -70,6 +71,7 @@
                 },
                 (json) => {
                     user.set(json);
+                    if($isCurrentUser) currentUserData.set(json);
                 },
             );
         }
@@ -97,7 +99,7 @@
 </script>
 
 <h2 class="mt-3">Basic Information</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light">
+<section class="section row">
     <div class="col-2 col-sm-1 user-img-container px-xl-4 px-m-2 px-0">
         <img src={$user.thumbnailPath ? $user.thumbnailPath:'/icons/user.webp'} alt="user" class="user-img w-100 rounded-3">
         {#if $isCurrentUser}
@@ -142,7 +144,7 @@
 </section>
 
 <h2 class="mt-3">{$isCurrentUser ? 'Servers' : 'Mutual Servers'}</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light">
+<section class="section row">
     {#if $user.projects}
         <div>
             <ul class="list-unstyled">
@@ -159,9 +161,9 @@
     {/if}
 </section>
 
-<section class="post-task-container container-fluid row m-0 mt-3 p-2 pt-3 shadow-none">
+<section class="post-task-container container-fluid row p-2 m-0 mt-3 pt-3 shadow-none">
     {#if $user.posts}
-        <div class="col-12 col-md-6 post-column">
+        <div class="col-12 col-md-6 ps-0 pe-0 pe-md-2 post-column">
             <h3>Posts</h3>
             <ul class="list-unstyled d-flex flex-column gap-4">
                 {#each $user.posts as post}
@@ -173,33 +175,29 @@
         </div>
     {/if}
     {#if $user.assignedTasks && $user.createdTasks}
-        <div class="col-12 col-md-6 task-column">
+        <div class="col-12 col-md-6 pe-0 ps-0 ps-md-2 d-flex flex-column gap-2">
             <h3>Assigned Tasks</h3>
-            <ul class="list-unstyled d-flex flex-column gap-4">
+            <ul class="list-unstyled section d-flex flex-column gap-2">
                 {#each $user.assignedTasks as task}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <li class="m-0" style="cursor: pointer;"
                     on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
-                        <Task {task} isInProjectPage={false} />
+                        <!-- <Task {task} isInProjectPage={false} /> -->
+                        <InlineTask {task} mode="show" isInProjectPage={false} />
                     </li>
                 {/each}
             </ul>
             <h3>Created Tasks</h3>
-            <ul class="list-unstyled d-flex flex-column gap-4">
+            <ul class="list-unstyled section d-flex flex-column gap-2">
                 {#each $user.createdTasks as task}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <li class="m-0" style="cursor: pointer;"
                     on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
-                        <Task {task} isInProjectPage={false} />
+                        <!-- <Task {task} isInProjectPage={false} /> -->
+                        <InlineTask {task} mode="show" isInProjectPage={false} />
                     </li>
                 {/each}
             </ul>
         </div>
     {/if}
 </section>
-
-<style>
-    section {
-        box-shadow: var(--container-shadow);
-    }
-</style>

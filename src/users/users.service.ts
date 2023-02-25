@@ -130,7 +130,7 @@ export class UsersService implements ICrudService {
 	}
 
 	async getProjects(userId: number) {
-		return this.prisma.user.findUniqueOrThrow({
+		return this.prisma.user.findUnique({
 			where: {
 				id: userId,
 			},
@@ -164,7 +164,7 @@ export class UsersService implements ICrudService {
 	}
 
 	async getTasks(userId: number) {
-		const user = await this.prisma.user.findUniqueOrThrow({
+		const user = await this.prisma.user.findUnique({
 			where: { id: userId },
 			select: {
 				projects: {

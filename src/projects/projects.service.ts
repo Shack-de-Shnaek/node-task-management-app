@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
+import { postSelector } from 'prisma/selectors/postSelectors';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
 import { taskSelector } from 'prisma/selectors/taskSelectors';
 import { FilesService } from 'src/files/files.service';
@@ -103,16 +104,6 @@ export class ProjectsService {
 	}
 
 	async addMember(projectId: number, email: string) {
-		await this.prisma.user.findUniqueOrThrow({
-			where: { email: email },
-			select: { id: true },
-		});
-
-		await this.prisma.project.findUniqueOrThrow({
-			where: { id: projectId },
-			select: { id: true },
-		});
-
 		return this.prisma.project.update({
 			where: { id: projectId },
 			data: {
@@ -127,10 +118,6 @@ export class ProjectsService {
 	}
 
 	async removeMember(projectId: number, userId: number) {
-		const user = await this.prisma.user.findUniqueOrThrow({
-			where: { id: userId },
-			select: { id: true },
-		});
 		const project = await this.prisma.project.findUniqueOrThrow({
 			where: { id: projectId },
 			select: {
@@ -167,7 +154,7 @@ export class ProjectsService {
 	}
 
 	async addAdmin(projectId: number, userId: number) {
-		const project = await this.prisma.project.findUniqueOrThrow({
+		const project = await this.prisma.project.findUnique({
 			where: { id: projectId },
 			select: {
 				members: {
@@ -195,10 +182,6 @@ export class ProjectsService {
 	}
 
 	async removeAdmin(projectId: number, userId: number) {
-		await this.prisma.user.findUniqueOrThrow({
-			where: { id: userId },
-			select: { id: true },
-		});
 		const project = await this.prisma.project.findUniqueOrThrow({
 			where: { id: projectId },
 			select: {
@@ -236,8 +219,17 @@ export class ProjectsService {
 		});
 	}
 
+	async getPosts(projectId: number) {
+		const project = await this.prisma.project.findUnique({
+			where: { id: projectId },
+			select: { posts: postSelector }
+		});
+
+		return project.posts;
+	}
+
 	async addPost(projectId: number, authorId: number, data: CreatePostDto) {
-		const project = await this.prisma.project.findUniqueOrThrow({
+		const project = await this.prisma.project.findUnique({
 			where: { id: projectId },
 			select: { id: true },
 		});
@@ -247,7 +239,7 @@ export class ProjectsService {
 	}
 
 	async addPostComment(projectId: number, authorId: number, postId: number, content: string) {
-		const project = await this.prisma.project.findUniqueOrThrow({
+		const project = await this.prisma.project.findUnique({
 			where: { id: projectId },
 			select: {
 				id: true,
@@ -268,21 +260,12 @@ export class ProjectsService {
 	}
 
 	async addTaskCategory(projectId: number, data: CreateTaskCategoryDto) {
-		await this.prisma.project.findUniqueOrThrow({
-			where: {
-				id: projectId,
-			},
-			select: {
-				id: true,
-			},
-		});
-
 		await this.tasksService.createTaskCategory(projectId, data);
 		return this.get({ id: projectId });
 	}
 
 	async removeTaskCategory(projectId: number, taskCategoryId: number) {
-		const project = await this.prisma.project.findUniqueOrThrow({
+		const project = await this.prisma.project.findUnique({
 			where: { id: projectId },
 			select: {
 				id: true,
@@ -327,11 +310,6 @@ export class ProjectsService {
 	}
 
 	async addTask(projectId: number, creatorId: number, data: CreateTaskDto) {
-		await this.prisma.project.findUniqueOrThrow({
-			where: { id: projectId },
-			select: { id: true },
-		});
-
 		await this.tasksService.create(data, projectId, creatorId);
 		return this.get({ id: projectId });
 	}

@@ -35,7 +35,7 @@
 
 {#key $project.id}
     {#if $project.id !== 0 && $project.tasks.length > 0}
-        <section class="container-fluid row m-0 mt-3 p-2 pt-3 bg-light d-flex flex-column-row flex-md-row justify-content-center">
+        <section class="section row mt-3 d-flex flex-column-row flex-md-row justify-content-center">
             <div class="chart-container px-2 pb-md-4 pt-sm-2 pt-0 pb-0 d-flex flex-column align-items-center">
                 <h4>Open tasks by category</h4>
                 <TaskPieChart categorizeBy='category' />
@@ -49,7 +49,7 @@
 {/key}
 
 <h2 class="mt-3">Tasks that are due soon</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light d-flex flex-column-row flex-md-row">
+<section class="section row d-flex flex-column-row flex-md-row">
     {#if $project.id !== 0 && dueSoonTasks.length > 0}
         {#each dueSoonTasks as task}
             <InlineTask {task} mode='showRemainingDays' />
@@ -60,7 +60,7 @@
 </section>
 
 <h2 class="mt-3">Tasks that are assigned to you</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light d-flex flex-column-row flex-md-row">
+<section class="section row d-flex flex-column-row flex-md-row">
     {#if $project.id !== 0 && currentUserTasks.length > 0}
         {#each currentUserTasks as task}
             <InlineTask {task} mode='show' />
@@ -72,10 +72,6 @@
 
 
 <style>
-    section {
-        box-shadow: var(--container-shadow);
-    }
-
     .chart-container {
         width: 50%;
     }

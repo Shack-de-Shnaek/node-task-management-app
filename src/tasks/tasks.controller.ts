@@ -17,6 +17,7 @@ import { SessionAuthGuard } from 'src/auth/sessionAuth.guard';
 import { ProjectMemberGuard } from 'src/projects/projectsMember.guard';
 import { UpdateTaskDto } from './task-update.dto';
 import { CreateTaskCommentDto } from './taskComment-create.dto';
+import { TaskExistsPipe } from './taskExists.pipe';
 import { TasksService } from './tasks.service';
 
 @Controller('api/tasks')
@@ -31,14 +32,14 @@ export class TasksController {
 
 	@Get(':taskId')
 	@UseGuards(ProjectMemberGuard)
-	async getTask(@Param('taskId', ParseIntPipe) taskId: number) {
+	async getTask(@Param('taskId', ParseIntPipe, TaskExistsPipe) taskId: number) {
 		return this.tasksService.get({ id: taskId });
 	}
 
 	@Put(':taskId')
 	@UseGuards(ProjectMemberGuard)
 	async updateTask(
-		@Param('taskId', ParseIntPipe) taskId: number,
+		@Param('taskId', ParseIntPipe, TaskExistsPipe) taskId: number,
 		@Body(new ValidationPipe()) data: UpdateTaskDto,
 	) {
 		return this.tasksService.update(taskId, data);
@@ -48,7 +49,7 @@ export class TasksController {
 	@HttpCode(201)
 	@UseGuards(ProjectMemberGuard)
 	async addComment(
-		@Param('taskId', ParseIntPipe) taskId: number,
+		@Param('taskId', ParseIntPipe, TaskExistsPipe) taskId: number,
 		@Body(new ValidationPipe()) data: CreateTaskCommentDto,
 		@Req() request,
 	) {

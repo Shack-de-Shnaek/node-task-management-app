@@ -1,33 +1,24 @@
 <script lang="ts">
-	import type { Writable } from "stream";
-	import { Navigate } from "svelte-router-spa";
-	import calculateTextColor from "../utilities/calculateTextColor";
+	import { navigateTo } from "svelte-router-spa";
 
     export let label: string;
     export let value: string | number = undefined;
     export let href: string = undefined;
     export let componentClass: string = undefined;
 
+    const click = () => {
+        if(href) navigateTo(href);
+    }
 </script>
 
-<div class="widget btn w-100 {componentClass}">
-    {#if href}
-        <Navigate to={href}>
-            <div class="widget-content">
-                <span>{label}</span>
-                {#if value !== undefined}
-                    <span>: {value}</span>
-                {/if}
-            </div>
-        </Navigate>
-    {:else}
-        <div class="widget-content">
-            <span>{label}</span>
-            {#if value !== undefined}
-                <span>: {value}</span>
-            {/if}
-        </div>
-    {/if}
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="widget btn w-100 {componentClass}" on:click={click}>
+    <div class="widget-content">
+        <span>{label}</span>
+        {#if value !== undefined}
+            <span>: {value}</span>
+        {/if}
+    </div>
 </div>
 
 <style>    

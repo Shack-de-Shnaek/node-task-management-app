@@ -1,5 +1,5 @@
 import { cachedTasks, currentUserData } from "../../store";
-import type { LimitedTaskData, TaskData } from "../../../../interfaces/TaskData";
+import type { TaskData } from "../../../../interfaces/TaskData";
 import type { UserData } from "$interfaces/UserData";
 
 const updateAllTaskstCache = (newTaskData: TaskData) => {
@@ -10,14 +10,11 @@ const updateAllTaskstCache = (newTaskData: TaskData) => {
         return data;
     });
     currentUserData.update(data => {
-        const limitedNewTaskData: LimitedTaskData = {
-            id: newTaskData.id,
-            title: newTaskData.title,
-            description: newTaskData.description,
-        }
+        const createdTaskIndex = data.createdTasks.findIndex(t => t.id === newTaskData.id);
+        if (createdTaskIndex !== -1) data.createdTasks[createdTaskIndex] = newTaskData;
 
-        const index = data.createdTasks.findIndex(t => t.id === newTaskData.id);
-        if (index !== -1) data.createdTasks[index] = limitedNewTaskData;
+        const assignedTaskIndex = data.assignedTasks.findIndex(t => t.id === newTaskData.id);
+        if (assignedTaskIndex !== -1) data.createdTasks[assignedTaskIndex] = newTaskData;
 
         return data;
     });

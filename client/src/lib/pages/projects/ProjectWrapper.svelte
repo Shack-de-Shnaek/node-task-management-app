@@ -28,17 +28,13 @@
         );
     }
 
-    $: if(currentRoute.namedParams.projectId !== undefined && parseInt(currentRoute.namedParams.projectId) !== $project.id) {
+    $: if(currentRoute.namedParams.projectId !== undefined && $project && parseInt(currentRoute.namedParams.projectId) !== $project.id) {
         getProject();
     }
 
     $: if(currentRoute.namedParams.projectId !== undefined && currentRoute.namedParams.taskId === undefined) {
         updateHeaderWithProjectData();
     }
-
-    onMount(async () => {
-        await getProject();
-    });
 </script>
 
 <Route {currentRoute} {params} />

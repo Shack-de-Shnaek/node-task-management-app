@@ -84,7 +84,7 @@
 </script>
 
 <h2 class="mt-3">About Project</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light">
+<section class="section row">
     <div class="col-2 col-sm-1 project-img-container px-xl-4 px-m-2 px-0">
         <img src={$project.thumbnailPath?$project.thumbnailPath:'/icons/project.webp'} alt="project" class="project-img w-100 rounded-3">
         {#if $currentUserIsAdmin}
@@ -116,7 +116,7 @@
 </section>
 
 <h2 class="mt-3">The Team</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light gap-3">
+<section class="section row gap-3">
     <div class="leader-admins row col-md-6 col-12 gap-3">
         <div class="leader col-12">
             <h3>Leader</h3>
@@ -146,7 +146,7 @@
 </section>
 
 <h2 class="mt-3">Task Categories</h2>
-<section class="container-fluid row m-0 p-2 pt-3 bg-light">
+<section class="section row">
     <ul class="col-12 col-sm-6 m-0 list-unstyled d-flex flex-column gap-1">
         {#each $project.taskCategories as category}
             <li class="d-flex gap-1">
@@ -171,10 +171,6 @@
 
 
 <style>
-    section {
-        box-shadow: var(--container-shadow);
-    }
-
     button {
         font-size: 0.75rem !important;
     }
