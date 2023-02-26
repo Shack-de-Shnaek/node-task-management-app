@@ -67,7 +67,7 @@
     </div>
 </section>
 
-<section class="section task-section row mt-3 shadow-none">
+<section class="section task-section row mt-3 shadow-none gap-3 gap-md-0">
     {#if $currentUserData.assignedTasks && $currentUserData.createdTasks}
         <div class="col-12 col-md-6 ps-0 pe-9 pe-md-2 d-flex flex-column gap-2">
             <h3>Unfinished Tasks</h3>
