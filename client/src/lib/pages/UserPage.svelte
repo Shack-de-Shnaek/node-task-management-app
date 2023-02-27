@@ -8,9 +8,7 @@
 	import { onMount } from "svelte";
 	import { Navigate, navigateTo } from "svelte-router-spa";
 	import Post from "../posts/Post.svelte";
-	import Task from "../tasks/Task.svelte";
-	import { project } from "./projects/projectStore";
-	import InlineTask from "../projects/InlineTask.svelte";
+	import InlineTask from "../tasks/InlineTask.svelte";
 
     export let currentRoute: CurrentRoute;
 

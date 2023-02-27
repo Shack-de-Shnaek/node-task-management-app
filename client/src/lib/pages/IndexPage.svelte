@@ -5,7 +5,7 @@
     import { currentUserData } from "../../store";
     import { headerData } from "../../store";
 	import Widget from "../misc/Widget.svelte";
-	import InlineTask from "../projects/InlineTask.svelte";
+	import InlineTask from "../tasks/InlineTask.svelte";
 
     const unfinishedTasks = derived(currentUserData, ($currentUserData) => {
         return $currentUserData.assignedTasks.filter(task => !['rejected', 'fixed'].includes(task.status.code));

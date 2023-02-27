@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { TaskData } from "../../../../../interfaces/TaskData";
 	import { currentUserData } from "../../../store";
-    import InlineTask from "../../projects/InlineTask.svelte";
+    import InlineTask from "../../tasks/InlineTask.svelte";
     import TaskPieChart from "../../projects/TaskPieChart.svelte";
     import { project } from "./projectStore";
 

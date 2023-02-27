@@ -1,5 +1,5 @@
 <script lang="ts">
-    import UserEntry from "../../projects/UserEntry.svelte";
+    import UserEntry from "../../users/UserEntry.svelte";
     import { currentUserIsAdmin, project } from "./projectStore";
 	import parseDate from "../../utilities/parseDate";
 	import EditableTextField from "../../misc/EditableTextField.svelte";
