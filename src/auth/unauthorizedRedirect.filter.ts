@@ -13,6 +13,6 @@ export class UnauthorizedRedirectFilter implements ExceptionFilter {
 		const response = context.getResponse();
 		const status = exception.getStatus();
 
-		response.status(status).redirect('/login');
+		response.status(401).redirect('/login');
 	}
 }

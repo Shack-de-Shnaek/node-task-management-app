@@ -13,6 +13,6 @@ export class SessionAuthGuard implements CanActivate {
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
 		const request = context.switchToHttp().getRequest();
 		if (request.isAuthenticated()) return true;
-		throw new UnauthorizedException();
+		throw new UnauthorizedException('You are not logged in');
 	}
 }

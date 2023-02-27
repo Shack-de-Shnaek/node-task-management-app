@@ -28,6 +28,11 @@ async function handleResponse<T>(
     
     if (res === undefined) return;
 
+    if (res.redirected) {
+        navigateTo(res.url.split('/').slice(3).join('/'));
+        return;
+    }
+
     if (res.ok) {
         try {
             const json: T = await res.json();
