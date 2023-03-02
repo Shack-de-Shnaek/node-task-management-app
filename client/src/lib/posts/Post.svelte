@@ -60,14 +60,14 @@
         <div class="carousel slide" id="post-{post.id}-carousel" data-bs-ride="carousel" data-bs-interval="false">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src={images[0].path} alt="" class="w-100">
+                    <img src={images[0].path} alt="" class="w-100" loading="lazy">
                 </div>
                 {#each images.slice(1) as image}
                     <div class="carousel-item">
-                        <img src={image.path} alt="" class="w-100">
+                        <img src={image.path} alt="" class="w-100" loading="lazy">
                     </div>
                 {/each}
-            </div>
+            </div> 
             {#if images.length > 1}
                 <button class="carousel-control-prev" type="button" data-bs-target="#post-{post.id}-carousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>

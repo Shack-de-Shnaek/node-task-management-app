@@ -55,7 +55,7 @@
             <InlineTask {task} mode='showRemainingDays' />
         {/each}
     {:else}
-        <h5>No tasks</h5>
+        <h5>No tasks to show</h5>
     {/if}
 </section>
 
@@ -66,7 +66,7 @@
             <InlineTask {task} mode='show' />
         {/each}
     {:else}
-        <h5>No tasks</h5>
+        <h5>No tasks to show</h5>
     {/if}
 </section>
 

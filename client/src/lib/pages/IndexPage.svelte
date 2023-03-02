@@ -71,28 +71,34 @@
     {#if $currentUserData.assignedTasks && $currentUserData.createdTasks}
         <div class="col-12 col-md-6 ps-0 pe-9 pe-md-2 d-flex flex-column gap-2">
             <h3>Unfinished Tasks</h3>
-            <ul class="list-unstyled section d-flex flex-column gap-2">
-                {#each $unfinishedTasks as task}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <li class="m-0" style="cursor: pointer;"
-                    on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
-                        <!-- <Task {task} isInProjectPage={false} /> -->
-                        <InlineTask {task} mode="show" isInProjectPage={false} />
-                    </li>
-                {/each}
+            <ul class="list-unstyled section px-2 d-flex flex-column gap-2">
+                {#if $unfinishedTasks.length > 0}
+                    {#each $unfinishedTasks as task}
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <li class="m-0" style="cursor: pointer;"
+                        on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
+                            <InlineTask {task} mode="show" isInProjectPage={false} />
+                        </li>
+                    {/each}
+                {:else}
+                    <h5>No tasks to show</h5>
+                {/if}
             </ul>
         </div>
         <div class="col-12 col-md-6 pe-0 ps-0 ps-md-2 d-flex flex-column gap-2">
             <h3>Overdue Tasks</h3>
-            <ul class="list-unstyled section d-flex flex-column gap-2">
-                {#each $overdueTasks as task}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <li class="m-0" style="cursor: pointer;"
-                    on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
-                        <!-- <Task {task} isInProjectPage={false} /> -->
-                        <InlineTask {task} mode="showRemainingDays" isInProjectPage={false} />
-                    </li>
-                {/each}
+            <ul class="list-unstyled section px-2 d-flex flex-column gap-2">
+                {#if $overdueTasks.length > 0}
+                    {#each $overdueTasks as task}
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <li class="m-0" style="cursor: pointer;"
+                        on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
+                            <InlineTask {task} mode="showRemainingDays" isInProjectPage={false} />
+                        </li>
+                    {/each}
+                {:else}
+                    <h5>No tasks to show</h5>
+                {/if}
             </ul>
         </div>
     {/if}

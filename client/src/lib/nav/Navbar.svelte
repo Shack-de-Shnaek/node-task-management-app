@@ -58,7 +58,7 @@
     <div class="project-menu sub-menu m-0" class:d-none={!projectMenuExpanded} use:clickOutside on:click_outside={() => { projectMenuExpanded = false }}>
         <Navigate to="/new-project">
             <span class="new-project w-100 m-0 p-2 d-flex align-items-center gap-1 text-light">
-                <img src="/icons/add.webp" alt="" style="width: 1rem; filter: invert(1)">
+                <img src="/icons/add.webp" alt="" style="width: 1rem; height: 1rem; filter: invert(1)">
                 <span>New project</span>
             </span>
         </Navigate>

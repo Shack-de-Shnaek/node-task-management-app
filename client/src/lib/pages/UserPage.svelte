@@ -164,37 +164,47 @@
         <div class="col-12 col-md-6 ps-0 pe-0 pe-md-2 post-column">
             <h3>Posts</h3>
             <ul class="list-unstyled d-flex flex-column gap-4">
-                {#each $user.posts as post}
-                    <li>
-                        <Post {post} isInProjectPage={false} showComments={false} componentClass="w-100" />
-                    </li>
-                {/each}
+                {#if $user.posts.length > 0}
+                    {#each $user.posts as post}
+                        <li>
+                            <Post {post} isInProjectPage={false} showComments={false} componentClass="w-100" />
+                        </li>
+                    {/each}
+                {:else}
+                    <h5>No posts to show</h5>
+                {/if}
             </ul>
         </div>
     {/if}
     {#if $user.assignedTasks && $user.createdTasks}
         <div class="col-12 col-md-6 pe-0 ps-0 ps-md-2 d-flex flex-column gap-2">
             <h3>Assigned Tasks</h3>
-            <ul class="list-unstyled section d-flex flex-column gap-2">
-                {#each $user.assignedTasks as task}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <li class="m-0" style="cursor: pointer;"
-                    on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
-                        <!-- <Task {task} isInProjectPage={false} /> -->
-                        <InlineTask {task} mode="show" isInProjectPage={false} />
-                    </li>
-                {/each}
+            <ul class="list-unstyled section px-2 d-flex flex-column gap-2">
+                {#if $user.assignedTasks.length > 0}
+                    {#each $user.assignedTasks as task}
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <li class="m-0" style="cursor: pointer;"
+                        on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
+                            <InlineTask {task} mode="show" isInProjectPage={false} />
+                        </li>
+                    {/each}
+                {:else}    
+                    <h5>No tasks to show</h5>
+                {/if}
             </ul>
             <h3>Created Tasks</h3>
-            <ul class="list-unstyled section d-flex flex-column gap-2">
-                {#each $user.createdTasks as task}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <li class="m-0" style="cursor: pointer;"
-                    on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
-                        <!-- <Task {task} isInProjectPage={false} /> -->
-                        <InlineTask {task} mode="show" isInProjectPage={false} />
-                    </li>
-                {/each}
+            <ul class="list-unstyled section px-2 d-flex flex-column gap-2">
+                {#if $user.createdTasks.length > 0}
+                    {#each $user.createdTasks as task}
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <li class="m-0" style="cursor: pointer;"
+                        on:click={() => { navigateTo(`/projects/${task.project.id}/tasks/${task.id}`) }}>
+                            <InlineTask {task} mode="show" isInProjectPage={false} />
+                        </li>
+                    {/each}
+                {:else}    
+                    <h5>No tasks to show</h5>
+                {/if}
             </ul>
         </div>
     {/if}
