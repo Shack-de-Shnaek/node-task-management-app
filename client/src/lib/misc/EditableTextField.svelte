@@ -19,12 +19,14 @@
 
     let editMode = false;
 
+    // $: if(value && textType === 'paragraph') value = value.replaceAll('\\n', '\n');    
+    
     let paragraphContainerHeight: number;
     const editTextArea = (event: MouseEvent) => {
         if(!allowEditing) return;
         editMode = true;
     }
-
+    
     const save = async() => {
         editMode = false;
         let callback: <T>(json: T) => void = undefined;
@@ -51,6 +53,8 @@
             callback,
         );
     }
+    
+    $: if(value && textType === 'paragraph') value = value.replaceAll('\\n', '\n');
 </script>
 
 {#if textType === 'span'}
@@ -78,7 +82,11 @@
         {#if value}
             <div on:click={editTextArea} bind:offsetHeight={paragraphContainerHeight}>
                 {#each parseParagraphs(value) as paragraph}
-                    <p class="mb-1">{paragraph}</p>
+                    {#if paragraph === '\n'}
+                        <br>
+                    {:else}
+                        <p class="mb-1">{paragraph}</p>
+                    {/if}
                 {/each}
             </div>
         {:else}

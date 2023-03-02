@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { compare } from 'bcrypt';
-import { PrismaService } from 'src/prisma.service';
 import { UsersService } from 'src/users/users.service';
 // import { verify } from 'crypto';
 

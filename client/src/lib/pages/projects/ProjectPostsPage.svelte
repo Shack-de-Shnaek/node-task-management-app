@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import NewPostInput from "../../posts/NewPostInput.svelte";
     import Post from "../../posts/Post.svelte";
     import { currentUserIsMember, project } from "./projectStore";
@@ -8,7 +9,9 @@
     {#if $currentUserIsMember}
         <NewPostInput />
     {/if}
-    {#each $project.posts as post}
-        <Post {post} />
-    {/each}
+    {#key $project.posts.length}
+	    {#each $project.posts as post}
+          <Post {post} />
+        {/each}
+    {/key}
 </div>

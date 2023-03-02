@@ -4,33 +4,29 @@
     import InlineTask from "../../tasks/InlineTask.svelte";
     import TaskPieChart from "../../projects/TaskPieChart.svelte";
     import { project } from "./projectStore";
+	import { derived, type Readable } from "svelte/store";
 
-    const getDueSoonTasks = () => {
+    const dueSoonTasks: Readable<TaskData[]> = derived(project, ($project) => {
         return $project.tasks.filter(task => {
             if(!task.dueAt) return false;
+            if(['fixed', 'rejected'].includes(task.status.name.toLowerCase())) return false;
             const delta = Math.round((new Date(task.dueAt).getTime() - new Date().getTime()) / 1000 / 3600 / 24);
-            return delta < 7;
+            return delta <= 7;
         }).sort((a, b) => {
             const days1 = Math.round(new Date(a.dueAt).getTime() / 360000 / 24);
             const days2 = Math.round(new Date(b.dueAt).getTime() / 360000 / 24)
             return days1 - days2;
         });
-    }
+    });
 
-    const getCurrentUserTasks = () => {
+    const currentUserTasks: Readable<TaskData[]> = derived(project, ($project) => {
         return $project.tasks.filter(task => {
             if(!task.assignedTo) return false;
+            if(['fixed', 'rejected'].includes(task.status.name)) return false;
             if(task.status.code === 'fixed' || task.status.code === 'rejected') return false;
             return task.assignedTo.id === $currentUserData.id;
-        });
-    }
-
-    let dueSoonTasks: TaskData[] = [];
-    let currentUserTasks: TaskData[] = [];
-    $: if($project.id !== 0) {
-        dueSoonTasks = getDueSoonTasks();
-        currentUserTasks = getCurrentUserTasks();
-    }
+        }); 
+    });
 </script>
 
 {#key $project.id}
@@ -50,8 +46,8 @@
 
 <h2 class="mt-3">Tasks that are due soon</h2>
 <section class="section row d-flex flex-column-row flex-md-row">
-    {#if $project.id !== 0 && dueSoonTasks.length > 0}
-        {#each dueSoonTasks as task}
+    {#if $project.id !== 0 && $dueSoonTasks.length > 0}
+        {#each $dueSoonTasks as task}
             <InlineTask {task} mode='showRemainingDays' />
         {/each}
     {:else}
@@ -61,8 +57,8 @@
 
 <h2 class="mt-3">Tasks that are assigned to you</h2>
 <section class="section row d-flex flex-column-row flex-md-row">
-    {#if $project.id !== 0 && currentUserTasks.length > 0}
-        {#each currentUserTasks as task}
+    {#if $project.id !== 0 && $currentUserTasks.length > 0}
+        {#each $currentUserTasks as task}
             <InlineTask {task} mode='show' />
         {/each}
     {:else}

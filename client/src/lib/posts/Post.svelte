@@ -53,7 +53,11 @@
     </header>
     <div class="px-2 py-1">
         {#each parseParagraphs(post.content) as paragraph}
-            <p>{paragraph}</p>
+            {#if paragraph === '\n'}
+                <br>
+            {:else}
+                <p class="mb-1">{paragraph}</p>
+            {/if}
         {/each}
     </div>
     {#if images.length > 0}

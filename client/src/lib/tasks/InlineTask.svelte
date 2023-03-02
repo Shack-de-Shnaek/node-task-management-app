@@ -15,9 +15,11 @@
         
         const delta = dueAt.getTime() - now.getTime();
         
-        return Math.round(delta / 1000 / 3600 / 24);
+        const deltaDays = Math.round(delta / 1000 / 3600 / 24);
+        
+        return deltaDays;
     }
-
+    
     const remainingDays = getRemainingDays();
 </script>
 

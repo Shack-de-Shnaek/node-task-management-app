@@ -6,7 +6,6 @@ import {
 	HttpCode,
 	NotFoundException,
 	Post,
-	Redirect,
 	Req,
 	Res,
 	UseGuards,
@@ -21,7 +20,7 @@ import { LocalAuthGuard } from './localAuth.guard';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private authService: AuthService, private usersService: UsersService) {}
+	constructor(private usersService: UsersService) {}
 
 	@Post('login')
 	@UseGuards(LocalAuthGuard)
