@@ -254,9 +254,8 @@
                     {/if}
                 </div>
             {/if}
-            {#if $task.id !== 0 && $task.attachments.filter(attachment => !attachment.isImage).length > 0}
+            {#if $task.id !== 0 && $task.attachments.length > 0}
                 <div class="attachments p-2 d-flex flex-column gap-1">
-                    <h5 class="m-0">Attachments</h5>
                     {#each $task.attachments as attachment}
                         <a href={attachment.path} target="_blank" rel="noreferrer" class="attachment text-primary">{attachment.path.split('/')[3]}</a>
                     {/each}

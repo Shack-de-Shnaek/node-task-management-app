@@ -66,9 +66,10 @@
         </form>
     {:else}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <span on:click={() => {
-            if(allowEditing) editMode = true
-        }}>{value ? value : `No ${field}`}</span>
+        <span 
+            on:click={() => { if(allowEditing) editMode = true} }
+            class:pointer={allowEditing}>
+        {value ? value : `No ${field}`}</span>
     {/if}
 {:else}
     {#if editMode}
@@ -80,7 +81,10 @@
     {:else}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         {#if value}
-            <div on:click={editTextArea} bind:offsetHeight={paragraphContainerHeight}>
+            <div 
+                on:click={editTextArea} 
+                bind:offsetHeight={paragraphContainerHeight}
+                class:pointer={allowEditing}>
                 {#each parseParagraphs(value) as paragraph}
                     {#if paragraph === '\n'}
                         <br>
@@ -98,5 +102,9 @@
 <style>
     button {
         font-size: 0.75rem;
+    }
+    
+    .pointer {
+        cursor: pointer;
     }
 </style>
