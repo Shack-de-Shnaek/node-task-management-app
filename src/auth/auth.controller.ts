@@ -11,7 +11,6 @@ import {
 	UseGuards,
 	ValidationPipe,
 } from '@nestjs/common';
-import { hash } from 'bcrypt';
 import { Request, Response } from 'express';
 import { CreateUserDto } from 'src/users/user-create.dto';
 import { UsersService } from 'src/users/users.service';
@@ -20,7 +19,7 @@ import { LocalAuthGuard } from './localAuth.guard';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private usersService: UsersService) {}
+	constructor(private usersService: UsersService, private authService: AuthService) {}
 
 	@Post('login')
 	@UseGuards(LocalAuthGuard)
@@ -32,10 +31,9 @@ export class AuthController {
 	@Post('register')
 	@HttpCode(201)
 	@Header('Content-Type', 'application/json')
-	async register(@Body(new ValidationPipe()) data: CreateUserDto, @Req() request: Request) {
-		data.password = await hash(data.password, 10);
-		const { password, ...user } = await this.usersService.create(data);
-		// return;
+	async register(@Body(new ValidationPipe()) data: CreateUserDto, @Res() response: Response) {
+		await this.authService.registerUser(data);
+		response.status(201).send();
 	}
 
 	@Post('logout')
@@ -44,12 +42,6 @@ export class AuthController {
 	async logout(@Req() request: Request, @Res() response: Response) {
 		request.session.destroy(() => {});
 		response.redirect('/login');
-	}
-
-	// @UseGuards(SessionAuthGuard)
-	@Get('test')
-	async test(@Req() request: Request) {
-		return request.user;
 	}
 
 	@Get('current-user')

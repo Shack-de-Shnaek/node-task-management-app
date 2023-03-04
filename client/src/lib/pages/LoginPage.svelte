@@ -1,6 +1,8 @@
 <script lang="ts">
+	import type { UserData } from '../../../../interfaces/UserData';
     import { fade } from 'svelte/transition';
 	import getCurrentUser from '../utilities/getCurrentUser';
+	import handleResponse from '../utilities/handleResponse';
 
     let mode: 'Login' | 'Register' = 'Login';
 
@@ -30,52 +32,43 @@
         }
     }
 
-    const login = async() => {
-        try {
-            const res = await fetch('/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginUserData)
-            });
-            if(res.ok) {
-                const json = await res.json();
+    const loginOrRegister = async() => {
+        const url = `/auth/${mode.toLowerCase()}`;
+        const errorMessage = `Could not ${mode === 'Login' ? 'log in' : 'register'}`;
+        
+        let body: Object;
+        let callback: (json: UserData) => void;
+
+        if(mode === 'Login') {
+            body = loginUserData;
+            callback = (json: UserData) => {
                 getCurrentUser();
                 window.location.pathname = '/';
-            } else if(res.status === 404) {
-                alert('That user does not exist');
-            } else if(res.status === 401) {
-                alert('Wrong password');
             }
-        } catch(e) {
-            console.log(e);
-        }
-    }
-
-    const register = async() => {
-        if(registerUserData.password !== registerUserData.confirmPassword) {
-            alert('Passwords do not match');
-            return;
-        }
-        
-        const {confirmPassword, ...data} = registerUserData;
-
-        try {
-            const res = await fetch('/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            if(res.ok) {
+        } else {
+            if(registerUserData.password !== registerUserData.confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            const {confirmPassword, ...data} = registerUserData;
+            body = data;
+            callback = (json: UserData) => {
                 for(const key in registerUserData) registerUserData[key] = '';
+                alert('Your account has been created\nPlease log in');
                 mode = 'Login';
             }
-        } catch(e) {
-            console.log(e);
         }
+        
+        await handleResponse<UserData>(
+            url,
+            {
+                method: 'POST',
+                errorMessage: errorMessage,
+                body: body
+            },
+            callback
+        )
     }
 </script>
 
@@ -85,14 +78,14 @@
             {mode}
         </h2>
         {#if mode === 'Login'}
-        <form id="login-form" class="d-flex flex-column gap-3" in:fade on:submit|preventDefault={login} >
+        <form id="login-form" class="d-flex flex-column gap-3" in:fade on:submit|preventDefault={loginOrRegister} >
             <input type="email" name="email" class="" id="login-email-input" placeholder="Email" required bind:value={loginUserData.email}>
             <input type="password" name="password" class="" id="login-password-input" placeholder="Password" required bind:value={loginUserData.password}>
             <button type="submit" class="btn btn-primary w-25 mx-auto">Log in</button>
         </form>
         <button on:click={() => switchMode('Register')} class="change-mode-button border-0 rounded-1 p-1">I don't have an account</button>
         {:else if mode === 'Register'}
-        <form id="register-form" class="d-flex flex-column gap-3" in:fade on:submit|preventDefault={register} >
+        <form id="register-form" class="d-flex flex-column gap-3" in:fade on:submit|preventDefault={loginOrRegister} >
             <input type="text" name="firstName" class="" id="register-first-name-input" placeholder="First name" required bind:value={registerUserData.firstName}>
             <input type="text" name="lastName" class="" id="register-last-name-input" placeholder="Last name" required bind:value={registerUserData.lastName}>
             <input type="email" name="email" class="" id="register-email-input" placeholder="Email" required bind:value={registerUserData.email}>

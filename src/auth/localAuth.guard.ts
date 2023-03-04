@@ -13,7 +13,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
 		const result = (await super.canActivate(context)) as boolean;
 		const request: Request = context.switchToHttp().getRequest();
 		const user = await this.usersService.get({ email: request.body.email }, false);
-		if (user === null) throw new NotFoundException('User does not exist');
+		if (user === null) throw new NotFoundException('This account does not exist');
 		await super.logIn(request);
 		return result;
 	}

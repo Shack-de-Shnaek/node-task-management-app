@@ -41,11 +41,6 @@ async function handleResponse<T>(
             callback();
         }
     } else {
-        if (res.status === 401) {
-            navigateTo('login');
-            return;
-        }
-
         const json: NestError = await res.json();
         if (json.message !== undefined) {
             alert(json.message);

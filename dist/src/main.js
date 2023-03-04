@@ -12,8 +12,9 @@ const prisma_exceptions_interceptor_1 = require("./prisma-exceptions.interceptor
 const compression = require("compression");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const { httpAdapter } = app.get(core_1.HttpAdapterHost);
     app.useGlobalInterceptors(new prisma_exceptions_interceptor_1.PrismaExceptionsInterceptor());
-    app.useGlobalFilters(new unauthorizedRedirect_filter_1.UnauthorizedRedirectFilter());
+    app.useGlobalFilters(new unauthorizedRedirect_filter_1.UnauthorizedRedirectFilter(httpAdapter));
     app.use(compression({
         filter: () => true,
         threshold: 0,

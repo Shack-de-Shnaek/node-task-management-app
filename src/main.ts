@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { PrismaClient } from '@prisma/client';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import * as session from 'express-session';
@@ -11,8 +11,11 @@ import * as compression from 'compression';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
+
+	const { httpAdapter } = app.get(HttpAdapterHost);
+	
 	app.useGlobalInterceptors(new PrismaExceptionsInterceptor());
-	app.useGlobalFilters(new UnauthorizedRedirectFilter());
+	app.useGlobalFilters(new UnauthorizedRedirectFilter(httpAdapter));
 	app.use(
 		compression({
 			filter: () => true,
