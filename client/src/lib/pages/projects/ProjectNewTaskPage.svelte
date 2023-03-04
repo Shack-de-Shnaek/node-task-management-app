@@ -77,46 +77,50 @@
         <textarea name="task-description" id="task-description" rows="5" placeholder="Description" class="w-100 form-control"
         required minlength="5" bind:value={newTaskData.description}></textarea>
         
-        <fieldset>
-            <label for="task-severity">Severity</label>
-            <select name="task-severity" id="task-severity" class="form-select"
-            required bind:value={newTaskData.severityCode}>
-                {#each $taskSeverities as severity, i}
-                    <option value={severity.code} title={severity.description}>{severity.name}</option>
-                {/each}
-            </select>
-        </fieldset>
-
-        <fieldset>
-            <label for="task-priority">Priority</label>
-            <select name="task-priority" id="task-priority" class="form-select"
-            required bind:value={newTaskData.priorityCode}>
-                {#each $taskPriorities as priority}
-                    <option value={priority.code} title={priority.description}>{priority.name}</option>
-                {/each}
-            </select>
-        </fieldset>
+        <div class="row w-100">
+            <fieldset class="col-12 col-md-6 py-1 d-flex align-items-center gap-2 selector-fieldset">
+                <label for="task-severity">Severity</label>
+                <select name="task-severity" id="task-severity" class="form-select"
+                required bind:value={newTaskData.severityCode}>
+                    {#each $taskSeverities as severity, i}
+                        <option value={severity.code} title={severity.description}>{severity.name}</option>
+                    {/each}
+                </select>
+            </fieldset>
+    
+            <fieldset class="col-12 col-md-6 py-1 d-flex align-items-center gap-2 selector-fieldset">
+                <label for="task-priority">Priority</label>
+                <select name="task-priority" id="task-priority" class="form-select"
+                required bind:value={newTaskData.priorityCode}>
+                    {#each $taskPriorities as priority}
+                        <option value={priority.code} title={priority.description}>{priority.name}</option>
+                    {/each}
+                </select>
+            </fieldset>
+        </div>
         
-        <fieldset disabled={!$currentUserIsAdmin}>
-            <label for="task-assigned-to">Assign To</label>
-            <select name="task-assigned-to" id="task-assigned-to" class="form-select"
-            bind:value={newTaskData.assignedToId}>
-                <option value={null}>Nobody</option>
-                {#each $project.members as member}
-                    <option value={member.id}>{member.firstName} {member.lastName}</option>
-                {/each}
-            </select>
-        </fieldset>
-        
-        <fieldset>
-            <label for="task-category">Category</label>
-            <select name="task-category" id="task-category" class="form-select"
-            required bind:value={newTaskData.categoryId}>
-                {#each $project.taskCategories as category}
-                    <option value={category.id}>{category.name}</option>
-                {/each}
-            </select>
-        </fieldset>
+        <div class="row w-100">
+            <fieldset class="col-12 col-md-6 py-1 d-flex align-items-center gap-2 selector-fieldset" disabled={!$currentUserIsAdmin}>
+                <label for="task-assigned-to">Assign To</label>
+                <select name="task-assigned-to" id="task-assigned-to" class="form-select"
+                bind:value={newTaskData.assignedToId}>
+                    <option value={null}>Nobody</option>
+                    {#each $project.members as member}
+                        <option value={member.id}>{member.firstName} {member.lastName}</option>
+                    {/each}
+                </select>
+            </fieldset>
+            
+            <fieldset class="col-12 col-md-6 py-1 d-flex align-items-center gap-2 selector-fieldset">
+                <label for="task-category">Category</label>
+                <select name="task-category" id="task-category" class="form-select"
+                required bind:value={newTaskData.categoryId}>
+                    {#each $project.taskCategories as category}
+                        <option value={category.id}>{category.name}</option>
+                    {/each}
+                </select>
+            </fieldset>
+        </div>
         
         <fieldset>
             <label for="task-due-at">Due Date</label>
@@ -142,6 +146,10 @@
 </div>
 
 <style>
+    .selector-fieldset label {
+        min-width: 27.5%;
+    }
+    
     .new-task-container {
         box-shadow: var(--container-shadow);
     }

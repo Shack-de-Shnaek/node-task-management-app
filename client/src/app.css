@@ -69,3 +69,7 @@ a {
   background: var(--bs-light);
   box-shadow: var(--container-shadow);
 }
+
+.w-fit-content {
+  min-width: fit-content !important;
+}

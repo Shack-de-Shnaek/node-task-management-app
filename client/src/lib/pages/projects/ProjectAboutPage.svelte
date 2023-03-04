@@ -136,7 +136,7 @@
             on:submit|preventDefault={() => addMember()}>
                 <input type="email" id="new-member-email-input" placeholder="Email" class="form-control"
                 required bind:value={newMemberEmail}>
-                <button type="submit" class="btn btn-success p-1">Add Member</button>
+                <button type="submit" class="btn btn-success p-1 w-fit-content">Add Member</button>
             </form>
         {/if}
         {#each $project.members as member}
@@ -153,7 +153,9 @@
                 <span>{category.name}</span>
                 <span style="background-color: {category.color}; color: {calculateTextColor(category.color)}; font-size: 0.75rem"
                 class="rounded-3 p-1">{category.color}</span>
-                <button class="btn btn-danger p-1" on:click={() => removeTaskCategory(category.id)}>Remove</button>
+                {#if $currentUserIsAdmin}
+                    <button class="btn btn-danger p-1" on:click={() => removeTaskCategory(category.id)}>Remove</button>
+                {/if}
             </li>
         {/each}
     </ul>
@@ -164,7 +166,7 @@
             bind:value={newTaskCategory.name}>
             <input type="color" name="category-color" class="form-color"
             bind:value={newTaskCategory.color}>
-            <button type="submit" class="btn btn-success p-1">Add Category</button>
+            <button type="submit" class="btn btn-success p-1 w-fit-content">Add Category</button>
         </form>
     {/if}
 </section>
