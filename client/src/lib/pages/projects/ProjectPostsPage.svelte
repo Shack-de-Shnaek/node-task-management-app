@@ -10,8 +10,12 @@
         <NewPostInput />
     {/if}
     {#key $project.posts.length}
-	    {#each $project.posts as post}
-          <Post {post} />
-        {/each}
+	    {#if $project.posts.length > 0}
+            {#each $project.posts as post}
+            <Post {post} />
+            {/each}
+        {:else}
+            <h5>No posts to show</h5>
+        {/if}
     {/key}
 </div>

@@ -27,7 +27,11 @@
 </script>
 
 <div class="post-list w-100 mt-3 d-flex flex-column align-items-center gap-3">
-    {#each $posts as post}
-        <Post {post} isInProjectPage={false} showComments={false} />
-    {/each}
+    {#if $posts.length > 0}    
+        {#each $posts as post}
+            <Post {post} isInProjectPage={false} showComments={false} />
+        {/each}
+    {:else}
+        <h5>No posts to show</h5>
+    {/if}
 </div>

@@ -38,13 +38,13 @@
 </script>
 
 <div class="container-fluid m-0 row p-2 py-1">
-    <div class="col-12 col-md-6 col-lg-4 px-1 py-1 px-md-3 py-md-0">
+    <div class="col-12 col-md-4 px-1 py-1 px-md-3 py-md-0">
         <Widget label="Unfinished Tasks" value={$unfinishedTasks.length} componentClass="btn-warning p-1 p-md-2" />
     </div>
-    <div class="col-12 col-md-6 col-lg-4 px-1 py-1 px-md-3 py-md-0">
+    <div class="col-12 col-md-4 px-1 py-1 px-md-3 py-md-0">
         <Widget label="Overdue Tasks" value={$overdueTasks.length} componentClass="btn-danger p-1 p-md-2" />
     </div>
-    <div class="col-12 col-md-6 col-lg-4 px-1 py-1 px-md-3 py-md-0">
+    <div class="col-12 col-md-4 px-1 py-1 px-md-3 py-md-0">
         <Widget label="All Posts" href="posts" componentClass="btn-primary p-1 p-md-2" />
     </div>
 </div>
