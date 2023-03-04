@@ -27,7 +27,7 @@ export class AuthService {
 		data.password = await hash(data.password, 10);
 		const user = await this.usersService.get({ email: data.email }, false, false, null);
 		if (user !== null) {
-			throw new BadRequestException('An account with this email already exists');
+			throw new BadRequestException('An account with this email address already exists');
 		}
 		await this.usersService.create(data);
 	}
