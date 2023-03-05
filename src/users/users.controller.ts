@@ -37,7 +37,10 @@ export class UsersController {
 	}
 
 	@Get(':userId')
-	async get(@Req() request, @Param('userId', ParseIntPipe, UserExistsPipe, new ValidationPipe()) userId: number) {
+	async get(
+		@Req() request,
+		@Param('userId', ParseIntPipe, UserExistsPipe, new ValidationPipe()) userId: number,
+	) {
 		const isSameUser = userId === request.user.id;
 		return this.usersService.get(
 			{ id: userId },

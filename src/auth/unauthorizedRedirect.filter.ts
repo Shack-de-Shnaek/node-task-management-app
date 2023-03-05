@@ -10,11 +10,11 @@ import {
 import { BaseExceptionFilter } from '@nestjs/core';
 
 @Catch(UnauthorizedException)
-export class UnauthorizedRedirectFilter extends BaseExceptionFilter {	
+export class UnauthorizedRedirectFilter extends BaseExceptionFilter {
 	catch(exception: HttpException, host: ArgumentsHost) {
 		const context = host.switchToHttp();
 		const request: Request = context.getRequest();
-		
+
 		if (request.url.includes('/auth/login')) return super.catch(exception, host);
 
 		const response = context.getResponse();

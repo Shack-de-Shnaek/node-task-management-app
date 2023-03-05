@@ -13,7 +13,7 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
 	const { httpAdapter } = app.get(HttpAdapterHost);
-	
+
 	app.useGlobalInterceptors(new PrismaExceptionsInterceptor());
 	app.useGlobalFilters(new UnauthorizedRedirectFilter(httpAdapter));
 	app.use(

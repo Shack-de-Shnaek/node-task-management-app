@@ -27,6 +27,7 @@ import { ProjectMemberGuard } from './projectsMember.guard';
 import { ProjectExistsPipe } from './projectExists.pipe';
 import { UserExistsPipe } from 'src/users/userExists.pipe';
 import { TaskExistsPipe } from 'src/tasks/taskExists.pipe';
+
 @Controller('api/projects')
 @UseGuards(SessionAuthGuard)
 export class ProjectsController {
@@ -91,7 +92,10 @@ export class ProjectsController {
 	@Delete(':projectId/members/self')
 	@HttpCode(200)
 	@UseGuards(ProjectMemberGuard)
-	async removeMemberSelf(@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number, @Req() request) {
+	async removeMemberSelf(
+		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
+		@Req() request,
+	) {
 		return this.projectsService.removeMember(projectId, request.user.id);
 	}
 
@@ -107,12 +111,10 @@ export class ProjectsController {
 
 	@Get(':projectId/posts')
 	@UseGuards(ProjectMemberGuard)
-	async getPosts(
-		@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number,
-	) {
+	async getPosts(@Param('projectId', ParseIntPipe, ProjectExistsPipe) projectId: number) {
 		return this.projectsService.getPosts(projectId);
 	}
-		
+
 	@Post(':projectId/posts')
 	@HttpCode(201)
 	@UseGuards(ProjectMemberGuard)

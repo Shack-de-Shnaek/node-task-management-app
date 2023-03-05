@@ -98,7 +98,7 @@ export class UsersService implements ICrudService {
 		});
 	}
 
-	async update(id: number, data: UpdateUserDto) {
+	async update(userId: number, data: UpdateUserDto) {
 		let thumbnailPath: string = null;
 		if (data.image) {
 			thumbnailPath = await this.filesService.generateThumbnailFile(data.image);
@@ -106,7 +106,7 @@ export class UsersService implements ICrudService {
 		}
 		return this.prisma.user.update({
 			where: {
-				id: id,
+				id: userId,
 			},
 			data: {
 				...data,
@@ -116,10 +116,10 @@ export class UsersService implements ICrudService {
 		});
 	}
 
-	async delete(id: number) {
+	async delete(userId: number) {
 		return this.prisma.user.update({
 			where: {
-				id: id,
+				id: userId,
 			},
 			data: {
 				isActive: false,

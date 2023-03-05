@@ -1,21 +1,19 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { CreateUserDto } from 'src/users/user-create.dto';
 import { UsersService } from 'src/users/users.service';
-// import { verify } from 'crypto';
 
 @Injectable()
 export class AuthService {
 	constructor(private usersService: UsersService) {}
 
 	async validateUser(email: string, password: string) {
-		const user = await this.usersService.get(
-			{
-				email: email,
-			},
-			true,
-			false,
-		);
+		const user = await this.usersService.get({ email: email }, true, false);
 		if (user === null) throw new NotFoundException('This account does not exist');
 		const passwordIsCorrect = await compare(password, user.password);
 		if (!passwordIsCorrect) throw new UnauthorizedException('Incorrect password');

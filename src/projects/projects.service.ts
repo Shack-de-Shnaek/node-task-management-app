@@ -222,7 +222,7 @@ export class ProjectsService {
 	async getPosts(projectId: number) {
 		const project = await this.prisma.project.findUnique({
 			where: { id: projectId },
-			select: { posts: postSelector }
+			select: { posts: postSelector },
 		});
 
 		return project.posts;
