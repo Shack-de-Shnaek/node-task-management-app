@@ -53,16 +53,20 @@
 <section class="section row">
     <div class="project-list-container">
         <ul class="list-unstyled project-list d-flex flex-column gap-2">
-            {#each $currentUserData.projects as project}
-                <li>
-                    <Navigate to="projects/{project.id}" title={project.name} styles="text-dark">
-                        <div class="project p-2 rounded-3 d-flex align-items-center gap-2">
-                            <img src={project.thumbnailPath?project.thumbnailPath:'/icons/project.webp'} alt="" class="rounded-circle" style="height: 2rem; width: 2rem;">
-                            <h6 class="m-0 text-start">{project.name}</h6>
-                        </div>
-                    </Navigate>
-                </li>
-            {/each}
+            {#if $currentUserData.projects.length > 0}
+                {#each $currentUserData.projects as project}
+                    <li>
+                        <Navigate to="projects/{project.id}" title={project.name} styles="text-dark">
+                            <div class="project p-2 rounded-3 d-flex align-items-center gap-2">
+                                <img src={project.thumbnailPath?project.thumbnailPath:'/icons/project.webp'} alt="" class="rounded-circle" style="height: 2rem; width: 2rem;">
+                                <h6 class="m-0 text-start">{project.name}</h6>
+                            </div>
+                        </Navigate>
+                    </li>
+                {/each}
+                {:else}
+                    <h5 class="m-0">No projects to show</h5>
+            {/if}
         </ul>
     </div>
 </section>
