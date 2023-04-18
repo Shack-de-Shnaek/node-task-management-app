@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Post } from '@prisma/client';
-import ICrudService from 'interfaces/ICrudService';
+import { Prisma } from '@prisma/client';
 import { postSelector } from 'prisma/selectors/postSelectors';
 import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma.service';
-import { ProjectsService } from 'src/projects/projects.service';
-import { UsersService } from 'src/users/users.service';
 import { CreatePostDto } from './post-create.dto';
 
 @Injectable()

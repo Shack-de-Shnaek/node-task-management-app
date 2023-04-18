@@ -7,7 +7,6 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import ICrudService from 'interfaces/ICrudService';
 import { postSelector } from 'prisma/selectors/postSelectors';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
 import { taskSelector } from 'prisma/selectors/taskSelectors';
@@ -229,7 +228,7 @@ export class ProjectsService {
 	}
 
 	async addPost(projectId: number, authorId: number, data: CreatePostDto) {
-		const project = await this.prisma.project.findUnique({
+		await this.prisma.project.findUnique({
 			where: { id: projectId },
 			select: { id: true },
 		});

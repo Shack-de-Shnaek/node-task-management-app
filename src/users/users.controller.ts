@@ -1,12 +1,10 @@
 import {
 	Controller,
 	Get,
-	NotFoundException,
 	Param,
 	ParseIntPipe,
 	Req,
 	UseGuards,
-	HttpCode,
 	ValidationPipe,
 	Body,
 	Put,

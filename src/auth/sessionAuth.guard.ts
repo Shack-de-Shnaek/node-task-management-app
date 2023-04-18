@@ -1,11 +1,4 @@
-import {
-	CanActivate,
-	ExecutionContext,
-	Injectable,
-	Redirect,
-	UnauthorizedException,
-} from '@nestjs/common';
-import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Injectable()

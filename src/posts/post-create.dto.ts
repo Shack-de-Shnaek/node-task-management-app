@@ -1,4 +1,4 @@
-import { IsDataURI, IsNumber, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsDataURI, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreatePostDto {
 	@MinLength(5)

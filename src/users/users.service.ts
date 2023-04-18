@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import ICrudService from 'interfaces/ICrudService';
 import { postSelector } from 'prisma/selectors/postSelectors';
 import { projectLimitedSelector, projectSelector } from 'prisma/selectors/projectSelectors';
-import { taskLimitedSelector, taskSelector } from 'prisma/selectors/taskSelectors';
+import { taskSelector } from 'prisma/selectors/taskSelectors';
 import { userLimitedSelector, userSelector } from 'prisma/selectors/userSelectors';
 import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma.service';
@@ -24,7 +24,7 @@ export class UsersService implements ICrudService {
 		};
 		if (mutualUserId === null) select = { ...select, ...userSelector.select };
 		else {
-			let mutualSelect: Prisma.UserSelect = Object(userSelector.select);
+			const mutualSelect: Prisma.UserSelect = Object(userSelector.select);
 
 			const mutualProjectMemberFilter = {
 				some: {

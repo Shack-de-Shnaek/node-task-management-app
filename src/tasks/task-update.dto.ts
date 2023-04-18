@@ -1,7 +1,6 @@
 import {
 	IsDataURI,
 	IsDateString,
-	IsIn,
 	IsInt,
 	IsOptional,
 	IsString,

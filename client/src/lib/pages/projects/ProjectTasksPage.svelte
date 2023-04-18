@@ -6,7 +6,6 @@
 	import { Navigate, navigateTo } from "svelte-router-spa";
 	import { getContext } from "svelte";
 	import type { Writable } from "svelte/store";
-	import { onMount } from "svelte";
 
     export let currentRoute;
 

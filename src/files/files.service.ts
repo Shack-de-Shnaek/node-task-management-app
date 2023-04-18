@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PostAttachment, TaskAttachment } from '@prisma/client';
 import { randomUUID } from 'crypto';
-import { writeFile, readFile } from 'fs';
+import { writeFile } from 'fs';
 import { join } from 'path';
 
 @Injectable()

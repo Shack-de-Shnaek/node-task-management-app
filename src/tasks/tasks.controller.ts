@@ -1,10 +1,8 @@
 import {
 	Body,
 	Controller,
-	forwardRef,
 	Get,
 	HttpCode,
-	Inject,
 	Param,
 	ParseIntPipe,
 	Post,

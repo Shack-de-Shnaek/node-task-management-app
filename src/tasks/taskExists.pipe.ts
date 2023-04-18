@@ -1,10 +1,4 @@
-import {
-	PipeTransform,
-	Injectable,
-	ArgumentMetadata,
-	BadRequestException,
-	NotFoundException,
-} from '@nestjs/common';
+import { PipeTransform, Injectable, ArgumentMetadata, NotFoundException } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 
 @Injectable()

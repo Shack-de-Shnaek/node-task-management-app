@@ -5,8 +5,6 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { ProjectsService } from './projects.service';
 
 @Injectable()
