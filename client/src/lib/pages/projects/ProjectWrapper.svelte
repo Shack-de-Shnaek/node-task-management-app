@@ -6,9 +6,8 @@
 	import updateAllProjectCache from "../../utilities/updateProjectCache";
 	import updateHeaderWithProjectData from "../../utilities/updateHeaderWithProjectData";
 	import handleResponse from "../../utilities/handleResponse";
-	import type { CurrentRoute } from "svelte-router-spa/types/components/route";
 
-    export let currentRoute: CurrentRoute;
+    export let currentRoute;
     export let params;
 
     const getProject = async () => {
@@ -32,7 +31,7 @@
         getProject();
     }
 
-    $: if($project && $project.id !== 0 && currentRoute.path.includes('projects') && currentRoute.namedParams.taskId === undefined) {
+    $: if($project && $project.id !== 0 && currentRoute.path.includes('projects') && currentRoute?.childRoute.namedParams.taskId === undefined) {
         updateHeaderWithProjectData();
     }
 </script>

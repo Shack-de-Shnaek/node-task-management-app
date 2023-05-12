@@ -6,6 +6,7 @@
 	import { navigateTo } from "svelte-router-spa";
 	import type { ProjectData } from "../../../../../interfaces/ProjectData";
 	import uploadMultipleAttachments from "../../utilities/uploadMultipleAttachments";
+	import updateHeaderWithProjectData from "../../utilities/updateHeaderWithProjectData";
 
     const newTaskData: {
         title: string;
@@ -61,7 +62,8 @@
             newTaskData.attachments,
             (data) => {
                 updateAllProjectCache(data);
-                navigateTo(`/projects/${data.id}/tasks`)
+                navigateTo(`/projects/${data.id}/tasks`);
+                updateHeaderWithProjectData();
             },
             otherData
         );

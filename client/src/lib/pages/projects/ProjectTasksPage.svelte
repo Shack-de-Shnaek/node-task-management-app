@@ -12,6 +12,7 @@
     let tasksByStatus: {
         [key: string]: TaskData[];
     } = {}
+
     $: if($taskStatuses.length > 0 && $project.id !== 0) {
         tasksByStatus = {};
         for(const status of $taskStatuses) tasksByStatus[status.code] = [];
@@ -38,13 +39,15 @@
             <div class="task-list d-flex flex-column" id="task-{taskStatus.code}-list">
                 <h3 class="task-header w-100 p-1 text-center" title={taskStatus.description}>{taskStatus.name}</h3>
                 <ul class="list m-0 p-0 pb-5 d-flex flex-column align-items-stretch gap-2 list-unstyled">
-                    {#each tasksByStatus[taskStatus.code] as task}
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <li class="m-0" style="cursor: pointer;"
-                        on:click={() => { navigateTo(`/projects/${$project.id}/tasks/${task.id}`) }}>
-                            <Task {task} />
-                        </li>
-                    {/each}
+                    {#if tasksByStatus[taskStatus.code] }
+                        {#each tasksByStatus[taskStatus.code] as task}
+                            <!-- svelte-ignore a11y-click-events-have-key-events -->
+                            <li class="m-0" style="cursor: pointer;"
+                            on:click={() => { navigateTo(`/projects/${$project.id}/tasks/${task.id}`) }}>
+                                <Task {task} />
+                            </li>
+                        {/each}
+                    {/if}
                 </ul>
             </div>
         {/each}
